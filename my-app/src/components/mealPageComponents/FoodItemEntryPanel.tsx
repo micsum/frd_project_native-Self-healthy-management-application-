@@ -1,14 +1,18 @@
 // Buffer Line
 import { Fragment, useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch, action } from "../../store";
 import { FoodItem } from "../../utils/type";
 
 function FoodItemEntryPanel(props: { foodItem?: FoodItem }) {
   const { foodItem } = props;
-  const weightUnitList = ["", "g", "kg", "lb"];
   const [selectedIndex, updateSelectedIndex] = useState<number>(0);
   const [foodItemCopy, updateFoodItemCopy] = useState<FoodItem>(
     foodItem || { foodName: "", servingSize: 0, sizeUnit: "" }
   );
+
+  const dispatch = useDispatch<AppDispatch>();
+  const weightUnitList = ["", "g", "kg", "lb"];
   let { foodName, servingSize, sizeUnit } = foodItemCopy;
 
   useEffect(() => {
@@ -38,7 +42,7 @@ function FoodItemEntryPanel(props: { foodItem?: FoodItem }) {
           />
         </div>
         <select
-          value={sizeUnit}
+          defaultValue={sizeUnit}
           onChange={(event) => {
             updateSelectedIndex(() => {
               return event.target.selectedIndex;
@@ -53,7 +57,12 @@ function FoodItemEntryPanel(props: { foodItem?: FoodItem }) {
       </div>
       <button
         onClick={() => {
-          console.log("cancel food request");
+          dispatch(
+            action("updateFoodInputPanelVisibility", {
+              visible: false,
+              foodItem,
+            })
+          );
         }}
       >
         Cancel
