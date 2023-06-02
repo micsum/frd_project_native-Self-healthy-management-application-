@@ -87,8 +87,8 @@ export const NbCardMid = () => {
 };
 
 const createCss = (margin: number) => {
-    return {
-        margin: margin,
-        color: "blue"
-    }
-}
+  return {
+    margin: margin,
+    color: "blue",
+  };
+};
