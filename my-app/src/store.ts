@@ -46,11 +46,12 @@ const rootReducer = (
 ): RootState => {
   switch (action.type) {
     case "updateFoodInputPanelVisibility":
-      const updated = { ...state };
-      updated.foodInputPanelOpen = action.payload.visible;
-      updated.foodItemInConsideration = action.payload.foodItem;
-      state = updated;
-      return state;
+      const { visible, foodItem } = action.payload;
+      let updated: RootState = {
+        foodInputPanelOpen: visible,
+        foodItemInConsideration: foodItem,
+      };
+      return updated;
     default:
       return state;
   }
