@@ -1,7 +1,10 @@
 // Buffer Line
 import { Fragment, useState } from "react";
-import { DateMealData } from "../../utils/type";
+import { DateMealData, FoodItem } from "../../utils/type";
+import { useDispatch } from "react-redux";
+import { action, AppDispatch, store } from "../../store";
 import MealTypeDisplay from "./MealTypeDisplay";
+import FoodItemEntryPanel from "./FoodItemEntryPanel";
 
 const fakeFoodData: DateMealData = {
   breakfast: [
@@ -24,12 +27,20 @@ const fakeFoodData: DateMealData = {
 
 function MealTypeSelection(props: { selectedDate: Date }) {
   const { selectedDate } = props;
+
   const [dateMealData, updateDateMealData] =
     useState<DateMealData>(fakeFoodData);
   const [mealType, updateMealType] = useState<string>("Breakfast");
-  const [foodInputHidden, updateFoodInputVisibility] = useState<boolean>(true);
+  const [foodInputVisible, updateFoodInputVisibility] = useState<boolean>(
+    store.getState().foodInputPanelOpen
+  );
+  const [FoodItemInEdit, updateFoodItemInEdit] = useState<FoodItem | undefined>(
+    store.getState().foodItemInConsideration
+  );
 
+  const dispatch = useDispatch<AppDispatch>();
   const mealTypeList: string[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
+
   const toggleMealSelection = (indexChange: number) => {
     updateMealType((currentMealType) => {
       let currentIndex = mealTypeList.indexOf(currentMealType);
@@ -37,6 +48,16 @@ function MealTypeSelection(props: { selectedDate: Date }) {
       return mealTypeList[newIndex];
     });
   };
+
+  store.subscribe(() => {
+    const storeInfo = store.getState();
+    updateFoodInputVisibility(() => {
+      return storeInfo.foodInputPanelOpen;
+    });
+    updateFoodItemInEdit(() => {
+      return storeInfo.foodItemInConsideration;
+    });
+  });
 
   return (
     <Fragment>
@@ -47,29 +68,25 @@ function MealTypeSelection(props: { selectedDate: Date }) {
           <span>{mealType}</span>
           <button onClick={() => toggleMealSelection(1)}>{">"}</button>
         </span>
-        <button
-          onClick={() => {
-            updateFoodInputVisibility(() => {
-              return !foodInputHidden;
-            });
-          }}
-        >
-          {foodInputHidden ? (
+        {foodInputVisible ? null : (
+          <button
+            onClick={() => {
+              dispatch(
+                action("updateFoodInputPanelVisibility", { visible: true })
+              );
+            }}
+          >
             <span>
               <span>+</span> Add item
             </span>
-          ) : (
-            <span>
-              Close <span>X</span>
-            </span>
-          )}
-        </button>
+          </button>
+        )}
       </div>
-      {foodInputHidden ? null : <input />}
       <MealTypeDisplay
         mealType={mealTypeList.indexOf(mealType)}
         mealData={dateMealData}
       />
+      {foodInputVisible ? <FoodItemEntryPanel /> : null}
     </Fragment>
   );
 }
