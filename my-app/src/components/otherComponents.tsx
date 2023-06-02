@@ -87,30 +87,8 @@ export const NbCardMid = () => {
 };
 
 const createCss = (margin: number) => {
-    return {
-        margin: margin,
-        color: "blue"
-    }
-}
-
-const styles = StyleSheet.create({
-    box1 : { 
-    maxWidth:"auto",
-    mx:"2",
-    rounded="lg"
-    overflow="hidden"
-    borderColor="coolGray.200"
-    borderWidth="1"
-    _dark={{
-      borderColor: "coolGray.700",
-      backgroundColor: "gray.800",
-    }}
-    _web={{
-      shadow: 2,
-      borderWidth: 0,
-    }}
-    _light={{
-      backgroundColor: "gray.50",
-    }}}
-
-})
+  return {
+    margin: margin,
+    color: "blue",
+  };
+};
