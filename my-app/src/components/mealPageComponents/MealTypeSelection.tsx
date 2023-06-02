@@ -9,7 +9,7 @@ import FoodItemEntryPanel from "./FoodItemEntryPanel";
 const fakeFoodData: DateMealData = {
   breakfast: [
     { foodName: "bread", servingSize: 100, sizeUnit: "g" },
-    { foodName: "milk", servingSize: 250, sizeUnit: "mL" },
+    { foodName: "milk", servingSize: 250, sizeUnit: "g" },
     { foodName: "egg", servingSize: 2, sizeUnit: "" },
   ],
   lunch: [
@@ -59,14 +59,28 @@ function MealTypeSelection(props: { selectedDate: Date }) {
     });
   });
 
+  function MealChangeButton(props: { indexChange: number }) {
+    const { indexChange } = props;
+    let icon = indexChange === 1 ? ">" : "<";
+    return (
+      <Fragment>
+        {!foodInputVisible ? (
+          <button onClick={() => toggleMealSelection(indexChange)}>
+            {icon}
+          </button>
+        ) : null}
+      </Fragment>
+    );
+  }
+
   return (
     <Fragment>
       <div>
         <span> Meal in Display : </span>
         <span>
-          <button onClick={() => toggleMealSelection(-1)}>{"<"}</button>
+          <MealChangeButton indexChange={-1} />
           <span>{mealType}</span>
-          <button onClick={() => toggleMealSelection(1)}>{">"}</button>
+          <MealChangeButton indexChange={1} />
         </span>
         {foodInputVisible ? null : (
           <button
