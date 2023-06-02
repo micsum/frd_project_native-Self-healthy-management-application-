@@ -43,7 +43,6 @@ function FoodItemEntryPanel(props: { foodItem?: FoodItem }) {
             updateSelectedIndex(() => {
               return event.target.selectedIndex;
             });
-            console.log(`weight unit changed to ${event.target.value}`);
           }}
         >
           <option value="">{""}</option>
@@ -52,6 +51,13 @@ function FoodItemEntryPanel(props: { foodItem?: FoodItem }) {
           <option value="lb">{"lb"}</option>
         </select>
       </div>
+      <button
+        onClick={() => {
+          console.log("cancel food request");
+        }}
+      >
+        Cancel
+      </button>
       <button
         onClick={() => {
           console.log(`confirm food item info input`);
