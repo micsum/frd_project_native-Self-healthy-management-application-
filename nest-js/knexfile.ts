@@ -7,7 +7,6 @@ module.exports = {
     debug: true,
     client: 'postgresql',
     connection: {
-      host: 'localhost',
       database: process.env.DB_NAME,
       user: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
@@ -17,7 +16,6 @@ module.exports = {
       max: 10,
     },
     migrations: {
-      directory: '/migrations',
       tableName: 'knex_migrations',
     },
   },
@@ -33,7 +31,6 @@ module.exports = {
       max: 10,
     },
     migrations: {
-      directory: '/migrations',
       tableName: 'knex_migrations',
     },
   },
@@ -49,7 +46,6 @@ module.exports = {
       max: 10,
     },
     migrations: {
-      directory: '/migrations',
       tableName: 'knex_migrations',
     },
   },

@@ -27,30 +27,7 @@ import * as React from "react";
 import { Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { HomeScreen } from "./src/pages/Demo";
-import { PlansPage } from "./src/pages/PlansPage";
-
-function SettingsScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Settings!</Text>
-    </View>
-  );
-}
-
-const Tab = createBottomTabNavigator();
-
-function MyTabs() {
-  return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Meal" component={SettingsScreen} />
-      <Tab.Screen name="Calendar" component={SettingsScreen} />
-      <Tab.Screen name="Plan" component={PlansPage} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
-    </Tab.Navigator>
-  );
-}
+import { MyTabs } from "./src/containers/bottomBar";
 
 export default function App() {
   return (
