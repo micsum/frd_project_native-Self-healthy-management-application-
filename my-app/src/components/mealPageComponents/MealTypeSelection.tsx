@@ -85,9 +85,7 @@ function MealTypeSelection(props: { selectedDate: Date }) {
         {foodInputVisible ? null : (
           <button
             onClick={() => {
-              dispatch(
-                action("updateFoodInputPanelVisibility", { visible: true })
-              );
+              dispatch(action("foodPanelVisibility", { visible: true }));
             }}
           >
             <span>
@@ -100,7 +98,9 @@ function MealTypeSelection(props: { selectedDate: Date }) {
         mealType={mealTypeList.indexOf(mealType)}
         mealData={dateMealData}
       />
-      {foodInputVisible ? <FoodItemEntryPanel /> : null}
+      {foodInputVisible ? (
+        <FoodItemEntryPanel foodItem={FoodItemInEdit} />
+      ) : null}
     </Fragment>
   );
 }

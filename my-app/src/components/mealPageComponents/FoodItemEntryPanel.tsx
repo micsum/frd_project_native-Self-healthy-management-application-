@@ -58,9 +58,13 @@ function FoodItemEntryPanel(props: { foodItem?: FoodItem }) {
       <button
         onClick={() => {
           dispatch(
-            action("updateFoodInputPanelVisibility", {
+            action("foodPanelVisibility", {
               visible: false,
-              foodItem,
+            })
+          );
+          dispatch(
+            action("foodItemInfo", {
+              foodItem: undefined,
             })
           );
         }}

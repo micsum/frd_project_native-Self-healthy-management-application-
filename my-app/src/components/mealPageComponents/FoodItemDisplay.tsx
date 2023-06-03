@@ -22,9 +22,13 @@ function FoodItemsDisplay(props: { itemIndex: number; foodItem: FoodItem }) {
 
   const editFoodItem = () => {
     dispatch(
-      action("updateFoodInputPanelVisibility", {
+      action("foodPanelVisibility", {
         visible: true,
-        foodItem: foodItem,
+      })
+    );
+    dispatch(
+      action("foodItemInfo", {
+        foodItem,
       })
     );
   };
