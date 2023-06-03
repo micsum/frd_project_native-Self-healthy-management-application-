@@ -15,10 +15,15 @@ function FoodItemsDisplay(props: { itemIndex: number; foodItem: FoodItem }) {
   const dispatch = useDispatch<AppDispatch>();
 
   store.subscribe(() => {
+    let storeInfo = store.getState();
     updateFoodInputVisibility(() => {
-      return store.getState().foodInputPanelOpen;
+      return storeInfo.foodInputPanelOpen;
     });
   });
+
+  const displayItemDetails = () => {
+    console.log(`Display nutritional details of ${foodName}`);
+  };
 
   const editFoodItem = () => {
     dispatch(
@@ -33,16 +38,16 @@ function FoodItemsDisplay(props: { itemIndex: number; foodItem: FoodItem }) {
     );
   };
 
+  const deleteFoodItem = () => {
+    console.log(`attempt to delete ${foodName}`);
+  };
+
   return (
     <Fragment>
       <div>
-        <button
-          onClick={() =>
-            console.log(`Display nutritional details of ${foodName}`)
-          }
-        >
-          Details
-        </button>
+        {foodInputVisible ? null : (
+          <button onClick={displayItemDetails}>Details</button>
+        )}
         <div>
           <div>{`${itemIndex}. ${foodName}`}</div>
           <div>{`Serving Size : ${servingSize} ${sizeUnit}`}</div>
@@ -50,12 +55,7 @@ function FoodItemsDisplay(props: { itemIndex: number; foodItem: FoodItem }) {
         {foodInputVisible ? null : (
           <Fragment>
             <button onClick={editFoodItem}> Edit </button>
-            <button
-              onClick={() => console.log(`attempt to delete ${foodName}`)}
-            >
-              {" "}
-              Delete{" "}
-            </button>
+            <button onClick={deleteFoodItem}> Delete </button>
           </Fragment>
         )}
       </div>

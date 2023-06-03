@@ -26,6 +26,38 @@ function FoodItemEntryPanel(props: { foodItem?: FoodItem }) {
     });
   }, [selectedIndex]);
 
+  const cancelItemUpdate = () => {
+    dispatch(
+      action("foodPanelVisibility", {
+        visible: false,
+      })
+    );
+    dispatch(
+      action("foodItemInfo", {
+        foodItem: undefined,
+      })
+    );
+  };
+
+  const confirmItemUpdate = () => {
+    if (itemNameInput.current === null || servingSizeInput.current === null) {
+      return;
+    } else if (itemNameInput.current.value === "") {
+      console.log("missing item name");
+      return;
+    } else if (parseFloat(servingSizeInput.current.value) <= 0) {
+      console.log("Inappropriate Quantity Submitted");
+      return;
+    }
+    const foodItemInfo: FoodItem = {
+      foodName: itemNameInput.current.value,
+      servingSize: parseFloat(servingSizeInput.current.value),
+      sizeUnit:
+        sizeUnitSelect.current === null ? "" : sizeUnitSelect.current.value,
+    };
+    console.log(foodItemInfo);
+  };
+
   return (
     <Fragment>
       <div>
@@ -62,49 +94,8 @@ function FoodItemEntryPanel(props: { foodItem?: FoodItem }) {
           <option value="lb">{"lb"}</option>
         </select>
       </div>
-      <button
-        onClick={() => {
-          dispatch(
-            action("foodPanelVisibility", {
-              visible: false,
-            })
-          );
-          dispatch(
-            action("foodItemInfo", {
-              foodItem: undefined,
-            })
-          );
-        }}
-      >
-        Cancel
-      </button>
-      <button
-        onClick={() => {
-          if (
-            itemNameInput.current === null ||
-            servingSizeInput.current === null
-          ) {
-            return;
-          } else if (itemNameInput.current.value === "") {
-            console.log("missing item name");
-            return;
-          } else if (parseFloat(servingSizeInput.current.value) <= 0) {
-            console.log("Inappropriate Quantity Submitted");
-            return;
-          }
-          const foodItemInfo: FoodItem = {
-            foodName: itemNameInput.current.value,
-            servingSize: parseFloat(servingSizeInput.current.value),
-            sizeUnit:
-              sizeUnitSelect.current === null
-                ? ""
-                : sizeUnitSelect.current.value,
-          };
-          console.log(foodItemInfo);
-        }}
-      >
-        Confirm
-      </button>
+      <button onClick={cancelItemUpdate}>Cancel</button>
+      <button onClick={confirmItemUpdate}>Confirm</button>
     </Fragment>
   );
 }
