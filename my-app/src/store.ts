@@ -25,6 +25,7 @@ export function action(actionType: string, properties: ObjectAny) {
       },
     };
   };
+
   switch (actionType) {
     case "foodPanelVisibility":
       return setFoodInputPanelVisibility(properties.visible);

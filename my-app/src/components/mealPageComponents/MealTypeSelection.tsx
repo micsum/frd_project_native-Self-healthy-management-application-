@@ -1,8 +1,8 @@
 // Buffer Line
 import { Fragment, useState } from "react";
-import { DateMealData, FoodItem } from "../../utils/type";
+import { DateMealData } from "../../utils/type";
 import { useDispatch } from "react-redux";
-import { action, AppDispatch, store } from "../../store";
+import { action, AppDispatch, store, RootState } from "../../store";
 import MealTypeDisplay from "./MealTypeDisplay";
 import FoodItemEntryPanel from "./FoodItemEntryPanel";
 
@@ -31,12 +31,13 @@ function MealTypeSelection(props: { selectedDate: Date }) {
   const [dateMealData, updateDateMealData] =
     useState<DateMealData>(fakeFoodData);
   const [mealType, updateMealType] = useState<string>("Breakfast");
-  const [foodInputVisible, updateFoodInputVisibility] = useState<boolean>(
-    store.getState().foodInputPanelOpen
-  );
-  const [FoodItemInEdit, updateFoodItemInEdit] = useState<FoodItem | undefined>(
-    store.getState().foodItemInConsideration
-  );
+
+  const [storeInfo, updateStoreInfo] = useState<RootState>(store.getState());
+  const { foodInputPanelOpen, foodItemInConsideration } = storeInfo;
+  const [foodInputVisible, foodItemInEdit] = [
+    foodInputPanelOpen,
+    foodItemInConsideration,
+  ];
 
   const dispatch = useDispatch<AppDispatch>();
   const mealTypeList: string[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
@@ -50,12 +51,9 @@ function MealTypeSelection(props: { selectedDate: Date }) {
   };
 
   store.subscribe(() => {
-    const storeInfo = store.getState();
-    updateFoodInputVisibility(() => {
-      return storeInfo.foodInputPanelOpen;
-    });
-    updateFoodItemInEdit(() => {
-      return storeInfo.foodItemInConsideration;
+    const newStoreInfo = store.getState();
+    updateStoreInfo(() => {
+      return newStoreInfo;
     });
   });
 
@@ -99,7 +97,7 @@ function MealTypeSelection(props: { selectedDate: Date }) {
         mealData={dateMealData}
       />
       {foodInputVisible ? (
-        <FoodItemEntryPanel foodItem={FoodItemInEdit} />
+        <FoodItemEntryPanel foodItem={foodItemInEdit} />
       ) : null}
     </Fragment>
   );
