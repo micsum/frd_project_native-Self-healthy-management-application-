@@ -31,8 +31,8 @@ function MealTypeSelection(props: { selectedDate: Date }) {
   const [dateMealData, updateDateMealData] =
     useState<DateMealData>(fakeFoodData);
   const [mealType, updateMealType] = useState<string>("Breakfast");
-
   const [storeInfo, updateStoreInfo] = useState<RootState>(store.getState());
+
   const { foodInputPanelOpen, foodItemInConsideration } = storeInfo;
   const [foodInputVisible, foodItemInEdit] = [
     foodInputPanelOpen,
@@ -42,14 +42,6 @@ function MealTypeSelection(props: { selectedDate: Date }) {
   const dispatch = useDispatch<AppDispatch>();
   const mealTypeList: string[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
 
-  const toggleMealSelection = (indexChange: number) => {
-    updateMealType((currentMealType) => {
-      let currentIndex = mealTypeList.indexOf(currentMealType);
-      let newIndex = (currentIndex + indexChange + 4) % 4;
-      return mealTypeList[newIndex];
-    });
-  };
-
   store.subscribe(() => {
     const newStoreInfo = store.getState();
     updateStoreInfo(() => {
@@ -57,9 +49,18 @@ function MealTypeSelection(props: { selectedDate: Date }) {
     });
   });
 
-  function MealChangeButton(props: { indexChange: number }) {
+  const MealChangeButton = (props: { indexChange: number }) => {
     const { indexChange } = props;
-    let icon = indexChange === 1 ? ">" : "<";
+    const icon = indexChange === 1 ? ">" : "<";
+
+    const toggleMealSelection = (indexChange: number) => {
+      updateMealType((currentMealType) => {
+        let currentIndex = mealTypeList.indexOf(currentMealType);
+        let newIndex = (currentIndex + indexChange + 4) % 4;
+        return mealTypeList[newIndex];
+      });
+    };
+
     return (
       <Fragment>
         {!foodInputVisible ? (
@@ -69,7 +70,7 @@ function MealTypeSelection(props: { selectedDate: Date }) {
         ) : null}
       </Fragment>
     );
-  }
+  };
 
   return (
     <Fragment>
