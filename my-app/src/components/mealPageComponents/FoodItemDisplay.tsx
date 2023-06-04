@@ -4,8 +4,12 @@ import { FoodItem } from "../../utils/type";
 import { useDispatch } from "react-redux";
 import { action, AppDispatch, store } from "../../store";
 
-function FoodItemsDisplay(props: { itemIndex: number; foodItem: FoodItem }) {
-  const { itemIndex, foodItem } = props;
+function FoodItemsDisplay(props: {
+  itemIndex: number;
+  foodItem: FoodItem;
+  removeMealItem: (foodItem: FoodItem) => void;
+}) {
+  const { itemIndex, foodItem, removeMealItem } = props;
   const { foodName, servingSize, sizeUnit } = foodItem;
 
   const [foodInputVisible, updateFoodInputVisibility] = useState<boolean>(
@@ -39,7 +43,7 @@ function FoodItemsDisplay(props: { itemIndex: number; foodItem: FoodItem }) {
   };
 
   const deleteFoodItem = () => {
-    console.log(`attempt to delete ${foodName}`);
+    removeMealItem(foodItem);
   };
 
   return (

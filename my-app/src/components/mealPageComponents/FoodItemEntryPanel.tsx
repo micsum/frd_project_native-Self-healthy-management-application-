@@ -33,11 +33,7 @@ function FoodItemEntryPanel(props: {
         visible: false,
       })
     );
-    dispatch(
-      action("foodItemInfo", {
-        foodItem: undefined,
-      })
-    );
+    dispatch(action("foodItemInfo", {}));
   };
 
   const confirmItemUpdate = (formItemInfo: FoodItem) => {
@@ -48,7 +44,7 @@ function FoodItemEntryPanel(props: {
       console.log("Inappropriate Quantity Submitted");
       return;
     }
-    console.log(formItemInfo);
+    updateMealData(formItemInfo);
   };
 
   return (

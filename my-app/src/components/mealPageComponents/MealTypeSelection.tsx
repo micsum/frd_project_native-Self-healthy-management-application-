@@ -73,7 +73,18 @@ function MealTypeSelection(props: { selectedDate: Date }) {
       return listToBeUpdated;
     });
     dispatch(action("foodPanelVisibility", { visible: false }));
-    dispatch(action("foodItemInfo", { foodItem: undefined }));
+    dispatch(action("foodItemInfo", {}));
+  };
+
+  const removeMealItem = (removedItem: FoodItem) => {
+    let mealItemList = dateMealData[mealType as keyof DateMealData];
+    mealItemList = mealItemList.filter((foodItem) => {
+      return foodItem.foodName !== removedItem.foodName;
+    });
+    const listToBeUpdated = { ...dateMealData, [mealType]: mealItemList };
+    updateDateMealData(() => {
+      return listToBeUpdated;
+    });
   };
 
   const MealChangeButton = (props: { indexChange: number }) => {
@@ -120,7 +131,11 @@ function MealTypeSelection(props: { selectedDate: Date }) {
           </button>
         )}
       </div>
-      <MealTypeDisplay mealType={mealType} mealData={dateMealData} />
+      <MealTypeDisplay
+        mealType={mealType}
+        mealData={dateMealData}
+        removeMealItem={removeMealItem}
+      />
       {foodInputVisible ? (
         <FoodItemEntryPanel
           foodItem={foodItemInEdit}

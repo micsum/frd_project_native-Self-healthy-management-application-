@@ -3,8 +3,12 @@ import { Fragment, useEffect, useState } from "react";
 import { DateMealData, FoodItem } from "../../utils/type";
 import FoodItemsDisplay from "./FoodItemDisplay";
 
-function MealTypeDisplay(props: { mealType: string; mealData: DateMealData }) {
-  const { mealType, mealData } = props;
+function MealTypeDisplay(props: {
+  mealType: string;
+  mealData: DateMealData;
+  removeMealItem: (foodItem: FoodItem) => void;
+}) {
+  const { mealType, mealData, removeMealItem } = props;
   const [mealDisplay, updateMealDisplay] = useState<FoodItem[]>(
     mealData[mealType as keyof DateMealData]
   );
@@ -28,6 +32,7 @@ function MealTypeDisplay(props: { mealType: string; mealData: DateMealData }) {
               key={itemIndex}
               itemIndex={itemIndex + 1}
               foodItem={foodItem}
+              removeMealItem={removeMealItem}
             />
           );
         })
