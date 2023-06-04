@@ -1,5 +1,6 @@
 // Buffer Line
 import { configureStore } from "@reduxjs/toolkit";
+import { produce } from "immer";
 import { FoodItem, ObjectAny } from "./utils/type";
 
 export interface RootState {
@@ -44,24 +45,22 @@ const initState: RootState = {
   foodItemInConsideration: undefined,
 };
 
-const rootReducer = (
-  state: RootState = initState,
-  action: IRootAction
-): RootState => {
-  let updated: RootState = { ...state };
+const rootReducer = produce((draft = initState, action: IRootAction) => {
   switch (action.type) {
-    case "updateFoodInputPanelVisibility":
+    case "updateFoodInputPanelVisibility": {
       const { visible } = action.payload;
-      updated.foodInputPanelOpen = visible;
-      return updated;
-    case "updateFoodItemInConsideration":
+      draft.foodInputPanelOpen = visible;
+      return draft;
+    }
+    case "updateFoodItemInConsideration": {
       const { foodItem } = action.payload || undefined;
-      updated.foodItemInConsideration = foodItem;
-      return updated;
+      draft.foodItemInConsideration = foodItem;
+      return draft;
+    }
     default:
-      return state;
+      return draft;
   }
-};
+});
 
 export const store = configureStore({
   reducer: rootReducer,

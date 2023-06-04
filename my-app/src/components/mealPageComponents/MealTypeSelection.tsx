@@ -1,6 +1,6 @@
 // Buffer Line
 import { Fragment, useState } from "react";
-import { DateMealData } from "../../utils/type";
+import { DateMealData, FoodItem } from "../../utils/type";
 import { useDispatch } from "react-redux";
 import { action, AppDispatch, store, RootState } from "../../store";
 import MealTypeDisplay from "./MealTypeDisplay";
@@ -40,7 +40,13 @@ function MealTypeSelection(props: { selectedDate: Date }) {
   ];
 
   const dispatch = useDispatch<AppDispatch>();
-  const mealTypeList: string[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
+  const mealTypeDisplayList: string[] = [
+    "Breakfast",
+    "Lunch",
+    "Dinner",
+    "Snack",
+  ];
+  const mealTypeList = ["breakfast", "lunch", "dinner", "snack"];
 
   store.subscribe(() => {
     const newStoreInfo = store.getState();
@@ -48,6 +54,38 @@ function MealTypeSelection(props: { selectedDate: Date }) {
       return newStoreInfo;
     });
   });
+
+  const updateMealData = (updatedItem: FoodItem) => {
+    let mealItemList = dateMealData[mealType as keyof DateMealData];
+    let itemUpdated = 0;
+    mealItemList = mealItemList.map((foodItem) => {
+      foodItem.foodName === updatedItem.foodName ? itemUpdated++ : null;
+      return foodItem.foodName === updatedItem.foodName
+        ? updatedItem
+        : foodItem;
+    });
+
+    itemUpdated === 0 ? mealItemList.push(updatedItem) : null;
+
+    const listToBeUpdated = { ...dateMealData, [mealType]: mealItemList };
+
+    updateDateMealData(() => {
+      return listToBeUpdated;
+    });
+    dispatch(action("foodPanelVisibility", { visible: false }));
+    dispatch(action("foodItemInfo", {}));
+  };
+
+  const removeMealItem = (removedItem: FoodItem) => {
+    let mealItemList = dateMealData[mealType as keyof DateMealData];
+    mealItemList = mealItemList.filter((foodItem) => {
+      return foodItem.foodName !== removedItem.foodName;
+    });
+    const listToBeUpdated = { ...dateMealData, [mealType]: mealItemList };
+    updateDateMealData(() => {
+      return listToBeUpdated;
+    });
+  };
 
   const MealChangeButton = (props: { indexChange: number }) => {
     const { indexChange } = props;
@@ -94,11 +132,15 @@ function MealTypeSelection(props: { selectedDate: Date }) {
         )}
       </div>
       <MealTypeDisplay
-        mealType={mealTypeList.indexOf(mealType)}
+        mealType={mealType}
         mealData={dateMealData}
+        removeMealItem={removeMealItem}
       />
       {foodInputVisible ? (
-        <FoodItemEntryPanel foodItem={foodItemInEdit} />
+        <FoodItemEntryPanel
+          foodItem={foodItemInEdit}
+          updateMealData={updateMealData}
+        />
       ) : null}
     </Fragment>
   );

@@ -4,16 +4,17 @@ import { useDispatch } from "react-redux";
 import { action, AppDispatch } from "../../store";
 import { FoodItem } from "../../utils/type";
 
-function FoodItemEntryPanel(props: { foodItem?: FoodItem }) {
-  const { foodItem } = props;
+function FoodItemEntryPanel(props: {
+  foodItem?: FoodItem;
+  updateMealData: (updatedItem: FoodItem) => void;
+}) {
+  const { foodItem, updateMealData } = props;
   const [selectedIndex, updateSelectedIndex] = useState<number>(0);
   const [foodItemCopy, updateFoodItemCopy] = useState<FoodItem>(
     foodItem || { foodName: "", servingSize: 0, sizeUnit: "" }
   );
 
-  const itemNameInput = useRef<HTMLInputElement>(null);
-  const servingSizeInput = useRef<HTMLInputElement>(null);
-  const sizeUnitSelect = useRef<HTMLSelectElement>(null);
+  const foodItemInfo = useRef<FoodItem>(foodItemCopy);
 
   const dispatch = useDispatch<AppDispatch>();
   const weightUnitList = ["", "g", "kg", "lb"];
@@ -32,30 +33,18 @@ function FoodItemEntryPanel(props: { foodItem?: FoodItem }) {
         visible: false,
       })
     );
-    dispatch(
-      action("foodItemInfo", {
-        foodItem: undefined,
-      })
-    );
+    dispatch(action("foodItemInfo", {}));
   };
 
-  const confirmItemUpdate = () => {
-    if (itemNameInput.current === null || servingSizeInput.current === null) {
-      return;
-    } else if (itemNameInput.current.value === "") {
+  const confirmItemUpdate = (formItemInfo: FoodItem) => {
+    if (formItemInfo.foodName === "") {
       console.log("missing item name");
       return;
-    } else if (parseFloat(servingSizeInput.current.value) <= 0) {
+    } else if (formItemInfo.servingSize <= 0) {
       console.log("Inappropriate Quantity Submitted");
       return;
     }
-    const foodItemInfo: FoodItem = {
-      foodName: itemNameInput.current.value,
-      servingSize: parseFloat(servingSizeInput.current.value),
-      sizeUnit:
-        sizeUnitSelect.current === null ? "" : sizeUnitSelect.current.value,
-    };
-    console.log(foodItemInfo);
+    updateMealData(formItemInfo);
   };
 
   return (
@@ -64,9 +53,14 @@ function FoodItemEntryPanel(props: { foodItem?: FoodItem }) {
         <div>{"Food Item Name : "}</div>
         <input
           type="text"
-          ref={itemNameInput}
           placeholder="Enter Food Item Name Here"
           defaultValue={foodName}
+          onChange={(event: any) => {
+            foodItemInfo.current = {
+              ...foodItemInfo.current,
+              foodName: event.target.value,
+            };
+          }}
         />
       </div>
       <div>
@@ -74,18 +68,26 @@ function FoodItemEntryPanel(props: { foodItem?: FoodItem }) {
           <div>{"Serving Size : "}</div>
           <input
             type="number"
-            ref={servingSizeInput}
             placeholder="Enter Food Item Quantity / Weight Here"
             defaultValue={servingSize}
+            onChange={(event: any) => {
+              foodItemInfo.current = {
+                ...foodItemInfo.current,
+                servingSize: parseFloat(event.target.value),
+              };
+            }}
           />
         </div>
         <select
           defaultValue={sizeUnit}
-          ref={sizeUnitSelect}
           onChange={(event) => {
             updateSelectedIndex(() => {
               return event.target.selectedIndex;
             });
+            foodItemInfo.current = {
+              ...foodItemInfo.current,
+              sizeUnit: event.target.value,
+            };
           }}
         >
           <option value="">{""}</option>
@@ -95,7 +97,9 @@ function FoodItemEntryPanel(props: { foodItem?: FoodItem }) {
         </select>
       </div>
       <button onClick={cancelItemUpdate}>Cancel</button>
-      <button onClick={confirmItemUpdate}>Confirm</button>
+      <button onClick={() => confirmItemUpdate(foodItemInfo.current)}>
+        Confirm
+      </button>
     </Fragment>
   );
 }

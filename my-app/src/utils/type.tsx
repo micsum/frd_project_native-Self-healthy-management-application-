@@ -1,6 +1,7 @@
 export type ObjectAny = {
   [key: string]: any;
 };
+
 export type FoodItem = {
   foodName: string;
   servingSize: number;
