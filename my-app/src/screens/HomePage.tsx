@@ -1,13 +1,39 @@
 import React, { useState } from "react";
-import { Text, View, Button } from "react-native";
-import {
-  AvatarPic,
-  NbCardMid,
-  Notification,
-} from "../components/otherComponents";
-import { ScrollView } from "native-base";
+import { Text, View, Button, StyleSheet, SafeAreaView } from "react-native";
+import { CardGoal } from "../components/homeCardGoal";
+import { ScrollView, HStack, Avatar as NativeAvatar } from "native-base";
+import { createStackNavigator } from "@react-navigation/stack";
+import { NotifyScreen } from "./NotificationPage";
+import { useNavigation } from "@react-navigation/native";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { CardExercise, CardFitnessData } from "../components/homeCardExercise";
+import { CardWeight } from "../components/homeCardWeight";
+import PagerView from "react-native-pager-view";
 
-export function HomeScreen({}) {
+export const AvatarPic = () => {
+  return (
+    <HStack justifyContent="space-between">
+      <NativeAvatar bg="blue.300">
+        <FontAwesome name="user-circle-o" size={48} color="black" />
+      </NativeAvatar>
+    </HStack>
+  );
+};
+
+export const Notification = () => {
+  const navigation = useNavigation();
+
+  return (
+    <MaterialIcons
+      name="notifications"
+      size={36}
+      color="black"
+      onPress={() => navigation.navigate()}
+    />
+  );
+};
+
+export function HomeScreen() {
   return (
     <ScrollView>
       <View
@@ -23,7 +49,10 @@ export function HomeScreen({}) {
         <Text> beHealthy </Text>
         <Notification />
       </View>
-      <NbCardMid />
+      <CardGoal />
+      <CardFitnessData />
+      <CardExercise />
+      <CardWeight />
     </ScrollView>
   );
 }

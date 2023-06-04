@@ -26,9 +26,10 @@
 import * as React from "react";
 import { Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MyTabs } from "./src/containers/bottomBar";
 import { NativeBaseProvider } from "native-base";
+import { createStackNavigator } from "@react-navigation/stack";
+import { NotifyScreen } from "./src/screens/NotificationPage";
 
 export default function App() {
   return (
