@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Text, View, Animated,  } from "react-native";
+import { Text, View, Animated } from "react-native";
 import { CardGoal } from "../components/homeCardGoal";
 import { ScrollView, HStack, Avatar as NativeAvatar } from "native-base";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -9,45 +9,53 @@ import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { CardExercise, CardFitnessData } from "../components/homeCardExercise";
 import { CardWeight } from "../components/homeCardWeight";
 import { ProfileScreen } from "./ProfilePage";
-import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5 } from "@expo/vector-icons";
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 export const AvatarPic = () => {
-  const navigation=useNavigation()
+  const navigation = useNavigation();
 
-  const isPressed =() =>{
+  const isPressed = () => {
     //@ts-ignore
-    navigation.navigate('Profile')
-  }
+    navigation.navigate("Profile");
+  };
   return (
     <HStack justifyContent="space-between">
       <NativeAvatar bg="blue.300">
-        <FontAwesome name="user-circle-o" size={48} 
-        color="black" 
-        onPress={isPressed}/>
+        <FontAwesome
+          name="user-circle-o"
+          size={48}
+          color="black"
+          onPress={isPressed}
+        />
       </NativeAvatar>
     </HStack>
   );
 };
 
 export const Notification = () => {
-  const navigation=useNavigation()
+  const navigation = useNavigation();
 
-  const isPressed =() =>{
+  const isPressed = () => {
     //@ts-ignore
-    navigation.navigate('Notify')
-  }
+    navigation.navigate("Notify");
+  };
   return (
     <View>
-    <MaterialIcons
-      name="notifications"
-      size={36}
-      color="black"
-      onPress={isPressed}
-    /></View>
+      <MaterialIcons
+        name="notifications"
+        size={36}
+        color="black"
+        onPress={isPressed}
+      />
+    </View>
   );
 };
 
-const AnimatedText = ()=>{
+const AnimatedText = () => {
   const bounceAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -70,10 +78,12 @@ const AnimatedText = ()=>{
   }, [bounceAnim]);
 
   return (
-    <View style={{
-      flexDirection: "row",
-      alignItems:'center',
-    }}>
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+      }}
+    >
       <Animated.Text
         style={{
           transform: [
@@ -92,12 +102,13 @@ const AnimatedText = ()=>{
       >
         beHealthy
       </Animated.Text>
-      <FontAwesome5 name="heartbeat" size={32} color="black"/>
+      <FontAwesome5 name="heartbeat" size={32} color="black" />
     </View>
   );
-}
+};
 
 export function HomeScreenNoStack() {
+  const insets = useSafeAreaInsets();
   return (
     <ScrollView>
       <View
@@ -105,15 +116,16 @@ export function HomeScreenNoStack() {
           flex: 1,
           flexDirection: "row",
           justifyContent: "space-between",
-          alignItems:'center',
+          alignItems: "center",
+          paddingTop: insets.top,
           padding: 10,
           marginBottom: 15,
-          backgroundColor:'#38668E'
+          backgroundColor: "#38668E",
         }}
       >
         <AvatarPic />
-        <AnimatedText/>
-        <Notification/>
+        <AnimatedText />
+        <Notification />
       </View>
       <CardGoal />
       <CardFitnessData />
@@ -125,24 +137,36 @@ export function HomeScreenNoStack() {
 
 const Stack = createStackNavigator();
 
-export const HomeScreen= () =>{
-  return(
+export const HomeScreen = () => {
+  return (
     <Stack.Navigator>
-      <Stack.Screen name="HomeNoStack" component={HomeScreenNoStack} options={{headerShown:false}}/>
-      <Stack.Screen name="Notify" component={NotifyScreen} options={{
-        headerShown:true,
-        title:'Notification', 
-        headerTitleAlign:'center', 
-        headerStyle:{backgroundColor:'#38668E'},
-        headerTintColor: '#a5f3fc',
-        }}/>
-        <Stack.Screen name="Profile" component={ProfileScreen} options={{
-        headerShown:true,
-        title:'Profile', 
-        headerTitleAlign:'center', 
-        headerStyle:{backgroundColor:'#38668E'},
-        headerTintColor: '#a5f3fc',
-        }}/>
+      <Stack.Screen
+        name="HomeNoStack"
+        component={HomeScreenNoStack}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Notify"
+        component={NotifyScreen}
+        options={{
+          headerShown: true,
+          title: "Notification",
+          headerTitleAlign: "center",
+          headerStyle: { backgroundColor: "#38668E" },
+          headerTintColor: "#a5f3fc",
+        }}
+      />
+      <Stack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerShown: true,
+          title: "Profile",
+          headerTitleAlign: "center",
+          headerStyle: { backgroundColor: "#38668E" },
+          headerTintColor: "#a5f3fc",
+        }}
+      />
     </Stack.Navigator>
-  )
-}
+  );
+};

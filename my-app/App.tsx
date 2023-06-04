@@ -28,13 +28,16 @@ import { Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { MyTabs } from "./src/containers/bottomBar";
 import { NativeBaseProvider } from "native-base";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function App() {
   return (
-    <NativeBaseProvider>
-      <NavigationContainer>
-        <MyTabs />
-      </NavigationContainer>
-    </NativeBaseProvider>
+    <SafeAreaProvider>
+      <NativeBaseProvider>
+        <NavigationContainer>
+          <MyTabs />
+        </NavigationContainer>
+      </NativeBaseProvider>
+    </SafeAreaProvider>
   );
 }
