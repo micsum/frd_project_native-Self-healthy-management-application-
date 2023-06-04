@@ -10,8 +10,10 @@ import {
   Center,
   Heading,
   Stack,
+  Button,
 } from "native-base";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 export const AvatarPic = () => {
   return (
@@ -24,7 +26,11 @@ export const AvatarPic = () => {
 };
 
 export const Notification = () => {
-  return <MaterialIcons name="notifications" size={36} color="black" />;
+  const navigation = useNavigation()
+
+  return <MaterialIcons name="notifications" size={36} color="black" onPress={()=>{
+    navigation.navigate()
+  }}/>
 };
 
 export const NbCardMid = () => {
