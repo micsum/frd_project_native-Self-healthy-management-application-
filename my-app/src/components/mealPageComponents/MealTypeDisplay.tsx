@@ -3,16 +3,14 @@ import { Fragment, useEffect, useState } from "react";
 import { DateMealData, FoodItem } from "../../utils/type";
 import FoodItemsDisplay from "./FoodItemDisplay";
 
-function MealTypeDisplay(props: { mealType: number; mealData: DateMealData }) {
+function MealTypeDisplay(props: { mealType: string; mealData: DateMealData }) {
   const { mealType, mealData } = props;
-  const mealTypeList = ["breakfast", "lunch", "dinner", "snack"];
   const [mealDisplay, updateMealDisplay] = useState<FoodItem[]>(
-    mealData[mealTypeList[mealType] as keyof DateMealData]
+    mealData[mealType as keyof DateMealData]
   );
 
   useEffect(() => {
-    const mealDisplayData =
-      mealData[mealTypeList[mealType] as keyof DateMealData];
+    const mealDisplayData = mealData[mealType as keyof DateMealData];
     updateMealDisplay(() => {
       return mealDisplayData;
     });
