@@ -143,7 +143,9 @@ export const HomeScreen = () => {
       <Stack.Screen
         name="HomeNoStack"
         component={HomeScreenNoStack}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+        }}
       />
       <Stack.Screen
         name="Notify"
@@ -154,6 +156,7 @@ export const HomeScreen = () => {
           headerTitleAlign: "center",
           headerStyle: { backgroundColor: "#38668E" },
           headerTintColor: "#a5f3fc",
+          headerBackTitle: " ",
         }}
       />
       <Stack.Screen
@@ -165,6 +168,7 @@ export const HomeScreen = () => {
           headerTitleAlign: "center",
           headerStyle: { backgroundColor: "#38668E" },
           headerTintColor: "#a5f3fc",
+          headerBackTitle: " ",
         }}
       />
     </Stack.Navigator>
