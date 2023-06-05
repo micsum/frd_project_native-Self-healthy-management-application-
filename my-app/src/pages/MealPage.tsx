@@ -1,9 +1,9 @@
 // Buffer Line
 import { Fragment, useState, useMemo, useEffect } from "react";
-import DateSelectionPanel from "../components/redoMealPageComponents/DateSelectionPanel";
-import MealTypeSelection from "../components/redoMealPageComponents/MealTypeSelection";
+import DateSelectionPanel from "../components/mealPageComponents/DateSelectionPanel";
+import MealTypeSelection from "../components/mealPageComponents/MealTypeSelection";
 import { FullItemInfo } from "../utils/type";
-import { fakeFoodNutritionData } from "../components/redoMealPageComponents/fakeFoodNutritionData";
+import { fakeFoodNutritionData } from "../components/mealPageComponents/fakeFoodNutritionData";
 
 const MealPage: React.FC = () => {
   const [date, updateSelectedDate] = useState<Date>(new Date());
