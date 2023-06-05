@@ -1,0 +1,11 @@
+node_modules
+package-lock.json
+
+nest-js/dist
+nest-js/node_modules
+nest-js/*.log
+
+my-app/react/dist
+my-app/react/node_modules
+
+.env

@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Text, View, Button } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 
-export const NotifyScreen = () => {
-  const navigation = useNavigation();
+export const ProfileScreen = () => {
   return (
     <View
       style={{
@@ -13,6 +11,7 @@ export const NotifyScreen = () => {
         padding: 15,
         marginTop: 50,
       }}
-    ></View>
+    >
+    </View>
   );
 };

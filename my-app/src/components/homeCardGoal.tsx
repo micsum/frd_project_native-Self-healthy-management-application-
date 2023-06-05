@@ -1,7 +1,6 @@
 import { View, StyleSheet } from "react-native";
 import React from "react";
 import {
-  Avatar as NativeAvatar,
   HStack,
   VStack,
   Box,
@@ -12,28 +11,8 @@ import {
   Stack,
   Button,
 } from "native-base";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 
-export const AvatarPic = () => {
-  return (
-    <HStack justifyContent="space-between">
-      <NativeAvatar bg="blue.300">
-        <FontAwesome name="user-circle-o" size={48} color="black" />
-      </NativeAvatar>
-    </HStack>
-  );
-};
-
-export const Notification = () => {
-  const navigation = useNavigation()
-
-  return <MaterialIcons name="notifications" size={36} color="black" onPress={()=>{
-    navigation.navigate()
-  }}/>
-};
-
-export const NbCardMid = () => {
+export const CardGoal = () => {
   return (
     <Box alignItems="center">
       <Box

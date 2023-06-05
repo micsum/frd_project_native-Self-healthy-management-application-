@@ -14,3 +14,8 @@ export type DateMealData = {
   dinner: FoodItem[];
   snack: FoodItem[];
 };
+
+export interface CardProps {
+  title: string;
+  description: string;
+}
