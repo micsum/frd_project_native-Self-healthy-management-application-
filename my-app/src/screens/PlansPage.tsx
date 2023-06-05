@@ -18,7 +18,7 @@ import {
 import { Path } from "react-native-svg";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 
-const Card = () => {
+function Card() {
   return (
     <Box alignItems="center">
       <Box
@@ -107,8 +107,8 @@ const Card = () => {
       </Box>
     </Box>
   );
-};
-function Example() {
+}
+function Select() {
   const { isOpen, onOpen, onClose } = useDisclose();
   return (
     <Center>
@@ -157,7 +157,7 @@ export function PlansPage() {
     <NativeBaseProvider>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text>Please choose your workout plan or diet plan!</Text>
-        <Example />
+        <Select />
         <Card />
         <Box alignItems="center">
           <Button onPress={() => console.log("hello world")}>Click Me</Button>
