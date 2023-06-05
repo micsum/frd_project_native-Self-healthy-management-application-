@@ -1,11 +1,11 @@
 // Buffer Line
 import { configureStore } from "@reduxjs/toolkit";
 import { produce } from "immer";
-import { FoodItem, ObjectAny } from "./utils/type";
+import { FoodItemBasicInfo, ObjectAny } from "./utils/type";
 
 export interface RootState {
   foodInputPanelOpen: boolean;
-  foodItemInConsideration: FoodItem | undefined;
+  foodItemInConsideration: FoodItemBasicInfo | undefined;
 }
 
 export function action(actionType: string, properties: ObjectAny) {
@@ -18,7 +18,9 @@ export function action(actionType: string, properties: ObjectAny) {
     };
   };
 
-  const updateFoodItemInConsideration = (foodItem: FoodItem | undefined) => {
+  const updateFoodItemInConsideration = (
+    foodItem: FoodItemBasicInfo | undefined
+  ) => {
     return {
       type: "updateFoodItemInConsideration" as const,
       payload: {

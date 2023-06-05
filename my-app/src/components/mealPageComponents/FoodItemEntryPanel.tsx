@@ -1,29 +1,38 @@
 // Buffer Line
-import { Fragment, useState, useEffect, useRef } from "react";
+import { Fragment, useState, useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { action, AppDispatch } from "../../store";
-import { FoodItem } from "../../utils/type";
+import { FoodItemBasicInfo } from "../../utils/type";
 
 function FoodItemEntryPanel(props: {
-  foodItem?: FoodItem;
-  updateMealData: (updatedItem: FoodItem) => void;
+  foodItem?: FoodItemBasicInfo;
+  mealType: string;
+  updateMealData: (updatedItem: FoodItemBasicInfo) => void;
 }) {
-  const { foodItem, updateMealData } = props;
+  const { foodItem, mealType, updateMealData } = props;
   const [selectedIndex, updateSelectedIndex] = useState<number>(0);
-  const [foodItemCopy, updateFoodItemCopy] = useState<FoodItem>(
-    foodItem || { foodName: "", servingSize: 0, sizeUnit: "" }
+  const [foodItemCopy, updateFoodItemCopy] = useState<FoodItemBasicInfo>(
+    foodItem || {
+      id: -1,
+      meal_id: -1,
+      meal_time: mealType,
+      foodName: "",
+      servingSize: 0,
+      sizeUnit: "",
+    }
   );
 
-  const foodItemInfo = useRef<FoodItem>(foodItemCopy);
+  const foodItemInfo = useRef<FoodItemBasicInfo>(foodItemCopy);
 
   const dispatch = useDispatch<AppDispatch>();
   const weightUnitList = ["", "g", "kg", "lb"];
-  let { foodName, servingSize, sizeUnit } = foodItemCopy;
+  let { id, meal_id, meal_time, foodName, servingSize, sizeUnit } =
+    foodItemCopy;
 
   useEffect(() => {
     sizeUnit = weightUnitList[selectedIndex];
     updateFoodItemCopy(() => {
-      return { foodName, servingSize, sizeUnit };
+      return { id, meal_id, meal_time, foodName, servingSize, sizeUnit };
     });
   }, [selectedIndex]);
 
@@ -36,7 +45,7 @@ function FoodItemEntryPanel(props: {
     dispatch(action("foodItemInfo", {}));
   };
 
-  const confirmItemUpdate = (formItemInfo: FoodItem) => {
+  const confirmItemUpdate = (formItemInfo: FoodItemBasicInfo) => {
     if (formItemInfo.foodName === "") {
       console.log("missing item name");
       return;
