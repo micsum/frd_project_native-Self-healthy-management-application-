@@ -1,3 +1,7 @@
+export type ObjectAny = {
+  [key: string]: any;
+};
+
 export type FoodItem = {
   foodName: string;
   servingSize: number;
@@ -10,3 +14,8 @@ export type DateMealData = {
   dinner: FoodItem[];
   snack: FoodItem[];
 };
+
+export interface CardProps {
+  title: string;
+  description: string;
+}
