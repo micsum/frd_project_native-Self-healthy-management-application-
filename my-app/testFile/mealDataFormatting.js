@@ -26,7 +26,7 @@ const reformatMealData = (data) => {
     lunch = [],
     dinner = [],
     snack = [];
-  let newVariables = [breakfast, lunch, dinner, snack];
+  let newVariables = [[], [], [], []];
   let mealArrays = [breakfastItems, lunchItems, dinnerItems, snackItems];
 
   for (let mealArray of mealArrays) {
@@ -46,7 +46,7 @@ const reformatMealData = (data) => {
       const nutritionInfoParams = [
         "id",
         "calories",
-        "serving_size",
+        "serving_size_g",
         "fat_total_g",
         "fat_saturated_g",
         "protein_g",
@@ -78,6 +78,7 @@ const reformatMealData = (data) => {
       return { basicInfo, nutritionInfo };
     });
   }
+  [breakfast, lunch, dinner, snack] = newVariables;
   return { breakfast, lunch, dinner, snack };
 };
 
