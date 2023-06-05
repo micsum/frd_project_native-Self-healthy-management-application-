@@ -3,7 +3,7 @@ import { HomeScreen } from "../screens/HomePage";
 import { NavigationContainer } from "@react-navigation/native";
 import { MealScreen } from "../screens/MealPage";
 import { CalenderScreen } from "../screens/CalendarPage";
-import { PlansPage } from "../screens/PlansPage";
+import { PlansScreen } from "../screens/PlansPage";
 import { MoreScreen } from "../screens/MorePage";
 import {
   FontAwesome5,
@@ -58,7 +58,7 @@ export function MyTabs() {
       />
       <Tab.Screen
         name="Plans"
-        component={PlansPage}
+        component={PlansScreen}
         options={{
           tabBarLabel: "Plans",
           tabBarIcon: () => (
