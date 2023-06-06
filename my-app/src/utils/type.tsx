@@ -72,3 +72,15 @@ export type NutritionContentDisplay = {
   amount: number;
   unit: string;
 };
+
+export type ItemChange = {
+  info: FoodItemBasicInfo;
+  method: string;
+};
+
+export type mealIDObject = {
+  breakfast: number;
+  lunch: number;
+  dinner: number;
+  snack: number;
+};

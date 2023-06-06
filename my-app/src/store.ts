@@ -5,6 +5,7 @@ import { FoodItemBasicInfo, ObjectAny } from "./utils/type";
 
 export interface RootState {
   foodInputPanelOpen: boolean;
+  itemNutritionPanelOpen: boolean;
   foodItemInConsideration: FoodItemBasicInfo | undefined;
 }
 
@@ -12,6 +13,15 @@ export function action(actionType: string, properties: ObjectAny) {
   const setFoodInputPanelVisibility = (visible: boolean) => {
     return {
       type: "updateFoodInputPanelVisibility" as const,
+      payload: {
+        visible,
+      },
+    };
+  };
+
+  const setNutritionDetailPanelVisibility = (visible: boolean) => {
+    return {
+      type: "updateNutritionPanelVisibility" as const,
       payload: {
         visible,
       },
@@ -32,6 +42,8 @@ export function action(actionType: string, properties: ObjectAny) {
   switch (actionType) {
     case "foodPanelVisibility":
       return setFoodInputPanelVisibility(properties.visible);
+    case "itemNutritionPanelVisibility":
+      return setNutritionDetailPanelVisibility(properties.visible);
     case "foodItemInfo":
       return updateFoodItemInConsideration(properties.foodItem);
 
@@ -44,6 +56,7 @@ type IRootAction = ReturnType<typeof action>;
 
 const initState: RootState = {
   foodInputPanelOpen: false,
+  itemNutritionPanelOpen: false,
   foodItemInConsideration: undefined,
 };
 
@@ -52,6 +65,11 @@ const rootReducer = produce((draft = initState, action: IRootAction) => {
     case "updateFoodInputPanelVisibility": {
       const { visible } = action.payload;
       draft.foodInputPanelOpen = visible;
+      return draft;
+    }
+    case "updateNutritionPanelVisibility": {
+      const { visible } = action.payload;
+      draft.itemNutritionPanelOpen = visible;
       return draft;
     }
     case "updateFoodItemInConsideration": {

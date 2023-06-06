@@ -1,5 +1,5 @@
 // Buffer Line
-import { DateMealFullData, FullItemInfo } from "../../utils/type";
+import { FoodItemBasicInfo, FullItemInfo } from "../../utils/type";
 
 export const fakeFoodNutritionData: FullItemInfo[] = [
   {
@@ -183,4 +183,36 @@ export const wrongFakeFoodData = {
     { foodName: "carrot", servingSize: 150, sizeUnit: "g" },
   ],
   snack: [],
+};
+
+const nutritionContentKey: string[] = [
+  "calories",
+  "fat_total_g",
+  "fat_saturated_g",
+  "protein_g",
+  "sodium_mg",
+  "potassium_mg",
+  "cholesterol_mg",
+  "carbohydrates_total_g",
+  "fiber_g",
+  "sugar_g",
+];
+
+export const createFakeFoodObject: (
+  foodItem: FoodItemBasicInfo
+) => FullItemInfo = (foodItem) => {
+  const { id, meal_id, meal_time, foodName, servingSize, sizeUnit } = foodItem;
+  let newFoodItem: any = {};
+  newFoodItem.id = id;
+  newFoodItem.meal_id = meal_id;
+  newFoodItem.meal_time = meal_time;
+  newFoodItem.name = foodName;
+  newFoodItem.serving_size_g = servingSize;
+  newFoodItem.saved_sizeUnit = sizeUnit;
+
+  for (let key of nutritionContentKey) {
+    newFoodItem[key] = 100;
+  }
+
+  return newFoodItem;
 };

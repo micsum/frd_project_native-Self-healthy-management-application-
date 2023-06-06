@@ -1,42 +1,61 @@
 // Buffer Line
-import { Fragment, useState, useMemo } from "react";
 import {
-  DateMealBasicData,
+  Fragment,
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+  useEffect,
+} from "react";
+import {
   DateMealFullData,
   FoodItemBasicInfo,
   FoodItemNutritionInfo,
   FormattedFoodItemInfo,
   FullItemInfo,
+  ItemChange,
+  mealIDObject,
 } from "../../utils/type";
 import { useDispatch } from "react-redux";
 import { store, action, RootState, AppDispatch } from "../../store";
 import FoodItemDisplay from "./FoodItemDisplay";
 import FoodItemEntryPanel from "./FoodItemEntryPanel";
+import NutritionDetailPanel from "./NutritionDetailDisplay";
+import { createFakeFoodObject } from "./fakeFoodNutritionData";
 
 function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
   const { foodItemFullInfo } = props;
 
-  const [dateMealBasicData, updateDateMealBasicData] =
-    useState<DateMealBasicData>({
-      breakfast: [],
-      lunch: [],
-      dinner: [],
-      snack: [],
-    });
   const [mealType, updateMealType] = useState<string>("breakfast");
   const [storeInfo, updateStoreInfo] = useState<RootState>(store.getState());
+  const [changes, updateChanges] = useState<ItemChange[]>([]);
+  const [nutritionDetail, updateNutritionDetail] = useState<
+    FoodItemNutritionInfo[]
+  >([]);
 
-  const { foodInputPanelOpen, foodItemInConsideration } = storeInfo;
-  const [foodInputVisible, foodItemInEdit] = [
+  const mealID = useRef<mealIDObject>({
+    breakfast: -1,
+    lunch: -1,
+    dinner: -1,
+    snack: -1,
+  });
+
+  const {
     foodInputPanelOpen,
+    foodItemInConsideration,
+    itemNutritionPanelOpen,
+  } = storeInfo;
+  const [foodInputVisible, itemNutritionPanelVisible, foodItemInEdit] = [
+    foodInputPanelOpen,
+    itemNutritionPanelOpen,
     foodItemInConsideration,
   ];
 
   const dispatch = useDispatch<AppDispatch>();
   store.subscribe(() => {
-    const newStoreInfo = store.getState();
+    const storeInfo = store.getState();
     updateStoreInfo(() => {
-      return newStoreInfo;
+      return storeInfo;
     });
   });
 
@@ -47,6 +66,32 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
     "Snack",
   ];
   const mealTypeList = ["breakfast", "lunch", "dinner", "snack"];
+
+  const nutritionContentKey: string[] = [
+    "calories",
+    "fat_total_g",
+    "fat_saturated_g",
+    "protein_g",
+    "sodium_mg",
+    "potassium_mg",
+    "cholesterol_mg",
+    "carbohydrates_total_g",
+    "fiber_g",
+    "sugar_g",
+  ];
+
+  const unitConversion = (expectedUnit: string, servingSizeG: number) => {
+    switch (expectedUnit) {
+      case "g":
+        return servingSizeG;
+      case "kg":
+        return servingSizeG / 1000;
+      case "lb":
+        return servingSizeG * 0.0022;
+      default:
+        return servingSizeG;
+    }
+  };
 
   const MealChangeButton = (props: { indexChange: number }) => {
     const { indexChange } = props;
@@ -71,9 +116,101 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
     );
   };
 
-  const reformatMealData: (data: FullItemInfo[]) => DateMealFullData = (
-    data
-  ) => {
+  const applyChanges = useCallback(
+    (originalData: FullItemInfo[], changes: ItemChange[]) => {
+      for (let change of changes) {
+        const { info, method } = change;
+        const { id, meal_id, meal_time, foodName, servingSize, sizeUnit } =
+          info;
+        switch (method) {
+          case "add":
+            {
+              let existingFoods = originalData.map((foodItem) => {
+                return foodItem.meal_time === info.meal_time
+                  ? foodItem.name
+                  : "";
+              });
+              if (
+                existingFoods.length === 0 ||
+                existingFoods.indexOf(info.foodName) === -1
+              ) {
+                originalData.push(createFakeFoodObject(info));
+              }
+            }
+            break;
+          case "update":
+            let itemIndex = -1;
+            let itemInConsideration;
+            let newItem: any = {};
+            for (let existingItem of originalData) {
+              if (
+                existingItem.id === info.id &&
+                existingItem.meal_id === info.meal_id &&
+                existingItem.meal_time === info.meal_time &&
+                existingItem.name === info.foodName
+              ) {
+                itemIndex = originalData.indexOf(existingItem);
+                itemInConsideration = existingItem;
+                break;
+              }
+            }
+
+            if (itemInConsideration === undefined) {
+              break;
+            }
+
+            let [originalItemServingSize, itemSizeUnit, newItemServingSize] = [
+              itemInConsideration.serving_size_g,
+              info.sizeUnit,
+              info.servingSize,
+            ];
+            let newServingSize = unitConversion(
+              itemSizeUnit,
+              newItemServingSize
+            );
+            let multiplyFactor = newServingSize / originalItemServingSize;
+
+            for (let key of nutritionContentKey) {
+              let newValue =
+                parseFloat(
+                  itemInConsideration[key as keyof FullItemInfo].toString()
+                ) * multiplyFactor;
+              newItem[key] = newValue;
+            }
+
+            newItem.id = id;
+            newItem.meal_id = meal_id;
+            newItem.meal_time = meal_time;
+            newItem.name = foodName;
+            newItem.serving_size_g = servingSize;
+            newItem.saved_sizeUnit = sizeUnit;
+
+            originalData = [
+              ...originalData.slice(0, itemIndex),
+              newItem,
+              ...originalData.slice(itemIndex + 1),
+            ];
+            break;
+          case "delete": {
+            originalData = originalData.filter((foodItem) => {
+              return (
+                foodItem.id !== info.id ||
+                foodItem.meal_id !== info.meal_id ||
+                foodItem.meal_time !== info.meal_time
+              );
+            });
+            break;
+          }
+          default:
+            break;
+        }
+      }
+      return originalData;
+    },
+    []
+  );
+
+  const reformatMealData = useCallback((data: FullItemInfo[]) => {
     let breakfastItems: FullItemInfo[] = [],
       lunchItems: FullItemInfo[] = [],
       dinnerItems: FullItemInfo[] = [],
@@ -159,7 +296,12 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
     }
     [breakfast, lunch, dinner, snack] = newVariables;
     return { breakfast, lunch, dinner, snack };
-  };
+  }, []);
+
+  const dateMealFullData = useMemo(() => {
+    const appliedChanges = applyChanges(foodItemFullInfo, changes);
+    return reformatMealData(appliedChanges);
+  }, [foodItemFullInfo, changes]);
 
   const retrieveFoodNutritionInformation = (data: DateMealFullData) => {
     let mealArrays = [data.breakfast, data.lunch, data.dinner, data.snack];
@@ -176,67 +318,83 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
     return { breakfast, lunch, dinner, snack };
   };
 
-  const dateMealFullData = useMemo(() => {
-    let formattedData = reformatMealData(foodItemFullInfo);
-
-    let mealArrays = [
-      formattedData.breakfast,
-      formattedData.lunch,
-      formattedData.dinner,
-      formattedData.snack,
-    ];
-    let newVariables: FoodItemBasicInfo[][] = [[], [], [], []];
-
-    for (let mealArray of mealArrays) {
-      newVariables[mealArrays.indexOf(mealArray)] = mealArray.map(
-        (foodItemInfo) => {
-          return foodItemInfo.basicInfo;
-        }
-      );
-    }
-    let [breakfast, lunch, dinner, snack] = newVariables;
-    updateDateMealBasicData(() => {
-      return { breakfast, lunch, dinner, snack };
+  useEffect(() => {
+    updateNutritionDetail(() => {
+      return retrieveFoodNutritionInformation(dateMealFullData)[
+        mealType as keyof DateMealFullData
+      ];
     });
-
-    return formattedData;
-  }, [foodItemFullInfo]);
+  }, [dateMealFullData]);
 
   const mealDisplay = dateMealFullData[mealType as keyof DateMealFullData];
 
-  const updateItemBasicInfo = (updatedItem: FoodItemBasicInfo) => {
-    let mealItemList = dateMealBasicData[mealType as keyof DateMealBasicData];
-    let itemUpdated = 0;
-    if (updatedItem.id !== -1) {
-      mealItemList = mealItemList.map((foodItem: FoodItemBasicInfo) => {
-        if (foodItem.id === updatedItem.id) {
-          itemUpdated++;
-          return updatedItem;
-        } else {
-          return foodItem;
+  const updateItemBasicInfo = async (updatedItem: FoodItemBasicInfo) => {
+    if (updatedItem.id !== -1 && updatedItem.meal_id !== -1) {
+      // update Existing Item
+      updateChanges(() => {
+        return [...changes, { info: updatedItem, method: "update" }];
+      });
+    } else if (updatedItem.id === -1 && updatedItem.meal_id !== -1) {
+      // add Item to Existing Meal OR update new Item added in this session
+      let itemIndex = -1;
+
+      for (let change of changes) {
+        const { info, method } = change;
+        if (
+          info.foodName === updatedItem.foodName &&
+          info.meal_time === updatedItem.meal_time &&
+          method === "add"
+        ) {
+          itemIndex = changes.indexOf(change);
+          break;
         }
+      }
+
+      if (itemIndex === -1) {
+        updateChanges(() => {
+          return [...changes, { info: updatedItem, method: "add" }];
+        });
+      } else {
+        updateChanges(() => {
+          return [
+            ...changes.slice(0, itemIndex),
+            { info: updatedItem, method: "add" },
+            ...changes.slice(itemIndex),
+          ];
+        });
+      }
+    } else {
+      const mealType = updatedItem.meal_time;
+      const existingItems =
+        dateMealFullData[mealType as keyof DateMealFullData];
+      const existingItemName = existingItems.map((foodItem) => {
+        return foodItem.basicInfo.foodName;
+      });
+      if (existingItemName.indexOf(updatedItem.foodName) !== -1) {
+        console.log(`duplicated Items`);
+        return;
+      }
+      updateChanges(() => {
+        return [...changes, { info: updatedItem, method: "add" }];
       });
     }
-    itemUpdated === 0 ? mealItemList.push(updatedItem) : null;
-
-    updateDateMealBasicData(() => {
-      return { ...dateMealBasicData, [mealType]: mealItemList };
-    });
 
     dispatch(action("foodPanelVisibility", { visible: false }));
     dispatch(action("foodItemInfo", {}));
   };
 
   const removeMealItem = (removedItem: FoodItemBasicInfo) => {
-    let mealItemList = dateMealBasicData[mealType as keyof DateMealBasicData];
-    mealItemList = mealItemList.filter((foodItem: FoodItemBasicInfo) => {
-      return foodItem.foodName !== removedItem.foodName;
+    updateChanges(() => {
+      return [...changes, { info: removedItem, method: "delete" }];
     });
-    console.log(mealItemList);
-    updateDateMealBasicData(() => {
-      return { ...dateMealBasicData, [mealType]: mealItemList };
+  };
+
+  const updateNutritionDisplayDetail = (
+    foodItemNutritionInfo: FoodItemNutritionInfo
+  ) => {
+    updateNutritionDetail(() => {
+      return [foodItemNutritionInfo];
     });
-    console.log({ ...dateMealBasicData, [mealType]: mealItemList });
   };
 
   return (
@@ -272,17 +430,28 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
               foodItemBasicInfo={foodItem.basicInfo}
               foodItemNutritionInfo={foodItem.nutritionInfo}
               removeMealItem={removeMealItem}
+              showNutritionDetail={updateNutritionDisplayDetail}
             />
           );
         })
       )}
-      {foodInputVisible ? (
+      {foodInputVisible && !itemNutritionPanelOpen ? (
         <FoodItemEntryPanel
           foodItem={foodItemInEdit}
           mealType={mealType}
+          mealID={mealID.current}
           updateMealData={updateItemBasicInfo}
         />
-      ) : null}
+      ) : (
+        <NutritionDetailPanel
+          panelTitle={`Nutrition Content of ${
+            itemNutritionPanelOpen
+              ? nutritionDetail[0].name
+              : mealTypeDisplayList[mealType.indexOf(mealType)]
+          }`}
+          nutritionData={nutritionDetail}
+        />
+      )}
     </Fragment>
   );
 }

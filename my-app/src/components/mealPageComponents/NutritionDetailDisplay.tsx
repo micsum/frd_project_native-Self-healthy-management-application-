@@ -1,5 +1,7 @@
 // Buffer Line
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
+import { useDispatch } from "react-redux";
+import { store, action, AppDispatch } from "../../store";
 import {
   FoodItemNutritionInfo,
   NutritionContentDisplay,
@@ -7,10 +9,22 @@ import {
 
 function NutritionDetailPanel(props: {
   panelTitle: string;
-  editable: boolean;
-  foodData: FoodItemNutritionInfo[];
+  nutritionData: FoodItemNutritionInfo[];
 }) {
-  const { panelTitle, editable, foodData } = props;
+  const { panelTitle, nutritionData } = props;
+
+  const [itemNutritionPanelVisible, updateItemNutritionPanelVisibility] =
+    useState<boolean>(store.getState().itemNutritionPanelOpen);
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  store.subscribe(() => {
+    const storeInfo = store.getState();
+    updateItemNutritionPanelVisibility(() => {
+      return storeInfo.itemNutritionPanelOpen;
+    });
+  });
+
   const nutritionContentKey: string[] = [
     "calories",
     "fat_total_g",
@@ -58,7 +72,7 @@ function NutritionDetailPanel(props: {
     });
   }
 
-  foodData.map((foodItem) => {
+  nutritionData.map((foodItem) => {
     for (let nutritionType of nutritionContentArray) {
       nutritionType.amount += parseFloat(
         foodItem[nutritionType.title as keyof FoodItemNutritionInfo].toString()
@@ -79,6 +93,10 @@ function NutritionDetailPanel(props: {
     };
   });
 
+  const closeItemNutritionPanel = () => {
+    dispatch(action("itemNutritionPanelVisibility", { visible: false }));
+  };
+
   return (
     <Fragment>
       <div>
@@ -96,9 +114,9 @@ function NutritionDetailPanel(props: {
           );
         })}
       </div>
-      {editable ? (
-        <button>
-          <span>Edit</span>
+      {itemNutritionPanelVisible ? (
+        <button onClick={closeItemNutritionPanel}>
+          <span>Close</span>
         </button>
       ) : null}
     </Fragment>
