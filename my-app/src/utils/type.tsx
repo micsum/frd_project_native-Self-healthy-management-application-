@@ -70,4 +70,5 @@ export type DateMealFullData = {
 export type NutritionContentDisplay = {
   title: string;
   amount: number;
+  unit: string;
 };
