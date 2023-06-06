@@ -1,11 +1,12 @@
 // Buffer Line
 import { configureStore } from "@reduxjs/toolkit";
 import { produce } from "immer";
-import { FoodItem, ObjectAny } from "./utils/type";
+import { FoodItemBasicInfo, ObjectAny } from "./utils/type";
 
 export interface RootState {
   foodInputPanelOpen: boolean;
-  foodItemInConsideration: FoodItem | undefined;
+  itemNutritionPanelOpen: boolean;
+  foodItemInConsideration: FoodItemBasicInfo | undefined;
 }
 
 export function action(actionType: string, properties: ObjectAny) {
@@ -18,7 +19,18 @@ export function action(actionType: string, properties: ObjectAny) {
     };
   };
 
-  const updateFoodItemInConsideration = (foodItem: FoodItem | undefined) => {
+  const setNutritionDetailPanelVisibility = (visible: boolean) => {
+    return {
+      type: "updateNutritionPanelVisibility" as const,
+      payload: {
+        visible,
+      },
+    };
+  };
+
+  const updateFoodItemInConsideration = (
+    foodItem: FoodItemBasicInfo | undefined
+  ) => {
     return {
       type: "updateFoodItemInConsideration" as const,
       payload: {
@@ -30,6 +42,8 @@ export function action(actionType: string, properties: ObjectAny) {
   switch (actionType) {
     case "foodPanelVisibility":
       return setFoodInputPanelVisibility(properties.visible);
+    case "itemNutritionPanelVisibility":
+      return setNutritionDetailPanelVisibility(properties.visible);
     case "foodItemInfo":
       return updateFoodItemInConsideration(properties.foodItem);
 
@@ -42,6 +56,7 @@ type IRootAction = ReturnType<typeof action>;
 
 const initState: RootState = {
   foodInputPanelOpen: false,
+  itemNutritionPanelOpen: false,
   foodItemInConsideration: undefined,
 };
 
@@ -50,6 +65,11 @@ const rootReducer = produce((draft = initState, action: IRootAction) => {
     case "updateFoodInputPanelVisibility": {
       const { visible } = action.payload;
       draft.foodInputPanelOpen = visible;
+      return draft;
+    }
+    case "updateNutritionPanelVisibility": {
+      const { visible } = action.payload;
+      draft.itemNutritionPanelOpen = visible;
       return draft;
     }
     case "updateFoodItemInConsideration": {

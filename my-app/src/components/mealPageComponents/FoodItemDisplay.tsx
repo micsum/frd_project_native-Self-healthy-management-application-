@@ -1,62 +1,68 @@
 // Buffer Line
-import { Fragment, useState } from "react";
-import { FoodItem } from "../../utils/type";
+import { Fragment, useState, useEffect } from "react";
+import { FoodItemBasicInfo, FoodItemNutritionInfo } from "../../utils/type";
 import { useDispatch } from "react-redux";
 import { action, AppDispatch, store } from "../../store";
 
-function FoodItemsDisplay(props: {
+function FoodItemDisplay(props: {
   itemIndex: number;
-  foodItem: FoodItem;
-  removeMealItem: (foodItem: FoodItem) => void;
+  foodItemBasicInfo: FoodItemBasicInfo;
+  foodItemNutritionInfo: FoodItemNutritionInfo;
+  removeMealItem: (foodItem: FoodItemBasicInfo) => void;
+  showNutritionDetail: (foodItemNutritionInfo: FoodItemNutritionInfo) => void;
 }) {
-  const { itemIndex, foodItem, removeMealItem } = props;
-  const { foodName, servingSize, sizeUnit } = foodItem;
+  const {
+    itemIndex,
+    foodItemBasicInfo,
+    foodItemNutritionInfo,
+    showNutritionDetail,
+    removeMealItem,
+  } = props;
+  const { foodName, servingSize, sizeUnit } = foodItemBasicInfo;
 
   const [foodInputVisible, updateFoodInputVisibility] = useState<boolean>(
     store.getState().foodInputPanelOpen
   );
+  const [itemNutritionPanelVisible, updateItemNutritionPanelVisibility] =
+    useState<boolean>(store.getState().itemNutritionPanelOpen);
 
   const dispatch = useDispatch<AppDispatch>();
 
   store.subscribe(() => {
-    let storeInfo = store.getState();
+    const storeInfo = store.getState();
     updateFoodInputVisibility(() => {
       return storeInfo.foodInputPanelOpen;
+    });
+    updateItemNutritionPanelVisibility(() => {
+      return storeInfo.itemNutritionPanelOpen;
     });
   });
 
   const displayItemDetails = () => {
-    console.log(`Display nutritional details of ${foodName}`);
+    showNutritionDetail(foodItemNutritionInfo);
+    dispatch(action("itemNutritionPanelVisibility", { visible: true }));
   };
 
   const editFoodItem = () => {
-    dispatch(
-      action("foodPanelVisibility", {
-        visible: true,
-      })
-    );
-    dispatch(
-      action("foodItemInfo", {
-        foodItem,
-      })
-    );
+    dispatch(action("foodPanelVisibility", { visible: true }));
+    dispatch(action("foodItemInfo", { foodItem: foodItemBasicInfo }));
   };
 
   const deleteFoodItem = () => {
-    removeMealItem(foodItem);
+    removeMealItem(foodItemBasicInfo);
   };
 
   return (
     <Fragment>
       <div>
-        {foodInputVisible ? null : (
+        {foodInputVisible || itemNutritionPanelVisible ? null : (
           <button onClick={displayItemDetails}>Details</button>
         )}
         <div>
           <div>{`${itemIndex}. ${foodName}`}</div>
           <div>{`Serving Size : ${servingSize} ${sizeUnit}`}</div>
         </div>
-        {foodInputVisible ? null : (
+        {foodInputVisible || itemNutritionPanelVisible ? null : (
           <Fragment>
             <button onClick={editFoodItem}> Edit </button>
             <button onClick={deleteFoodItem}> Delete </button>
@@ -67,4 +73,4 @@ function FoodItemsDisplay(props: {
   );
 }
 
-export default FoodItemsDisplay;
+export default FoodItemDisplay;

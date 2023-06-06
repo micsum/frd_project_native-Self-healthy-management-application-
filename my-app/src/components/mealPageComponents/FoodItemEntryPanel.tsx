@@ -1,29 +1,39 @@
 // Buffer Line
-import { Fragment, useState, useEffect, useRef } from "react";
+import { Fragment, useState, useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { action, AppDispatch } from "../../store";
-import { FoodItem } from "../../utils/type";
+import { FoodItemBasicInfo, mealIDObject } from "../../utils/type";
 
 function FoodItemEntryPanel(props: {
-  foodItem?: FoodItem;
-  updateMealData: (updatedItem: FoodItem) => void;
+  foodItem?: FoodItemBasicInfo;
+  mealID: mealIDObject;
+  mealType: string;
+  updateMealData: (updatedItem: FoodItemBasicInfo) => void;
 }) {
-  const { foodItem, updateMealData } = props;
+  const { foodItem, mealType, mealID, updateMealData } = props;
   const [selectedIndex, updateSelectedIndex] = useState<number>(0);
-  const [foodItemCopy, updateFoodItemCopy] = useState<FoodItem>(
-    foodItem || { foodName: "", servingSize: 0, sizeUnit: "" }
+  const [foodItemCopy, updateFoodItemCopy] = useState<FoodItemBasicInfo>(
+    foodItem || {
+      id: -1,
+      meal_id: mealID[mealType as keyof mealIDObject],
+      meal_time: mealType,
+      foodName: "",
+      servingSize: 0,
+      sizeUnit: "",
+    }
   );
 
-  const foodItemInfo = useRef<FoodItem>(foodItemCopy);
+  const foodItemInfo = useRef<FoodItemBasicInfo>(foodItemCopy);
 
   const dispatch = useDispatch<AppDispatch>();
   const weightUnitList = ["", "g", "kg", "lb"];
-  let { foodName, servingSize, sizeUnit } = foodItemCopy;
+  let { id, meal_id, meal_time, foodName, servingSize, sizeUnit } =
+    foodItemCopy;
 
   useEffect(() => {
     sizeUnit = weightUnitList[selectedIndex];
     updateFoodItemCopy(() => {
-      return { foodName, servingSize, sizeUnit };
+      return { id, meal_id, meal_time, foodName, servingSize, sizeUnit };
     });
   }, [selectedIndex]);
 
@@ -36,7 +46,7 @@ function FoodItemEntryPanel(props: {
     dispatch(action("foodItemInfo", {}));
   };
 
-  const confirmItemUpdate = (formItemInfo: FoodItem) => {
+  const confirmItemUpdate = (formItemInfo: FoodItemBasicInfo) => {
     if (formItemInfo.foodName === "") {
       console.log("missing item name");
       return;
@@ -47,6 +57,30 @@ function FoodItemEntryPanel(props: {
     updateMealData(formItemInfo);
   };
 
+  const enterItemName = (event: any) => {
+    foodItemInfo.current = {
+      ...foodItemInfo.current,
+      foodName: event.target.value,
+    };
+  };
+
+  const enterItemServingSize = (event: any) => {
+    foodItemInfo.current = {
+      ...foodItemInfo.current,
+      servingSize: parseFloat(event.target.value),
+    };
+  };
+
+  const changeSelectedUnit = (event: any) => {
+    updateSelectedIndex(() => {
+      return event.target.selectedIndex;
+    });
+    foodItemInfo.current = {
+      ...foodItemInfo.current,
+      sizeUnit: event.target.value,
+    };
+  };
+
   return (
     <Fragment>
       <div>
@@ -55,12 +89,7 @@ function FoodItemEntryPanel(props: {
           type="text"
           placeholder="Enter Food Item Name Here"
           defaultValue={foodName}
-          onChange={(event: any) => {
-            foodItemInfo.current = {
-              ...foodItemInfo.current,
-              foodName: event.target.value,
-            };
-          }}
+          onChange={enterItemName}
         />
       </div>
       <div>
@@ -70,30 +99,14 @@ function FoodItemEntryPanel(props: {
             type="number"
             placeholder="Enter Food Item Quantity / Weight Here"
             defaultValue={servingSize}
-            onChange={(event: any) => {
-              foodItemInfo.current = {
-                ...foodItemInfo.current,
-                servingSize: parseFloat(event.target.value),
-              };
-            }}
+            onChange={enterItemServingSize}
           />
         </div>
-        <select
-          defaultValue={sizeUnit}
-          onChange={(event) => {
-            updateSelectedIndex(() => {
-              return event.target.selectedIndex;
-            });
-            foodItemInfo.current = {
-              ...foodItemInfo.current,
-              sizeUnit: event.target.value,
-            };
-          }}
-        >
-          <option value="">{""}</option>
+        <select defaultValue={sizeUnit} onChange={changeSelectedUnit}>
           <option value="g">{"g"}</option>
           <option value="kg">{"kg"}</option>
           <option value="lb">{"lb"}</option>
+          <option value="">{""}</option>
         </select>
       </div>
       <button onClick={cancelItemUpdate}>Cancel</button>
