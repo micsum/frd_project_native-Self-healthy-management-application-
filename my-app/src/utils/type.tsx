@@ -19,3 +19,8 @@ export interface CardProps {
   title: string;
   description: string;
 }
+
+export interface LoginData {
+  email: String;
+  password: String;
+}

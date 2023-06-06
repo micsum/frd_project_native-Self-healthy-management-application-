@@ -28,16 +28,23 @@ import { Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { MyTabs } from "./src/containers/bottomBar";
 import { NativeBaseProvider } from "native-base";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { Login } from "./src/screens/LoginPage";
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <NativeBaseProvider>
-        <NavigationContainer>
-          <MyTabs />
-        </NavigationContainer>
-      </NativeBaseProvider>
+      <Login></Login>
     </SafeAreaProvider>
   );
 }
+
+export const Main = () => {
+  <SafeAreaProvider>
+    <NativeBaseProvider>
+      <NavigationContainer>
+        <MyTabs />
+      </NavigationContainer>
+    </NativeBaseProvider>
+  </SafeAreaProvider>;
+};

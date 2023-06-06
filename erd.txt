@@ -87,6 +87,9 @@ email string unique
 username string
 password string
 phone_number string unique
+weight number
+height number
+target string
 
 
 meal_input_record

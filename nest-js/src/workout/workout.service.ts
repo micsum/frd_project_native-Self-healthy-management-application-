@@ -77,7 +77,7 @@ export class WorkoutService {
   }
 }
 
-new WorkoutService(knex).scrapWorkoutList();
+//new WorkoutService(knex).scrapWorkoutList();
 
 // chromium.launch({ headless: false }).then((browser) => {
 //   browser.newPage().then((page) => {

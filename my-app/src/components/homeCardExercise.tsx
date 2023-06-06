@@ -12,29 +12,6 @@ import {
   Button,
 } from "native-base";
 import { CardProps } from "../utils/type";
-import AppleHealthKit, {
-  HealthValue,
-  HealthKitPermissions,
-} from "react-native-health";
-
-//const permissions = {
-//  permissions: {
-//    read: [AppleHealthKit.Constants.Permissions.HeartRate],
-//    write: [AppleHealthKit.Constants.Permissions.Steps],
-//  },
-//} as HealthKitPermissions;
-
-//AppleHealthKit.initHealthKit(permissions, (error: string) => {
-//  if (error) {
-//    console.log("cannot grant permissions!");
-//  }
-//
-//  const options = {
-//    startDate: new Date().toISOString(),
-//  };
-//
-//  AppleHealthKit.getWorkoutRouteSamples();
-//});
 
 export const fitnessData = [{ title: "card1", description: "hihi" }];
 export const exerciseData = [{ title: "card2", description: "test" }];
