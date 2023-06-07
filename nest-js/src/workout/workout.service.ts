@@ -1,16 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import { Page, chromium } from 'playwright';
 import { InjectKnex, Knex } from 'nestjs-knex';
-import { knex } from '../../db';
+import debug from 'debug';
+
+let log = debug('workout.service.ts');
+log.enabled = true;
 
 @Injectable()
 export class WorkoutService {
   constructor(@InjectKnex() private knex: Knex) {}
-  getWorkoutList() {}
+  async getWorkoutList() {
+    log('get workout plans');
+    let workouts = await this.knex('workout').select(
+      'id',
+      'title',
+      'cover_image',
+    );
+    for (let workout of workouts) {
+      let days = await this.knex('workout_day')
+        .select('id', 'title', 'headers', 'rows')
+        .where({
+          workout_id: workout.id,
+        });
+      workout.days = days;
+    }
+    return { workouts };
+  }
 
   async scrapWorkoutList() {
     let browser = await chromium.launch({ headless: false });
     let page = await browser.newPage();
+    log('scraping workout list...');
     await page.goto('https://www.muscleandstrength.com/workouts/men');
     let workoutList = await page.evaluate(() => {
       return Array.from(
@@ -18,19 +38,68 @@ export class WorkoutService {
         (div) => {
           let cell = div.parentElement;
           let imageSrc =
-            cell.querySelector<HTMLImageElement>('.node-image img')?.dataset
+            cell?.querySelector<HTMLImageElement>('.node-image img')?.dataset
               .src;
-          let href = cell.querySelector('a')?.href;
-          let title = cell.querySelector('.node-title')?.textContent?.trim();
+          let href = cell?.querySelector('a')?.href;
+          let title = cell?.querySelector('.node-title')?.textContent?.trim();
+          if (!imageSrc || !href || !title) return null;
           return { imageSrc, href, title };
         },
       );
     });
 
-    for (let workout of workoutList) {
-      //console.log({ workout });
-      let tables = await this.scrapWorkoutDetail(page, workout.href);
+    let n = workoutList.length;
+    log(`scrapping ${n} workout plans...`);
+
+    let i = 0;
+    for (const workout of workoutList) {
+      i++;
+      log(`scrapping ${i}/${n} workout plan...`);
+      if (!workout) continue;
+      let days = await this.scrapWorkoutDetail(page, workout.href);
+      await this.knex.transaction(async (knex) => {
+        // let { id: user_id, name } = { id: 1, name: 'alice' };
+
+        let slug = workout.href.match(/workouts\/([a-z0-9-]+(.html)?)$/)?.[1];
+        if (!slug) {
+          log('Failed to parse slug, href: ' + workout.href);
+          return;
+        }
+
+        let row = await knex('workout').select('id').where({ slug }).first();
+
+        if (row) {
+          await knex('workout').where({ id: row.id }).update({
+            title: workout.title,
+            href: workout.href,
+            cover_image: workout.imageSrc,
+          });
+        } else {
+          [row] = await knex('workout')
+            .insert({
+              slug,
+              title: workout.title,
+              href: workout.href,
+              cover_image: workout.imageSrc,
+            })
+            .returning('id');
+        }
+        let workout_id = row.id;
+
+        await knex('workout_day').where({ workout_id }).delete();
+
+        for (let day of days) {
+          await knex('workout_day').insert({
+            workout_id,
+            title: day.title,
+            headers: JSON.stringify(day.headers),
+            rows: JSON.stringify(day.rows),
+          });
+        }
+      });
     }
+
+    log(`scrapped ${n} workout plans.`);
 
     await page.close();
     await browser.close();
@@ -38,14 +107,15 @@ export class WorkoutService {
 
   async scrapWorkoutDetail(page: Page, href: string) {
     await page.goto(href);
-    let tables = await page.evaluate(() => {
+    let days = await page.evaluate(() => {
       return Array.from(document.querySelectorAll('h4 + table'), (table) => {
-        let title = table.previousElementSibling.textContent?.trim();
+        let title = table.previousElementSibling?.textContent?.trim() || '';
         let headers: string[] = [];
         let rows: string[][] = [];
         table.querySelectorAll('tr').forEach((tr) => {
-          let cols = Array.from(tr.querySelectorAll('th'), (th) =>
-            th.textContent?.trim(),
+          let cols = Array.from(
+            tr.querySelectorAll('th'),
+            (th) => th.textContent?.trim() || '',
           );
           if (cols.length > 0) {
             headers = cols;
@@ -53,8 +123,9 @@ export class WorkoutService {
             return;
           }
 
-          cols = Array.from(tr.querySelectorAll('td strong'), (th) =>
-            th.textContent?.trim(),
+          cols = Array.from(
+            tr.querySelectorAll('td strong'),
+            (th) => th.textContent?.trim() || '',
           );
           if (cols.length > 0) {
             headers = cols;
@@ -62,18 +133,21 @@ export class WorkoutService {
             return;
           }
 
-          cols = Array.from(tr.querySelectorAll('td'), (td) =>
-            td.textContent.trim(),
+          cols = Array.from(
+            tr.querySelectorAll('td'),
+            (td) => td.textContent?.trim() || '',
           );
           if (cols.length > 0) {
             rows.push(cols);
           }
         });
         return { title, headers, rows };
-      });
+      }).filter(
+        (table) =>
+          table.title && table.headers.length > 0 && table.rows.length > 0,
+      );
     });
-    console.dir({ tables }, { depth: 20 });
-    return tables;
+    return days;
   }
 }
 

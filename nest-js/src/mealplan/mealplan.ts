@@ -23,6 +23,7 @@ async function collectMealPlanList() {
     if (!match) continue;
     let id = match[1];
     let slug = match[2];
+
     console.log({ meal });
     let tables = await collectMealPlanDetail(page, meal.href);
   }
@@ -46,6 +47,7 @@ async function collectMealPlanDetail(page: Page, href: string) {
         let cover_image =
           day.h2.parentElement?.querySelector('img')?.dataset.src;
         let meals = [];
+        let meal = [];
         let node = day.h2.nextElementSibling;
         for (; node && node.tagName !== 'H2'; node = node.nextElementSibling) {
           let text = node.textContent?.trim();
@@ -62,7 +64,7 @@ async function collectMealPlanDetail(page: Page, href: string) {
               for (let li of node.children) {
                 let text = li.textContent?.trim();
                 if (!text) continue;
-                meals.push({
+                meal.push({
                   food: text,
                 });
               }
@@ -79,36 +81,7 @@ async function collectMealPlanDetail(page: Page, href: string) {
     return { published_on, days };
   });
   console.dir(mealPlan, { depth: 20 });
-  throw new Error('todo');
+  // throw new Error('todo');
 }
-
-//   let title = table.previousElementSibling.textContent?.trim();
-//   let headers: string[] = [];
-//   let rows: string[][] = [];
-//   table.querySelectorAll('tr').forEach((tr) => {
-//     let cols = Array.from(tr.querySelectorAll('th'), (th) =>
-//       th.textContent?.trim(),
-//     );
-//     if (cols.length > 0) {
-//       headers = cols;
-//       rows = [];
-//       return;
-//     }
-//     cols = Array.from(tr.querySelectorAll('td strong'), (th) =>
-//       th.textContent?.trim(),
-//     );
-//     if (cols.length > 0) {
-//       headers = cols;
-//       rows = [];
-//       return;
-//     }
-//     cols = Array.from(tr.querySelectorAll('td'), (td) =>
-//       td.textContent.trim(),
-//     );
-//     if (cols.length > 0) {
-//       rows.push(cols);
-//     }
-//   });
-//   return { title, headers, rows };
 
 collectMealPlanList();

@@ -1,8 +1,17 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
+import { WorkoutService } from './workout.service';
 
 @Controller('workout')
 export class WorkoutController {
-  getWorkoutList() {}
+  constructor(private readonly workoutService: WorkoutService) {}
 
-  scrapWorkoutList() {}
+  @Get()
+  getWorkoutList() {
+    return this.workoutService.getWorkoutList();
+  }
+
+  @Post('/scrap')
+  scrapWorkoutList() {
+    return this.workoutService.scrapWorkoutList();
+  }
 }
