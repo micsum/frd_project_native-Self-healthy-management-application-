@@ -1,5 +1,7 @@
 // Buffer Line
 import { Fragment, useState, useMemo, useEffect } from "react";
+import { Provider } from "react-redux";
+import { store } from "../store";
 import DateSelectionPanel from "../components/mealPageComponents/DateSelectionPanel";
 import MealTypeSelection from "../components/mealPageComponents/MealTypeSelection";
 import { FullItemInfo } from "../utils/type";
@@ -25,8 +27,10 @@ const MealPage: React.FC = () => {
 
   return (
     <Fragment>
-      <DateSelectionPanel date={date} selectNewDate={updateSelectedDate} />
-      <MealTypeSelection foodItemFullInfo={dateMealData}></MealTypeSelection>
+      <Provider store={store}>
+        {/* <DateSelectionPanel date={date} selectNewDate={updateSelectedDate} /> */}
+        <MealTypeSelection foodItemFullInfo={dateMealData}></MealTypeSelection>
+      </Provider>
     </Fragment>
   );
 };

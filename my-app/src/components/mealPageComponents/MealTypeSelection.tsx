@@ -21,6 +21,7 @@ import { store, action, RootState, AppDispatch } from "../../store";
 import FoodItemDisplay from "./FoodItemDisplay";
 import FoodItemEntryPanel from "./FoodItemEntryPanel";
 import NutritionDetailPanel from "./NutritionDetailDisplay";
+import { View, Text, Button } from "react-native";
 import { createFakeFoodObject } from "./fakeFoodNutritionData";
 
 function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
@@ -95,9 +96,10 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
     return (
       <Fragment>
         {!foodInputVisible && !itemNutritionPanelVisible ? (
-          <button onClick={() => toggleMealSelection(indexChange)}>
-            {icon}
-          </button>
+          <Button
+            title={`${icon}`}
+            onPress={() => toggleMealSelection(indexChange)}
+          />
         ) : null}
       </Fragment>
     );
@@ -421,27 +423,27 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
 
   return (
     <Fragment>
-      <div>
-        <span>Meal In Display : </span>
-        <span>
+      <View>
+        <Text>Meal In Display : </Text>
+        <View>
           <MealChangeButton indexChange={-1} />
-          <span>{mealTypeDisplayList[mealTypeList.indexOf(mealType)]}</span>
+          <Text>{mealTypeDisplayList[mealTypeList.indexOf(mealType)]}</Text>
           <MealChangeButton indexChange={1} />
-        </span>
+        </View>
+
         {foodInputVisible || itemNutritionPanelVisible ? null : (
-          <button
-            onClick={() => {
+          <Button
+            title={"Add Item"}
+            onPress={() => {
               dispatch(action("foodPanelVisibility", { visible: true }));
             }}
-          >
-            <span>
-              <span>+</span>Add item
-            </span>
-          </button>
+          />
         )}
-      </div>
+      </View>
       {mealDisplay.length === 0 ? (
-        <div>{"** No Items Consumed **"}</div>
+        <View>
+          <Text>{"** No Items Consumed **"}</Text>
+        </View>
       ) : (
         mealDisplay.map((foodItem: FormattedFoodItemInfo) => {
           const itemIndex = mealDisplay.indexOf(foodItem) + 1;
