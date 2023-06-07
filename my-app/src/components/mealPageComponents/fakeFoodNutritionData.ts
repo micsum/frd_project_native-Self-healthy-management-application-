@@ -18,7 +18,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
     carbohydrates_total_g: 50.2,
     fiber_g: 2.7,
     sugar_g: 5.7,
-    saved_sizeUnit: "g",
+    saved_size_unit: "g",
   },
   {
     id: 1,
@@ -36,7 +36,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
     carbohydrates_total_g: 9.8,
     fiber_g: 0,
     sugar_g: 0,
-    saved_sizeUnit: "g",
+    saved_size_unit: "g",
   },
   {
     id: 2,
@@ -54,7 +54,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
     carbohydrates_total_g: 1.1,
     fiber_g: 0,
     sugar_g: 0.6,
-    saved_sizeUnit: "g",
+    saved_size_unit: "g",
   },
   {
     id: 3,
@@ -72,7 +72,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
     carbohydrates_total_g: 94,
     fiber_g: 5.4,
     sugar_g: 1.7,
-    saved_sizeUnit: "g",
+    saved_size_unit: "g",
   },
   {
     id: 4,
@@ -90,7 +90,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
     carbohydrates_total_g: 0,
     fiber_g: 0,
     sugar_g: 0,
-    saved_sizeUnit: "g",
+    saved_size_unit: "g",
   },
   {
     id: 5,
@@ -108,7 +108,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
     carbohydrates_total_g: 14.6,
     fiber_g: 6.7,
     sugar_g: 2.8,
-    saved_sizeUnit: "g",
+    saved_size_unit: "g",
   },
   {
     id: 6,
@@ -126,7 +126,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
     carbohydrates_total_g: 85.3,
     fiber_g: 1.2,
     sugar_g: 0.2,
-    saved_sizeUnit: "g",
+    saved_size_unit: "g",
   },
   {
     id: 7,
@@ -144,7 +144,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
     carbohydrates_total_g: 0,
     fiber_g: 0,
     sugar_g: 0,
-    saved_sizeUnit: "g",
+    saved_size_unit: "g",
   },
   {
     id: 8,
@@ -162,7 +162,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
     carbohydrates_total_g: 12.4,
     fiber_g: 4.6,
     sugar_g: 5.2,
-    saved_sizeUnit: "g",
+    saved_size_unit: "g",
   },
 ];
 
@@ -208,7 +208,7 @@ export const createFakeFoodObject: (
   newFoodItem.meal_time = meal_time;
   newFoodItem.name = foodName;
   newFoodItem.serving_size_g = servingSize;
-  newFoodItem.saved_sizeUnit = sizeUnit;
+  newFoodItem.saved_size_unit = sizeUnit;
 
   for (let key of nutritionContentKey) {
     newFoodItem[key] = 100;

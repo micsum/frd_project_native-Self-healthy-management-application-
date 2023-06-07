@@ -11,7 +11,7 @@ export type FullItemInfo = {
   name: string;
   calories: number;
   serving_size_g: number;
-  saved_sizeUnit: string;
+  saved_size_unit: string;
   fat_total_g: number;
   fat_saturated_g: number;
   protein_g: number;
@@ -84,8 +84,3 @@ export type mealIDObject = {
   dinner: number;
   snack: number;
 };
-
-export interface LoginData {
-  email: String;
-  password: String;
-}
