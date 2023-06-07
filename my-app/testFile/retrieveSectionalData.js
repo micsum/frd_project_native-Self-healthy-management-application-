@@ -1,3 +1,4 @@
+// Buffer Line
 const retrieveSectionalData = (data) => {
   let mealArrays = [data.breakfast, data.lunch, data.dinner, data.snack];
   let newVariables = [[], [], [], []];
