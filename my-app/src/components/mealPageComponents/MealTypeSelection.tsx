@@ -42,8 +42,8 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
 
   const {
     foodInputPanelOpen,
-    foodItemInConsideration,
     itemNutritionPanelOpen,
+    foodItemInConsideration,
   } = storeInfo;
   const [foodInputVisible, itemNutritionPanelVisible, foodItemInEdit] = [
     foodInputPanelOpen,
@@ -107,7 +107,7 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
 
     return (
       <Fragment>
-        {!foodInputVisible ? (
+        {!foodInputVisible && !itemNutritionPanelVisible ? (
           <button onClick={() => toggleMealSelection(indexChange)}>
             {icon}
           </button>
@@ -183,7 +183,7 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
             newItem.meal_time = meal_time;
             newItem.name = foodName;
             newItem.serving_size_g = servingSize;
-            newItem.saved_sizeUnit = sizeUnit;
+            newItem.saved_size_unit = sizeUnit;
 
             originalData = [
               ...originalData.slice(0, itemIndex),
@@ -280,7 +280,7 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
           });
           basicInfoDummy["foodName"] = value("name");
           basicInfoDummy["servingSize"] = value("serving_size_g");
-          basicInfoDummy["sizeUnit"] = value("saved_sizeUnit");
+          basicInfoDummy["sizeUnit"] = value("saved_size_unit");
 
           nutritionInfoParams.map((param: string) => {
             nutritionInfoDummy[param as keyof FoodItemNutritionInfo] =
@@ -406,7 +406,7 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
           <span>{mealTypeDisplayList[mealTypeList.indexOf(mealType)]}</span>
           <MealChangeButton indexChange={1} />
         </span>
-        {foodInputVisible ? null : (
+        {foodInputVisible || itemNutritionPanelVisible ? null : (
           <button
             onClick={() => {
               dispatch(action("foodPanelVisibility", { visible: true }));
@@ -435,7 +435,7 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
           );
         })
       )}
-      {foodInputVisible && !itemNutritionPanelOpen ? (
+      {foodInputVisible && !itemNutritionPanelVisible ? (
         <FoodItemEntryPanel
           foodItem={foodItemInEdit}
           mealType={mealType}
@@ -445,7 +445,7 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
       ) : (
         <NutritionDetailPanel
           panelTitle={`Nutrition Content of ${
-            itemNutritionPanelOpen
+            itemNutritionPanelVisible
               ? nutritionDetail[0].name
               : mealTypeDisplayList[mealType.indexOf(mealType)]
           }`}
