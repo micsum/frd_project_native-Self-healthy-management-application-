@@ -2,25 +2,6 @@ import React from "react";
 import { Text, View } from "react-native";
 import { Button, Center, NativeBaseProvider } from "native-base";
 
-const Example = () => {
-  return (
-    <Button.Group
-      isAttached
-      colorScheme="blue"
-      mx={{
-        base: "auto",
-        md: 0,
-      }}
-      size="sm"
-    >
-      <Button>Edit</Button>
-      <Button>Save</Button>
-      <Button>Save</Button>
-      <Button>Save</Button>
-    </Button.Group>
-  );
-};
-
 export const PlanDetailScreen = ({ route }: any) => {
   const { id } = route.params;
   return (
@@ -34,9 +15,7 @@ export const PlanDetailScreen = ({ route }: any) => {
       }}
     >
       <NativeBaseProvider>
-        <Center flex={1} px="3">
-          <Example />
-        </Center>
+        <Center flex={1} px="3"></Center>
       </NativeBaseProvider>
       <Text>djfhsjdfhsjdfhsdjh{id}</Text>
     </View>
