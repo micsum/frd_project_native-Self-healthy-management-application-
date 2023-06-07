@@ -30,21 +30,24 @@ import { MyTabs } from "./src/containers/bottomBar";
 import { NativeBaseProvider } from "native-base";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Login } from "./src/screens/LoginPage";
+import { WelcomeScreen } from "./src/screens/WelcomePage";
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <Login></Login>
+      <WelcomeScreen></WelcomeScreen>
     </SafeAreaProvider>
   );
 }
 
 export const Main = () => {
-  <SafeAreaProvider>
-    <NativeBaseProvider>
-      <NavigationContainer>
-        <MyTabs />
-      </NavigationContainer>
-    </NativeBaseProvider>
-  </SafeAreaProvider>;
+  return (
+    <SafeAreaProvider>
+      <NativeBaseProvider>
+        <NavigationContainer>
+          <MyTabs />
+        </NavigationContainer>
+      </NativeBaseProvider>
+    </SafeAreaProvider>
+  );
 };
