@@ -31,11 +31,12 @@ import { NativeBaseProvider } from "native-base";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Login } from "./src/screens/LoginPage";
 import { WelcomeScreen } from "./src/screens/WelcomePage";
+import { Register } from "./src/screens/RegisterPage";
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <WelcomeScreen></WelcomeScreen>
+      <Register />
     </SafeAreaProvider>
   );
 }

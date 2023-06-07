@@ -12,7 +12,22 @@ import {
   Image,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
+//function LoginLink() {
+//  const router = useRouter();
+//  return (
+//    <View>
+//      <Text
+//        onPress={() => {
+//          router.push("/LoginPage");
+//        }}
+//      >
+//        Settings
+//      </Text>
+//    </View>
+//  );
+//}
 export const WelcomeScreen = () => {
   const [sliderState, setSliderState] = useState({ currentPage: 0 });
   const { width, height } = Dimensions.get("window");
@@ -34,7 +49,7 @@ export const WelcomeScreen = () => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
-      <SafeAreaView style={{ flex: 1 }} className="bg-blue-300">
+      <SafeAreaView style={{ flex: 1 }} className="bg-gray-200">
         <ScrollView
           style={{ flex: 1 }}
           horizontal={true}
