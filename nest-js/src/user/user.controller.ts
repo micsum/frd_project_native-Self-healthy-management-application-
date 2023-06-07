@@ -21,9 +21,9 @@ export class UserController {
   }
 
   @Post('login')
-  mic(@Body() LoginData: LoginData) {
+  findAll(@Body() LoginData: LoginData) {
     this.userService.findAll();
-    console.log(LoginData);
+    // console.log(LoginData); test LoginData
     return { success: true }; //res.json
   }
 
