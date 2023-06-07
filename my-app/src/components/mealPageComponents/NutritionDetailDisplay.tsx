@@ -1,5 +1,6 @@
 // Buffer Line
 import { Fragment, useState } from "react";
+import { View, Text, Button } from "react-native";
 import { useDispatch } from "react-redux";
 import { store, action, AppDispatch } from "../../store";
 import {
@@ -99,25 +100,23 @@ function NutritionDetailPanel(props: {
 
   return (
     <Fragment>
-      <div>
-        <span>{panelTitle}</span>
-      </div>
-      <div>
+      <View>
+        <Text>{panelTitle}</Text>
+      </View>
+      <View>
         {nutritionContentArray.map((nutritionContentRow) => {
           return (
-            <div key={nutritionContentRow.title}>
-              <span>
+            <View key={nutritionContentRow.title}>
+              <Text>
                 {nutritionContentRow.title} : {nutritionContentRow.amount}{" "}
                 {nutritionContentRow.unit}
-              </span>
-            </div>
+              </Text>
+            </View>
           );
         })}
-      </div>
+      </View>
       {itemNutritionPanelVisible ? (
-        <button onClick={closeItemNutritionPanel}>
-          <span>Close</span>
-        </button>
+        <Button title="Close" onPress={closeItemNutritionPanel} />
       ) : null}
     </Fragment>
   );

@@ -1,5 +1,6 @@
 // Buffer Line
 import { Fragment, useState, useRef, useEffect } from "react";
+import { View, Text, Button, TextInput } from "react-native";
 import { useDispatch } from "react-redux";
 import { action, AppDispatch } from "../../store";
 import { FoodItemBasicInfo, mealIDObject } from "../../utils/type";
@@ -84,36 +85,35 @@ function FoodItemEntryPanel(props: {
 
   return (
     <Fragment>
-      <div>
-        <div>{"Food Item Name : "}</div>
-        <input
-          type="text"
+      <View>
+        <Text>{"Food Item Name : "}</Text>
+        <TextInput
+          value="text"
           placeholder="Enter Food Item Name Here"
           defaultValue={foodName}
           onChange={enterItemName}
         />
-      </div>
-      <div>
-        <div>
-          <div>{"Serving Size : "}</div>
-          <input
-            type="number"
+      </View>
+      <View>
+        <View>
+          <Text>{"Serving Size : "}</Text>
+          <TextInput
+            value="number"
             placeholder="Enter Food Item Quantity / Weight Here"
-            defaultValue={servingSize}
+            defaultValue={servingSize.toString()}
             onChange={enterItemServingSize}
           />
-        </div>
-        <div>
-          <span>{selectedUnit}</span>
-          <button onClick={changeSelectedUnit}>
-            <span>Change Unit</span>
-          </button>
-        </div>
-      </div>
-      <button onClick={cancelItemUpdate}>Cancel</button>
-      <button onClick={() => confirmItemUpdate(foodItemInfo.current)}>
-        Confirm
-      </button>
+        </View>
+        <View>
+          <Text>{selectedUnit}</Text>
+          <Button title="Change Unit" onPress={changeSelectedUnit} />
+        </View>
+      </View>
+      <Button title="Cancel" onPress={cancelItemUpdate} />
+      <Button
+        title="Confirm"
+        onPress={() => confirmItemUpdate(foodItemInfo.current)}
+      />
     </Fragment>
   );
 }

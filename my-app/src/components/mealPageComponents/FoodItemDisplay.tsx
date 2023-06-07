@@ -1,5 +1,6 @@
 // Buffer Line
 import { Fragment, useState, useEffect } from "react";
+import { View, Text, Button } from "react-native";
 import { FoodItemBasicInfo, FoodItemNutritionInfo } from "../../utils/type";
 import { useDispatch } from "react-redux";
 import { action, AppDispatch, store } from "../../store";
@@ -54,21 +55,21 @@ function FoodItemDisplay(props: {
 
   return (
     <Fragment>
-      <div>
+      <View>
         {foodInputVisible || itemNutritionPanelVisible ? null : (
-          <button onClick={displayItemDetails}>Details</button>
+          <Button onPress={displayItemDetails} title="Details" />
         )}
-        <div>
-          <div>{`${itemIndex}. ${foodName}`}</div>
-          <div>{`Serving Size : ${servingSize} ${sizeUnit}`}</div>
-        </div>
+        <View>
+          <Text>{`${itemIndex}. ${foodName}`}</Text>
+          <Text>{`Serving Size : ${servingSize} ${sizeUnit}`}</Text>
+        </View>
         {foodInputVisible || itemNutritionPanelVisible ? null : (
           <Fragment>
-            <button onClick={editFoodItem}> Edit </button>
-            <button onClick={deleteFoodItem}> Delete </button>
+            <Button title="Edit" onPress={editFoodItem} />
+            <Button title="Delete" onPress={deleteFoodItem} />
           </Fragment>
         )}
-      </div>
+      </View>
     </Fragment>
   );
 }
