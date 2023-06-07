@@ -24,7 +24,7 @@ export function PlanItem(props: Props) {
   return (
     <Box alignItems="center">
       <Box
-        maxW="56"
+        maxW="80"
         rounded="lg"
         overflow="hidden"
         borderColor="coolGray.200"

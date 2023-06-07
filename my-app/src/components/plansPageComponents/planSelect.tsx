@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Select,
-  Box,
-  CheckIcon,
-  Center,
-  NativeBaseProvider,
-} from "native-base";
+import { Select, Box, CheckIcon, Center } from "native-base";
 
 export function PlanSelect() {
   const [currentValue, setValue] = React.useState("wp");

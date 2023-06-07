@@ -46,6 +46,7 @@ export function PlansHomeScreen() {
     </ScrollView>
   );
 }
+//Create Stack
 const Stack = createStackNavigator();
 
 export const PlansScreen = () => {
