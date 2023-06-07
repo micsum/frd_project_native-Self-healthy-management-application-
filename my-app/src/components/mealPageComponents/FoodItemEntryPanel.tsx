@@ -11,7 +11,7 @@ function FoodItemEntryPanel(props: {
   updateMealData: (updatedItem: FoodItemBasicInfo) => void;
 }) {
   const { foodItem, mealType, mealID, updateMealData } = props;
-  const [selectedIndex, updateSelectedIndex] = useState<number>(0);
+  const [selectedUnit, updateSelectedUnit] = useState<string>("g");
   const [foodItemCopy, updateFoodItemCopy] = useState<FoodItemBasicInfo>(
     foodItem || {
       id: -1,
@@ -19,23 +19,22 @@ function FoodItemEntryPanel(props: {
       meal_time: mealType,
       foodName: "",
       servingSize: 0,
-      sizeUnit: "",
+      sizeUnit: "g",
     }
   );
 
   const foodItemInfo = useRef<FoodItemBasicInfo>(foodItemCopy);
 
   const dispatch = useDispatch<AppDispatch>();
-  const weightUnitList = ["", "g", "kg", "lb"];
+  const weightUnitList = ["g", "kg", "lb"];
   let { id, meal_id, meal_time, foodName, servingSize, sizeUnit } =
     foodItemCopy;
 
   useEffect(() => {
-    sizeUnit = weightUnitList[selectedIndex];
-    updateFoodItemCopy(() => {
-      return { id, meal_id, meal_time, foodName, servingSize, sizeUnit };
+    updateSelectedUnit(() => {
+      return sizeUnit;
     });
-  }, [selectedIndex]);
+  }, []);
 
   const cancelItemUpdate = () => {
     dispatch(
@@ -71,13 +70,15 @@ function FoodItemEntryPanel(props: {
     };
   };
 
-  const changeSelectedUnit = (event: any) => {
-    updateSelectedIndex(() => {
-      return event.target.selectedIndex;
+  const changeSelectedUnit = () => {
+    let newUnit =
+      weightUnitList[(weightUnitList.indexOf(selectedUnit) + 1) % 3];
+    updateSelectedUnit(() => {
+      return newUnit;
     });
     foodItemInfo.current = {
       ...foodItemInfo.current,
-      sizeUnit: event.target.value,
+      sizeUnit: newUnit,
     };
   };
 
@@ -102,12 +103,12 @@ function FoodItemEntryPanel(props: {
             onChange={enterItemServingSize}
           />
         </div>
-        <select defaultValue={sizeUnit} onChange={changeSelectedUnit}>
-          <option value="g">{"g"}</option>
-          <option value="kg">{"kg"}</option>
-          <option value="lb">{"lb"}</option>
-          <option value="">{""}</option>
-        </select>
+        <div>
+          <span>{selectedUnit}</span>
+          <button onClick={changeSelectedUnit}>
+            <span>Change Unit</span>
+          </button>
+        </div>
       </div>
       <button onClick={cancelItemUpdate}>Cancel</button>
       <button onClick={() => confirmItemUpdate(foodItemInfo.current)}>

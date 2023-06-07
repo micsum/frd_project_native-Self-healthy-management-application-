@@ -80,19 +80,6 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
     "sugar_g",
   ];
 
-  const unitConversion = (expectedUnit: string, servingSizeG: number) => {
-    switch (expectedUnit) {
-      case "g":
-        return servingSizeG;
-      case "kg":
-        return servingSizeG / 1000;
-      case "lb":
-        return servingSizeG * 0.0022;
-      default:
-        return servingSizeG;
-    }
-  };
-
   const MealChangeButton = (props: { indexChange: number }) => {
     const { indexChange } = props;
     const icon = indexChange === 1 ? ">" : "<";
@@ -114,6 +101,34 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
         ) : null}
       </Fragment>
     );
+  };
+
+  const unitConversion: (
+    oldSize: number,
+    oldUnit: string,
+    newSize: number,
+    newUnit: string
+  ) => number = (oldSize, oldUnit, newSize, newUnit) => {
+    let unitConversion = 1;
+    if (oldUnit !== newUnit) {
+      const unitConversionList = [
+        { from: "g", to: "kg", factor: 1000 },
+        { from: "kg", to: "lb", factor: 1 / 2.2 },
+        { from: "lb", to: "g", factor: 1 / 453.592 },
+      ];
+
+      for (let i = 0; i < 6; i++) {
+        const { from, to, factor } = unitConversionList[i % 3];
+        if (oldUnit === from) {
+          unitConversion *= factor;
+          oldUnit = to;
+        }
+        if (newUnit === oldUnit) {
+          break;
+        }
+      }
+    }
+    return parseFloat(((newSize * unitConversion) / oldSize).toFixed(4));
   };
 
   const applyChanges = useCallback(
@@ -144,10 +159,10 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
             let newItem: any = {};
             for (let existingItem of originalData) {
               if (
-                existingItem.id === info.id &&
-                existingItem.meal_id === info.meal_id &&
-                existingItem.meal_time === info.meal_time &&
-                existingItem.name === info.foodName
+                existingItem.id === id &&
+                existingItem.meal_id === meal_id &&
+                existingItem.meal_time === meal_time &&
+                existingItem.name === foodName
               ) {
                 itemIndex = originalData.indexOf(existingItem);
                 itemInConsideration = existingItem;
@@ -159,16 +174,23 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
               break;
             }
 
-            let [originalItemServingSize, itemSizeUnit, newItemServingSize] = [
+            let [
+              originalItemServingSize,
+              originalItemSizeUnit,
+              newItemServingSize,
+              newItemSizeUnit,
+            ] = [
               itemInConsideration.serving_size_g,
-              info.sizeUnit,
+              itemInConsideration.saved_size_unit,
               info.servingSize,
+              info.sizeUnit,
             ];
-            let newServingSize = unitConversion(
-              itemSizeUnit,
-              newItemServingSize
+            let multiplyFactor = unitConversion(
+              originalItemServingSize,
+              originalItemSizeUnit,
+              newItemServingSize,
+              newItemSizeUnit
             );
-            let multiplyFactor = newServingSize / originalItemServingSize;
 
             for (let key of nutritionContentKey) {
               let newValue =
@@ -324,7 +346,7 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
         mealType as keyof DateMealFullData
       ];
     });
-  }, [dateMealFullData]);
+  }, [dateMealFullData, mealType]);
 
   const mealDisplay = dateMealFullData[mealType as keyof DateMealFullData];
 

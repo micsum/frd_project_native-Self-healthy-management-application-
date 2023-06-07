@@ -1,3 +1,4 @@
+// Buffer Line
 const reformatMealData = (data) => {
   let breakfastItems = [],
     lunchItems = [],
