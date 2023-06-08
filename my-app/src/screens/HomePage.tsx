@@ -11,7 +11,6 @@ import { CardWeight } from "../components/homeCardWeight";
 import { ProfileScreen } from "./ProfilePage";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import PagerView from "react-native-pager-view";
 
 export const AvatarPic = () => {
   const navigation = useNavigation();

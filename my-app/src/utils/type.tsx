@@ -94,7 +94,7 @@ export interface SignUpData {
   email: String;
   password: String;
   confirmPassword: string;
-  weight: number;
-  height: number;
+  weight: string;
+  height: string;
   target: string;
 }

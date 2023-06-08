@@ -25,7 +25,7 @@ export const Login = () => {
   const onSubmit = async (data: LoginData) => {
     try {
       await axios
-        .post(`${process.env.Domain}/login`, { data })
+        .post(`${process.env.Domain}/user/login`, { data })
         .then((response) => {
           console.log("res", response.data); // test response.data thought axios
         });

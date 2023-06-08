@@ -7,7 +7,7 @@ import { KnexModule } from 'nestjs-knex';
 import { HttpModule } from '@nestjs/axios';
 import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
-import { env } from './env';
+import { env } from '../env';
 import { MealPlanModule } from './mealplan/mealplan.module';
 
 let knexConfig = require('../knexfile');
