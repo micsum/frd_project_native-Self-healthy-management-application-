@@ -8,7 +8,7 @@ log.enabled = true;
 
 type MealPlan = {
   href: string | undefined;
-  image: string | undefined;
+  cover_image: string | undefined;
   title: string | undefined;
 };
 
@@ -32,8 +32,23 @@ export class MealPlanService {
   constructor(@InjectKnex() private knex: Knex) {}
 
   async getMealPlanList() {
-    // log('get meal plan');
-    // let mealplans = await this.knex('mealplan').select;
+    log('get meal plan');
+    let mealplans = await this.knex('mealplan').select(
+      'id',
+      'title',
+      'cover_image',
+    );
+    console.log(mealplans);
+    for (let mealplan_day of mealplans) {
+      let days = await this.knex('mealplan_day')
+        .select('id', 'mealplan_id', 'name', 'cover_image')
+        .where({
+          mealplan_id: mealplan_day.id,
+        });
+      mealplan_day.days = days;
+    }
+
+    return { mealplans };
   }
 
   async scrapMealPlanList() {
@@ -48,27 +63,127 @@ export class MealPlanService {
         document.querySelectorAll<HTMLAnchorElement>('a[data-doc-id]'),
         (a) => ({
           href: a.href,
-          image: a.querySelector('img')?.dataset?.src,
+          cover_image: a.querySelector('img')?.dataset?.src,
           title: a.querySelector('.card__title-text')?.textContent?.trim(),
         }),
       ).filter((plan) => plan.title?.startsWith('7-Day')),
     );
+
+    let n = mealPlanLists.length;
+    log(`scrapping ${n} meal plans...`);
+    let i = 0;
     for (let meal of mealPlanLists) {
-      if (!meal.href) continue;
-      let match = meal.href.match(/(\d+)\/([a-z-]+)/);
+      i++;
+      log(`scrapping ${i}/${n} workout plan...`);
+      const href = meal.href;
+      if (!href) continue;
+      let match = href.match(/(\d+)\/([a-z0-9-]+(.html)?)\/?/);
       if (!match) continue;
       let id = match[1];
       let slug = match[2];
 
-      console.log({ meal });
-      let tables = await this.scrapMealPlanDetail(page, meal.href);
+      console.log({
+        id,
+        slug,
+        href: meal.href,
+        title: meal.title,
+        cover_image: meal.cover_image,
+      });
+
+      await this.knex.transaction(async (knex) => {
+        let row = await knex('mealplan').select('id').where({ id }).first();
+
+        if (row) {
+          await knex('mealplan').where({ id: row.id }).update({
+            title: meal.title,
+            href: meal.href,
+            cover_image: meal.cover_image,
+          });
+        } else {
+          [row] = await knex('mealplan')
+            .insert({
+              slug: slug,
+              id: id,
+              title: meal.title,
+              href: meal.href,
+              cover_image: meal.cover_image,
+            })
+            .returning('id');
+        }
+        // console.log(row);
+
+        let mealplan_id = row.id;
+
+        async function deleteDetails() {
+          await knex('meal_content')
+            .innerJoin(
+              'mealplan_day',
+              'mealplan_day.id',
+              'meal_content.mealplan_day_id',
+            )
+            .where({ mealplan_id })
+            .delete();
+
+          await knex('mealplan_day').where({ mealplan_id }).delete();
+        }
+
+        async function deleteAll() {
+          await deleteDetails();
+          await knex('mealplan').where({ id }).delete();
+        }
+
+        //   // console.log({ meal });
+        let days = await this.scrapMealPlanDetail(page, href, id);
+
+        console.dir(days, { depth: 20 });
+
+        await deleteDetails();
+
+        if (days.length === 0) {
+          await deleteAll();
+          return;
+        }
+        for (let day of days) {
+          // console.log(day.name);
+
+          if (day.meals.length === 0) {
+            await deleteAll();
+            return;
+          }
+          let [{ id: mealplan_day_id }] = await knex('mealplan_day')
+            .insert({
+              mealplan_id: id,
+              name: day.name,
+              cover_image: day.cover_image,
+            })
+            .returning('id');
+
+          for (let meal of day.meals) {
+            if (meal.foods.length === 0) {
+              await deleteAll();
+              return;
+            }
+            await knex('meal_content')
+              .insert({
+                mealplan_day_id,
+                name: meal.name,
+                calories: meal.calories,
+                foods: JSON.stringify(meal.foods),
+              })
+              .returning('id');
+          }
+        }
+
+        // }
+        // await knex('mealplan_day').insert;
+      });
     }
 
     await page.close();
     await browser.close();
   }
 
-  async scrapMealPlanDetail(page: Page, href: string) {
+  async scrapMealPlanDetail(page: Page, href: string, id: string) {
     await page.goto(href);
     let mealPlan = await page.evaluate(() => {
       let published_on = document
@@ -82,7 +197,12 @@ export class MealPlanService {
         .filter((day) => day.name?.startsWith('Day '))
         .map((day) => {
           let cover_image =
-            day.h2.parentElement?.querySelector('img')?.dataset.src;
+            day.h2.nextElementSibling?.querySelector('img')?.dataset.src;
+          if (!cover_image) {
+            cover_image =
+              day.h2.parentElement?.parentElement?.querySelector('img')?.dataset
+                .src;
+          }
           let meals: Meal[] = [];
           let meal: Meal = {
             name: '',
@@ -123,7 +243,8 @@ export class MealPlanService {
                 if (
                   !text ||
                   text.startsWith('Daily Totals') ||
-                  text.startsWith('To make')
+                  text.startsWith('To make') ||
+                  text.startsWith('Meal-Prep Tip')
                 ) {
                   break;
                 }
@@ -138,11 +259,10 @@ export class MealPlanService {
             meals: meals.filter((meal) => meal.name),
           };
         });
-      return { published_on, days };
+      return days;
     });
-
-    console.dir(mealPlan, { depth: 20 });
-    // throw new Error('todo');
     return mealPlan;
+    // console.dir(mealPlan, { depth: 20 });
+    // throw new Error('todo');
   }
 }
