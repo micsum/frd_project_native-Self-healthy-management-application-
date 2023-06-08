@@ -1,14 +1,9 @@
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller } from "react-hook-form";
-import { LoginData, SignUpData } from "../utils/type";
+import { SignUpData } from "../utils/type";
+import DropDownPicker from "react-native-dropdown-picker";
 import axios from "axios";
 
 export const Register = () => {
@@ -16,7 +11,7 @@ export const Register = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<SignUpData>({
     defaultValues: {
       email: "",
       password: "",
@@ -37,112 +32,130 @@ export const Register = () => {
       console.error(error);
     }
   };
+
+  const [targetOpen, setTargetOpen] = useState(false);
+  const [targetValue, setTargetOpen] = useState(null);
+  const [target, setTarget] = useState([
+    { label: "Lose Weight", value: "lose_weight" },
+  ]);
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-[#38668E]">
       <View className="p-8 w-full max-w-sm">
         <Text className="text-5xl font-bold mb-6 text-white">Sign Up</Text>
-        <Controller
-          control={control}
-          rules={{ required: true }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              keyboardType="email-address"
-              className="w-full bg-white rounded-md h-12 px-4 mb-4"
-              autoCapitalize="none"
-              placeholderTextColor="#000"
-              placeholder="Enter email address"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-            />
+        <View>
+          <Controller
+            control={control}
+            rules={{ required: "Email is required" }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                keyboardType="email-address"
+                className="w-full bg-white rounded-md h-12 px-4 mb-4"
+                autoCapitalize="none"
+                placeholderTextColor="#000"
+                placeholder="Enter email address"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value.toString()}
+              />
+            )}
+            name="email"
+          />
+          {errors.email && (
+            <Text className="text-red-400">{errors.email.message}</Text>
           )}
-          name="email"
-        />
-        <Controller
-          control={control}
-          rules={{ required: true }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              className="w-full bg-white rounded-md h-12 px-4 mb-4"
-              placeholderTextColor="#000"
-              placeholder="Enter password"
-              secureTextEntry={true}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-            />
+        </View>
+        <View>
+          <Controller
+            control={control}
+            rules={{ required: "Password is required", minLength: 8 }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                className="w-full bg-white rounded-md h-12 px-4 mb-4"
+                placeholderTextColor="#000"
+                placeholder="Enter password"
+                secureTextEntry={true}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value.toString()}
+              />
+            )}
+            name="password"
+          />
+          {errors.password && (
+            <Text className="text-red-400">{errors.password.message}</Text>
           )}
-          name="password"
-        />
-
-        <Controller
-          control={control}
-          rules={{ required: true }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              className="w-full bg-white rounded-md h-12 px-4 mb-4"
-              placeholderTextColor="#000"
-              placeholder="Confirm password"
-              secureTextEntry={true}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-            />
-          )}
-          name="confirmPassword"
-        />
-
-        <Controller
-          control={control}
-          rules={{ required: true }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              className="w-full bg-white rounded-md h-12 px-4 mb-4"
-              placeholderTextColor="#000"
-              placeholder="Your weight"
-              secureTextEntry={true}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-            />
-          )}
-          name="weight"
-        />
-
-        <Controller
-          control={control}
-          rules={{ required: true }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              className="w-full bg-white rounded-md h-12 px-4 mb-4"
-              placeholderTextColor="#000"
-              placeholder="Your height"
-              secureTextEntry={true}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-            />
-          )}
-          name="height"
-        />
-
-        <Controller
-          control={control}
-          rules={{ required: true }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              className="w-full bg-white rounded-md h-12 px-4"
-              placeholderTextColor="#000"
-              placeholder="Your target"
-              secureTextEntry={true}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-            />
-          )}
-          name="target"
-        />
-
+        </View>
+        <View>
+          <Controller
+            control={control}
+            rules={{ required: true, minLength: 8 }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                className="w-full bg-white rounded-md h-12 px-4 mb-4"
+                placeholderTextColor="#000"
+                placeholder="Confirm password"
+                secureTextEntry={true}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+            name="confirmPassword"
+          />
+        </View>
+        <View>
+          <Controller
+            control={control}
+            rules={{ required: true }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                className="w-full bg-white rounded-md h-12 px-4 mb-4"
+                placeholderTextColor="#000"
+                placeholder="Your weight"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value.toString()}
+              />
+            )}
+            name="weight"
+          />
+        </View>
+        <View>
+          <Controller
+            control={control}
+            rules={{ required: true }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                className="w-full bg-white rounded-md h-12 px-4 mb-4"
+                placeholderTextColor="#000"
+                placeholder="Your height"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value.toString()}
+              />
+            )}
+            name="height"
+          />
+        </View>
+        <View>
+          <Controller
+            control={control}
+            rules={{ required: true }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <>
+                <DropDownPicker
+                  items={[
+                    { label: "Item 1", value: "item1" },
+                    { label: "Item 2", value: "item2" },
+                  ]}
+                  defaultValue={"item1"}
+                  onChangeItem={(item) => console.log(item.value)}
+                />
+              </>
+            )}
+            name="target"
+          />
+        </View>
         <TouchableOpacity
           onPress={handleSubmit(onSubmit)}
           className="my-8 h-12 border-2 border-white  rounded-md flex flex-row justify-center items-center px-6"

@@ -10,6 +10,7 @@ export const env = {
   DB_NAME: '',
   DB_USERNAME: '',
   DB_PASSWORD: '',
+  JWT_SECRET: '',
 };
 
 populateEnv(env, { mode: 'halt' });
