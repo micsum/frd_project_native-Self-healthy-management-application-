@@ -13,7 +13,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       {/* <WelcomeScreen></WelcomeScreen> */}
-      {/* <MealScreen /> */}
+      <MealScreen />
       {/* <WelcomeScreen /> */}
     </SafeAreaProvider>
   );

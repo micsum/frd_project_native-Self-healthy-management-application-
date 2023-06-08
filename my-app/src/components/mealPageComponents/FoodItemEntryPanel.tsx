@@ -4,6 +4,8 @@ import { View, Text, Button, TextInput } from "react-native";
 import { useDispatch } from "react-redux";
 import { action, AppDispatch } from "../../store";
 import { FoodItemBasicInfo, mealIDObject } from "../../utils/type";
+import { mps } from "./mealPageComponentStyleSheet";
+import { FontAwesome } from "@expo/vector-icons";
 
 function FoodItemEntryPanel(props: {
   foodItem?: FoodItemBasicInfo;
@@ -47,6 +49,15 @@ function FoodItemEntryPanel(props: {
   };
 
   const confirmItemUpdate = (formItemInfo: FoodItemBasicInfo) => {
+    if (
+      formItemInfo.foodName === foodItem?.foodName &&
+      formItemInfo.servingSize === foodItem?.servingSize &&
+      formItemInfo.sizeUnit === foodItem?.sizeUnit
+    ) {
+      console.log("No Changes Detected");
+      return;
+    }
+
     if (formItemInfo.foodName === "") {
       console.log("missing item name");
       return;
@@ -84,37 +95,68 @@ function FoodItemEntryPanel(props: {
   };
 
   return (
-    <Fragment>
-      <View>
-        <Text>{"Food Item Name : "}</Text>
+    <View style={mps.detailPanel}>
+      <View style={mps.foodItemInputDiv}>
+        <Text style={mps.foodItemInputTitle}>{"Food Item Name : "}</Text>
         <TextInput
-          value="text"
+          value={foodName}
           placeholder="Enter Food Item Name Here"
           defaultValue={foodName}
           onChange={enterItemName}
+          style={mps.foodItemInput}
         />
       </View>
-      <View>
-        <View>
-          <Text>{"Serving Size : "}</Text>
+      <View style={[mps.foodItemInputDiv, mps.servingSizeDiv]}>
+        <View style={mps.servingSizeInput}>
+          <Text style={mps.foodItemInputTitle}>{"Serving Size : "}</Text>
           <TextInput
-            value="number"
+            value={servingSize.toString()}
             placeholder="Enter Food Item Quantity / Weight Here"
             defaultValue={servingSize.toString()}
             onChange={enterItemServingSize}
+            style={mps.foodItemInput}
           />
         </View>
-        <View>
-          <Text>{selectedUnit}</Text>
-          <Button title="Change Unit" onPress={changeSelectedUnit} />
+        <View style={mps.servingSizeDiv}>
+          <Text
+            style={[
+              mps.sizeUnitText,
+              { paddingStart: 10, paddingEnd: 10, width: "50%" },
+            ]}
+          >
+            {selectedUnit}
+          </Text>
+          <View style={mps.sizeUnitText}>
+            <FontAwesome
+              name="exchange"
+              size={mps.defaultFontSize.fontSize * 1.5}
+              color="orange"
+              onPress={changeSelectedUnit}
+            />
+          </View>
         </View>
       </View>
-      <Button title="Cancel" onPress={cancelItemUpdate} />
-      <Button
-        title="Confirm"
-        onPress={() => confirmItemUpdate(foodItemInfo.current)}
-      />
-    </Fragment>
+      <View style={mps.controlDiv}>
+        <View style={mps.formButtonDiv}>
+          <View style={mps.formButton}>
+            <Button
+              title="Confirm"
+              onPress={() => confirmItemUpdate(foodItemInfo.current)}
+              color={`#7cfc00`}
+            />
+          </View>
+        </View>
+        <View style={mps.formButtonDiv}>
+          <View style={mps.formButton}>
+            <Button
+              title="Cancel"
+              onPress={cancelItemUpdate}
+              color={`#b22222`}
+            />
+          </View>
+        </View>
+      </View>
+    </View>
   );
 }
 

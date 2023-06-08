@@ -7,6 +7,8 @@ import {
   FoodItemNutritionInfo,
   NutritionContentDisplay,
 } from "../../utils/type";
+import { mps } from "./mealPageComponentStyleSheet";
+import { ScrollView } from "native-base";
 
 function NutritionDetailPanel(props: {
   panelTitle: string;
@@ -96,29 +98,39 @@ function NutritionDetailPanel(props: {
 
   const closeItemNutritionPanel = () => {
     dispatch(action("itemNutritionPanelVisibility", { visible: false }));
+    dispatch(action("foodItemInfo", {}));
   };
 
   return (
-    <Fragment>
-      <View>
-        <Text>{panelTitle}</Text>
-      </View>
-      <View>
-        {nutritionContentArray.map((nutritionContentRow) => {
-          return (
-            <View key={nutritionContentRow.title}>
-              <Text>
-                {nutritionContentRow.title} : {nutritionContentRow.amount}{" "}
-                {nutritionContentRow.unit}
-              </Text>
-            </View>
-          );
-        })}
-      </View>
-      {itemNutritionPanelVisible ? (
-        <Button title="Close" onPress={closeItemNutritionPanel} />
-      ) : null}
-    </Fragment>
+    <View style={mps.detailPanel}>
+      <ScrollView
+        showsVerticalScrollIndicator={true}
+        persistentScrollbar={true}
+        endFillColor={"purple"}
+      >
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={mps.panelTitle}>{panelTitle}</Text>
+          {itemNutritionPanelVisible ? (
+            <Button title="Close" onPress={closeItemNutritionPanel} />
+          ) : null}
+        </View>
+        <View>
+          {nutritionContentArray.map((nutritionContentRow) => {
+            return (
+              <View
+                key={nutritionContentRow.title}
+                style={mps.nutritionContentDisplay}
+              >
+                <Text style={mps.nutritionContentText}>
+                  {nutritionContentRow.title} : {nutritionContentRow.amount}{" "}
+                  {nutritionContentRow.unit}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
