@@ -84,3 +84,17 @@ export type mealIDObject = {
   dinner: number;
   snack: number;
 };
+
+export interface LoginData {
+  email: String;
+  password: String;
+}
+
+export interface SignUpData {
+  email: String;
+  password: String;
+  confirmPassword: string;
+  weight: number;
+  height: number;
+  target: string;
+}
