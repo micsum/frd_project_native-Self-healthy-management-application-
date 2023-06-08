@@ -26,10 +26,10 @@ export const Register = () => {
       target: "",
     },
   });
-  const onSubmit = async (data: SignUpData) => {
+  const onSubmit = async (SignUpdata: SignUpData) => {
     try {
       await axios
-        .post(`${process.env.Domain}/signup`, { data })
+        .post(`${process.env.Domain}/signup`, { SignUpdata })
         .then((response) => {
           console.log("res", response.data); // test response.data thought axios
         });
@@ -40,7 +40,7 @@ export const Register = () => {
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-[#38668E]">
       <View className="p-8 w-full max-w-sm">
-        <Text className="text-5xl font-bold mb-6 text-white">Login</Text>
+        <Text className="text-5xl font-bold mb-6 text-white">Sign Up</Text>
         <Controller
           control={control}
           rules={{ required: true }}
@@ -63,7 +63,7 @@ export const Register = () => {
           rules={{ required: true }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              className="w-full bg-white rounded-md h-12 px-4"
+              className="w-full bg-white rounded-md h-12 px-4 mb-4"
               placeholderTextColor="#000"
               placeholder="Enter password"
               secureTextEntry={true}
@@ -80,7 +80,7 @@ export const Register = () => {
           rules={{ required: true }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              className="w-full bg-white rounded-md h-12 px-4"
+              className="w-full bg-white rounded-md h-12 px-4 mb-4"
               placeholderTextColor="#000"
               placeholder="Confirm password"
               secureTextEntry={true}
@@ -97,7 +97,7 @@ export const Register = () => {
           rules={{ required: true }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              className="w-full bg-white rounded-md h-12 px-4"
+              className="w-full bg-white rounded-md h-12 px-4 mb-4"
               placeholderTextColor="#000"
               placeholder="Your weight"
               secureTextEntry={true}
@@ -114,7 +114,7 @@ export const Register = () => {
           rules={{ required: true }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              className="w-full bg-white rounded-md h-12 px-4"
+              className="w-full bg-white rounded-md h-12 px-4 mb-4"
               placeholderTextColor="#000"
               placeholder="Your height"
               secureTextEntry={true}
