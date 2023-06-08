@@ -4,13 +4,15 @@ import { View, Text, Button } from "react-native";
 import { FoodItemBasicInfo, FoodItemNutritionInfo } from "../../utils/type";
 import { useDispatch } from "react-redux";
 import { action, AppDispatch, store } from "../../store";
+import { mps } from "./mealPageComponentStyleSheet";
+import { Entypo, AntDesign } from "@expo/vector-icons";
 
 function FoodItemDisplay(props: {
   itemIndex: number;
   foodItemBasicInfo: FoodItemBasicInfo;
   foodItemNutritionInfo: FoodItemNutritionInfo;
   removeMealItem: (foodItem: FoodItemBasicInfo) => void;
-  showNutritionDetail: (foodItemNutritionInfo: FoodItemNutritionInfo) => void;
+  showNutritionDetail: (foodItemNutritionInfo: FoodItemNutritionInfo[]) => void;
 }) {
   const {
     itemIndex,
@@ -40,7 +42,7 @@ function FoodItemDisplay(props: {
   });
 
   const displayItemDetails = () => {
-    showNutritionDetail(foodItemNutritionInfo);
+    showNutritionDetail([foodItemNutritionInfo]);
     dispatch(action("itemNutritionPanelVisibility", { visible: true }));
   };
 
@@ -54,23 +56,46 @@ function FoodItemDisplay(props: {
   };
 
   return (
-    <Fragment>
-      <View>
+    <View style={mps.foodItemDisplayDiv}>
+      <View style={mps.foodItemDisplay}>
         {foodInputVisible || itemNutritionPanelVisible ? null : (
-          <Button onPress={displayItemDetails} title="Details" />
+          <View style={mps.foodItemDisplayButton}>
+            <Entypo
+              name="info-with-circle"
+              size={mps.foodItemDisplayButton.fontSize}
+              color="black"
+              onPress={displayItemDetails}
+            />
+          </View>
         )}
-        <View>
-          <Text>{`${itemIndex}. ${foodName}`}</Text>
-          <Text>{`Serving Size : ${servingSize} ${sizeUnit}`}</Text>
+        <View style={mps.foodItemDisplayContent}>
+          <Text style={mps.defaultFontSize}>{`${itemIndex}. ${foodName}`}</Text>
+          <Text
+            style={mps.defaultFontSize}
+          >{`Serving Size : ${servingSize} ${sizeUnit}`}</Text>
         </View>
         {foodInputVisible || itemNutritionPanelVisible ? null : (
           <Fragment>
-            <Button title="Edit" onPress={editFoodItem} />
-            <Button title="Delete" onPress={deleteFoodItem} />
+            <View style={mps.foodItemDisplayButton}>
+              <AntDesign
+                name="edit"
+                size={mps.foodItemDisplayButton.fontSize}
+                color="black"
+                onPress={editFoodItem}
+              />
+            </View>
+            <View style={mps.foodItemDisplayButton}>
+              <AntDesign
+                name="delete"
+                size={mps.foodItemDisplayButton.fontSize}
+                color="black"
+                onPress={deleteFoodItem}
+              />
+            </View>
           </Fragment>
         )}
       </View>
-    </Fragment>
+    </View>
   );
 }
 

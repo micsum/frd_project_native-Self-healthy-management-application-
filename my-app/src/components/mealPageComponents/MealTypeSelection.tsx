@@ -16,12 +16,16 @@ import {
   ItemChange,
   mealIDObject,
 } from "../../utils/type";
+import { View, Text, Button, SafeAreaView } from "react-native";
+import { ScrollView } from "native-base";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import { store, action, RootState, AppDispatch } from "../../store";
 import FoodItemDisplay from "./FoodItemDisplay";
 import FoodItemEntryPanel from "./FoodItemEntryPanel";
 import NutritionDetailPanel from "./NutritionDetailDisplay";
-import { View, Text, Button } from "react-native";
+import { foodItemDisplayHeight, mps } from "./mealPageComponentStyleSheet";
+import { AntDesign } from "@expo/vector-icons";
 import { createFakeFoodObject } from "./fakeFoodNutritionData";
 
 function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
@@ -80,30 +84,6 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
     "fiber_g",
     "sugar_g",
   ];
-
-  const MealChangeButton = (props: { indexChange: number }) => {
-    const { indexChange } = props;
-    const icon = indexChange === 1 ? ">" : "<";
-
-    const toggleMealSelection = (indexChange: number) => {
-      updateMealType((currentMealType) => {
-        let currentIndex = mealTypeList.indexOf(currentMealType);
-        let newIndex = (currentIndex + indexChange + 4) % 4;
-        return mealTypeList[newIndex];
-      });
-    };
-
-    return (
-      <Fragment>
-        {!foodInputVisible && !itemNutritionPanelVisible ? (
-          <Button
-            title={`${icon}`}
-            onPress={() => toggleMealSelection(indexChange)}
-          />
-        ) : null}
-      </Fragment>
-    );
-  };
 
   const unitConversion: (
     oldSize: number,
@@ -414,51 +394,85 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
   };
 
   const updateNutritionDisplayDetail = (
-    foodItemNutritionInfo: FoodItemNutritionInfo
+    foodItemNutritionInfo: FoodItemNutritionInfo[]
   ) => {
     updateNutritionDetail(() => {
-      return [foodItemNutritionInfo];
+      return foodItemNutritionInfo;
     });
   };
 
+  const openEditPanel = () => {
+    dispatch(action("foodPanelVisibility", { visible: true }));
+  };
+
+  const MealChangeButton = (props: { indexChange: number }) => {
+    const { indexChange } = props;
+    const icon = indexChange === 1 ? "caretright" : "caretleft";
+
+    const toggleMealSelection = (indexChange: number) => {
+      updateMealType((currentMealType) => {
+        let currentIndex = mealTypeList.indexOf(currentMealType);
+        let newIndex = (currentIndex + indexChange + 4) % 4;
+        return mealTypeList[newIndex];
+      });
+    };
+
+    return (
+      <Fragment>
+        {!foodInputVisible && !itemNutritionPanelVisible ? (
+          <AntDesign
+            name={`${icon}`}
+            size={24}
+            color="black"
+            onPress={() => toggleMealSelection(indexChange)}
+          />
+        ) : null}
+      </Fragment>
+    );
+  };
+
   return (
-    <Fragment>
-      <View>
-        <Text>Meal In Display : </Text>
-        <View>
+    <SafeAreaView style={{ paddingTop: useSafeAreaInsets().top }}>
+      <View style={[mps.mealTypeSelection, { height: "10%", marginBottom: 5 }]}>
+        <Text style={[mps.mealDisplayText, mps.defaultFontSize]}>
+          Meal In Display :{" "}
+        </Text>
+        <View style={mps.mealTypeToggle}>
           <MealChangeButton indexChange={-1} />
-          <Text>{mealTypeDisplayList[mealTypeList.indexOf(mealType)]}</Text>
+          <Text style={[mps.defaultFontSize, { fontWeight: "bold" }]}>
+            {mealTypeDisplayList[mealTypeList.indexOf(mealType)]}
+          </Text>
           <MealChangeButton indexChange={1} />
         </View>
 
         {foodInputVisible || itemNutritionPanelVisible ? null : (
-          <Button
-            title={"Add Item"}
-            onPress={() => {
-              dispatch(action("foodPanelVisibility", { visible: true }));
-            }}
-          />
+          <View style={mps.addItemButton}>
+            <Button title={"Add Item"} onPress={openEditPanel} />
+          </View>
         )}
       </View>
-      {mealDisplay.length === 0 ? (
+      <ScrollView style={foodItemDisplayHeight}>
         <View>
-          <Text>{"** No Items Consumed **"}</Text>
+          {mealDisplay.length === 0 ? (
+            <Text>{"** No Items Consumed **"}</Text>
+          ) : (
+            mealDisplay.map((foodItem: FormattedFoodItemInfo) => {
+              const itemIndex = mealDisplay.indexOf(foodItem) + 1;
+              return (
+                <FoodItemDisplay
+                  key={itemIndex}
+                  itemIndex={itemIndex}
+                  foodItemBasicInfo={foodItem.basicInfo}
+                  foodItemNutritionInfo={foodItem.nutritionInfo}
+                  removeMealItem={removeMealItem}
+                  showNutritionDetail={updateNutritionDisplayDetail}
+                />
+              );
+            })
+          )}
         </View>
-      ) : (
-        mealDisplay.map((foodItem: FormattedFoodItemInfo) => {
-          const itemIndex = mealDisplay.indexOf(foodItem) + 1;
-          return (
-            <FoodItemDisplay
-              key={itemIndex}
-              itemIndex={itemIndex}
-              foodItemBasicInfo={foodItem.basicInfo}
-              foodItemNutritionInfo={foodItem.nutritionInfo}
-              removeMealItem={removeMealItem}
-              showNutritionDetail={updateNutritionDisplayDetail}
-            />
-          );
-        })
-      )}
+      </ScrollView>
+
       {foodInputVisible && !itemNutritionPanelVisible ? (
         <FoodItemEntryPanel
           foodItem={foodItemInEdit}
@@ -473,10 +487,17 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
               ? nutritionDetail[0].name
               : mealTypeDisplayList[mealType.indexOf(mealType)]
           }`}
-          nutritionData={nutritionDetail}
+          nutritionData={
+            nutritionDetail.length === 0
+              ? retrieveFoodNutritionInformation(dateMealFullData)[
+                  mealType as keyof DateMealFullData
+                ]
+              : nutritionDetail
+          }
+          showNutritionDetail={updateNutritionDisplayDetail}
         />
       )}
-    </Fragment>
+    </SafeAreaView>
   );
 }
 

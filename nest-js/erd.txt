@@ -141,9 +141,36 @@ title text
 headers jsonb
 rows jsonb
 
+mealplan
+--------
+id integer PK
+slug varchar(100) unique
+title text
+href text
+cover_image text
 
-# zoom: 0.715
-# view: (328, 12)
+mealplan_day
+------------
+id
+mealplan_id integer FK 
+name text
+cover_image text
+
+meal_content
+------------
+id
+mealplan_day_id FK
+name text
+calories integer
+foods jsonb
+
+
+
+
+
+
+# zoom: 1.026
+# view: (508, -572)
 # text-bg: #6495ed
 # text-color: #000000
 # diagram-bg: #f5f5f5
@@ -153,13 +180,16 @@ rows jsonb
 # meal_food_item (154, 189)
 # user_relationship (1418, 246)
 # role_registration (1347, 710)
-# calendar_event (92, 568)
+# calendar_event (-120, 370)
 # text_message (991, 91)
 # exercise_history (522, 197)
 # user (969, 400)
-# meal_input_record (425, 401)
+# meal_input_record (565, 431)
 # table (823, 878)
 # scrapped_website (776, 668)
 # row_info (1100, 760)
-# workout (456, 838)
-# workout_day (180, 902)
+# workout (358, 879)
+# workout_day (-11, 883)
+# mealplan (319, 1067)
+# mealplan_day (-19, 1063)
+# meal_content (-22, 1314)
