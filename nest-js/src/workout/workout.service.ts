@@ -30,7 +30,9 @@ export class WorkoutService {
   async scrapWorkoutList() {
     let browser = await chromium.launch({ headless: false });
     let page = await browser.newPage();
+
     log('scraping workout list...');
+
     await page.goto('https://www.muscleandstrength.com/workouts/men');
     let workoutList = await page.evaluate(() => {
       return Array.from(
