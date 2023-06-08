@@ -13,8 +13,9 @@ import { ScrollView } from "native-base";
 function NutritionDetailPanel(props: {
   panelTitle: string;
   nutritionData: FoodItemNutritionInfo[];
+  showNutritionDetail: (foodItemNutritionInfo: FoodItemNutritionInfo[]) => void;
 }) {
-  const { panelTitle, nutritionData } = props;
+  const { panelTitle, nutritionData, showNutritionDetail } = props;
 
   const [itemNutritionPanelVisible, updateItemNutritionPanelVisibility] =
     useState<boolean>(store.getState().itemNutritionPanelOpen);
@@ -98,7 +99,7 @@ function NutritionDetailPanel(props: {
 
   const closeItemNutritionPanel = () => {
     dispatch(action("itemNutritionPanelVisibility", { visible: false }));
-    dispatch(action("foodItemInfo", {}));
+    showNutritionDetail([]);
   };
 
   return (

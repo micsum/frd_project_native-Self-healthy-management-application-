@@ -12,7 +12,7 @@ function FoodItemDisplay(props: {
   foodItemBasicInfo: FoodItemBasicInfo;
   foodItemNutritionInfo: FoodItemNutritionInfo;
   removeMealItem: (foodItem: FoodItemBasicInfo) => void;
-  showNutritionDetail: (foodItemNutritionInfo: FoodItemNutritionInfo) => void;
+  showNutritionDetail: (foodItemNutritionInfo: FoodItemNutritionInfo[]) => void;
 }) {
   const {
     itemIndex,
@@ -42,7 +42,7 @@ function FoodItemDisplay(props: {
   });
 
   const displayItemDetails = () => {
-    showNutritionDetail(foodItemNutritionInfo);
+    showNutritionDetail([foodItemNutritionInfo]);
     dispatch(action("itemNutritionPanelVisibility", { visible: true }));
   };
 

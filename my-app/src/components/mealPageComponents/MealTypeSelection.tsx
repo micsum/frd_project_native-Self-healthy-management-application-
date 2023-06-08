@@ -394,10 +394,10 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
   };
 
   const updateNutritionDisplayDetail = (
-    foodItemNutritionInfo: FoodItemNutritionInfo
+    foodItemNutritionInfo: FoodItemNutritionInfo[]
   ) => {
     updateNutritionDetail(() => {
-      return [foodItemNutritionInfo];
+      return foodItemNutritionInfo;
     });
   };
 
@@ -487,7 +487,14 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
               ? nutritionDetail[0].name
               : mealTypeDisplayList[mealType.indexOf(mealType)]
           }`}
-          nutritionData={nutritionDetail}
+          nutritionData={
+            nutritionDetail.length === 0
+              ? retrieveFoodNutritionInformation(dateMealFullData)[
+                  mealType as keyof DateMealFullData
+                ]
+              : nutritionDetail
+          }
+          showNutritionDetail={updateNutritionDisplayDetail}
         />
       )}
     </SafeAreaView>
