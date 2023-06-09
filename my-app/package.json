@@ -32,6 +32,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.44.3",
     "react-native": "0.71.8",
+    "react-native-alert-notification": "^0.3.4",
     "react-native-device-info": "^10.6.0",
     "react-native-dotenv": "^3.4.8",
     "react-native-dropdown-picker": "^5.4.6",

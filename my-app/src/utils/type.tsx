@@ -90,11 +90,12 @@ export interface LoginData {
   password: String;
 }
 
-export interface SignUpData {
+export type SignUpData = {
+  username: string;
   email: String;
   password: String;
   confirmPassword: string;
   weight: string;
   height: string;
   target: string;
-}
+};

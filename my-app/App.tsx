@@ -12,7 +12,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       {/* <WelcomeScreen></WelcomeScreen> */}
-      <WelcomeScreen />
+      <Register />
     </SafeAreaProvider>
   );
 }

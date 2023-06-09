@@ -1,34 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Knex } from 'nestjs-knex';
+import { InjectKnex, Knex } from 'nestjs-knex';
 
 @Injectable()
 export class UserService {
-  findAll() {
-    throw new Error('Method not implemented.');
-  }
-  constructor(private knex: Knex) {}
+  //@ts-ignore
+  constructor(@InjectKnex() private knex: Knex) {}
 
   async create(createUserDto: CreateUserDto) {
-    await this.knex('user').insert(createUserDto);
+    //console.log('new', createUserDto); check the confirm password drop
+
+    await this.knex('user').insert({
+      createUserDto,
+    });
     return 'Successfully registered';
   }
 
   async checkDbUser(createUserDto: CreateUserDto) {
     let query = this.knex('user')
       .select('*')
-      .where({ email: createUserDto.email });
+      .where({ email: createUserDto.email })
+      .orWhere({ username: createUserDto.username });
 
     let dbResult = await query;
     if (dbResult.length === 1) {
       return {
-        error: 'user existed',
+        error: 'User Existed',
       };
     }
     return {};
   }
 
+  findAll() {
+    return `success`;
+  }
   findOne(id: number) {
     return `This action returns a #${id} user`;
   }

@@ -11,9 +11,10 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { LoginData } from 'type';
+//import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginData, SignUpData } from 'type';
 import { hashPassword } from 'hash';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -22,18 +23,20 @@ export class UserController {
   @Post('signUp')
   @UsePipes(new ValidationPipe())
   async create(@Body() createUserDto: CreateUserDto) {
-    //console.log(createUserDto);
+    //console.log('body', createUserDto); //check bodydata
     try {
       let checkDbUser = await this.userService.checkDbUser(createUserDto);
       if (checkDbUser.error) {
-        return checkDbUser.error;
+        return checkDbUser;
       }
       const userPassword = await hashPassword(createUserDto.password);
       createUserDto.password = userPassword;
-      return this.userService.create(createUserDto);
+      delete createUserDto.confirmPassword;
+      await this.userService.create(createUserDto);
+      return { message: 'Successfully registered' };
     } catch (error) {
-      console.error(error);
-      return error;
+      console.error('dtoDbcheck', error); //check dto or db error
+      return { error: 'Server Error' };
     }
   }
 
