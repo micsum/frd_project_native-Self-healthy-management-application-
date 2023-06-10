@@ -1,6 +1,6 @@
 // Buffer Line
 import { Fragment, useEffect, useState } from "react";
-import { View, Text, Button, ScrollView } from "react-native";
+import { View, Text, Button } from "react-native";
 import DateTimePicker from "@mohalla-tech/react-native-date-time-picker";
 import { store } from "../../store";
 import { mps } from "./mealPageComponentStyleSheet";
@@ -29,16 +29,31 @@ export default function DateSelectionPanel(props: {
   });
 
   useEffect(() => {
-    console.log(date);
-  }, [date]);
+    if (foodInputVisible || itemNutritionPanelVisible) {
+      setOpen(() => {
+        return false;
+      });
+    }
+  }, [foodInputVisible, itemNutritionPanelVisible]);
 
   return (
-    <View style={{ height: 120 }}>
-      <View style={mps.calendarDiv}>
-        <View style={{ width: "60%" }}>
+    <View style={{ height: 120, padding: 5, paddingBottom: 0 }}>
+      <View style={mps.calendarDisplayDiv}>
+        <View
+          style={
+            open
+              ? // mps.calendarDivOpen
+                {
+                  width: "75%",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                }
+              : mps.calendarDiv
+          }
+        >
           {open ? (
             <Fragment>
-              <View>
+              <View style={{ width: "80%" }}>
                 <DateTimePicker
                   mode="date"
                   initialValue={date}
@@ -48,17 +63,22 @@ export default function DateSelectionPanel(props: {
               </View>
             </Fragment>
           ) : (
-            <Text>
-              Selected Date :{" "}
+            <Text style={mps.calendarText}>
+              <Text>Selected Date : {"\n"}</Text>
               <Text>
                 {date.getFullYear()} / {date.getMonth() + 1} / {date.getDate()}
               </Text>
             </Text>
           )}
         </View>
-        <View style={{ width: "20%" }}>
+        <View
+          style={{
+            width: "25%",
+            paddingRight: open ? 3 : 10,
+          }}
+        >
           <Button
-            title={open ? "Close" : "Open"}
+            title={open ? "Close" : "Change"}
             onPress={
               foodInputVisible || itemNutritionPanelVisible
                 ? () => {}

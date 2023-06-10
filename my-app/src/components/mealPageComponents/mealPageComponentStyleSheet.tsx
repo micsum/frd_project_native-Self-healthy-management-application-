@@ -10,24 +10,36 @@ const fullWidthDisplayElement: ViewStyle = {
 
 const defaultFontSize = 20;
 export const foodItemDisplayHeight = {
-  height: "20%",
+  minHeight: "20%",
 };
 
 export const mps = StyleSheet.create({
   defaultFontSize: {
     fontSize: defaultFontSize,
   },
-  calendarDiv: {
+  calendarDisplayDiv: {
     flexDirection: "row",
     justifyContent: "space-evenly",
     alignItems: "center",
     width: "100%",
-    backgroundColor: "cyan",
-  },
-  calendar: {
-    height: "40%",
+    height: "100%",
     borderWidth: 2,
     borderColor: "gray",
+    borderRadius: 10,
+  },
+  calendarDiv: {
+    flexDirection: "row",
+    justifyContent: "center",
+    width: "80%",
+  },
+  calendarDivOpen: {
+    width: "80%",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  calendarText: {
+    fontSize: defaultFontSize * 1.5,
+    fontWeight: "bold",
   },
   mealTypeSelection: fullWidthDisplayElement,
   mealDisplayText: {
@@ -37,11 +49,11 @@ export const mps = StyleSheet.create({
   mealTypeToggle: {
     flexDirection: "row",
     alignItems: "center",
-    width: "30%",
+    width: "40%",
   },
   addItemButton: {
     alignItems: "flex-end",
-    width: "30%",
+    width: "20%",
   },
   foodItemDisplayDiv: {
     margin: 6,
@@ -55,8 +67,7 @@ export const mps = StyleSheet.create({
     padding: 10,
   },
   foodItemDisplayContent: {
-    width: "60%",
-    padding: 5,
+    padding: 6,
     paddingStart: 10,
   },
   panelTitle: {
@@ -65,10 +76,12 @@ export const mps = StyleSheet.create({
     textDecorationLine: "underline",
   },
   detailPanel: {
-    height: "30%",
+    height: "40%",
     padding: 10,
-    borderColor: "black",
+    margin: 5,
     borderWidth: 2,
+    borderColor: "black",
+    borderRadius: 10,
     overflow: "visible",
   },
   nutritionContentDisplay: fullWidthDisplayElement,

@@ -63,12 +63,20 @@ function FoodItemDisplay(props: {
             <Entypo
               name="info-with-circle"
               size={mps.foodItemDisplayButton.fontSize}
-              color="black"
+              color="orange"
               onPress={displayItemDetails}
             />
           </View>
         )}
-        <View style={mps.foodItemDisplayContent}>
+        <View
+          style={[
+            {
+              width:
+                foodInputVisible || itemNutritionPanelVisible ? "100%" : "60%",
+            },
+            mps.foodItemDisplayContent,
+          ]}
+        >
           <Text style={mps.defaultFontSize}>{`${itemIndex}. ${foodName}`}</Text>
           <Text
             style={mps.defaultFontSize}
@@ -88,7 +96,7 @@ function FoodItemDisplay(props: {
               <AntDesign
                 name="delete"
                 size={mps.foodItemDisplayButton.fontSize}
-                color="black"
+                color={`#b22222`}
                 onPress={deleteFoodItem}
               />
             </View>

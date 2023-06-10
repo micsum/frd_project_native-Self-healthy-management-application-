@@ -96,7 +96,7 @@ function FoodItemEntryPanel(props: {
   };
 
   return (
-    <ScrollView style={mps.detailPanel}>
+    <ScrollView style={[{ minHeight: 250 }, mps.detailPanel]}>
       <View style={mps.foodItemInputDiv}>
         <Text style={mps.foodItemInputTitle}>{"Food Item Name : "}</Text>
         <TextInput

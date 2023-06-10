@@ -433,15 +433,30 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
 
   return (
     <Fragment>
-      <View style={[mps.mealTypeSelection, { height: "10%", marginBottom: 5 }]}>
+      <View style={[mps.mealTypeSelection, { height: "10%" }]}>
         <Text style={[mps.mealDisplayText, mps.defaultFontSize]}>
           Meal In Display :{" "}
         </Text>
         <View style={mps.mealTypeToggle}>
           <MealChangeButton indexChange={-1} />
-          <Text style={[mps.defaultFontSize, { fontWeight: "bold" }]}>
-            {mealTypeDisplayList[mealTypeList.indexOf(mealType)]}
-          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              width: "60%",
+            }}
+          >
+            <Text
+              style={[
+                mps.defaultFontSize,
+                {
+                  fontWeight: "bold",
+                },
+              ]}
+            >
+              {mealTypeDisplayList[mealTypeList.indexOf(mealType)]}
+            </Text>
+          </View>
           <MealChangeButton indexChange={1} />
         </View>
 
@@ -491,7 +506,7 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
           panelTitle={`Nutrition Content of ${
             itemNutritionPanelVisible
               ? nutritionDetail[0].name
-              : mealTypeDisplayList[mealType.indexOf(mealType)]
+              : mealTypeDisplayList[mealTypeList.indexOf(mealType)]
           }`}
           nutritionData={
             nutritionDetail.length === 0
