@@ -24,7 +24,7 @@ export class UserService {
     let dbResult = await query;
     if (dbResult.length === 1) {
       return {
-        error: 'User Existed. Please input another username / email',
+        error: 'User Existed.\n Please input another username / email.',
       };
     }
     return {};

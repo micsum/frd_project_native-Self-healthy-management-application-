@@ -13,17 +13,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller } from "react-hook-form";
 import { SignUpData } from "../utils/type";
 import DropDownPicker from "react-native-dropdown-picker";
-import axios from "axios";
+//import axios from "axios";
 import { NativeBaseProvider, ScrollView } from "native-base";
 import { Domain } from "@env";
 import {
   ALERT_TYPE,
   Dialog,
   AlertNotificationRoot,
-  Toast,
 } from "react-native-alert-notification";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { Login } from "./LoginPage";
+import { createStackNavigator } from "@react-navigation/stack";
 
-export const Register = () => {
+export const RegisterForm = () => {
+  const navigation=useNavigation()
   const {
     control,
     handleSubmit,
@@ -39,6 +42,11 @@ export const Register = () => {
       target: "",
     },
   });
+
+  const returnLogin = ()=>{
+    //@ts-ignore
+    navigation.navigate("Login")
+  }
 
   const onSubmit = async (signUpData: SignUpData) => {
     try {
@@ -70,6 +78,7 @@ export const Register = () => {
           title: "Success",
           textBody: response.message,
           button: "OK",
+          onPressButton: returnLogin
         });
         //console.log(response.message); //success registered
       }
@@ -315,3 +324,25 @@ export const Register = () => {
     </SafeAreaView>
   );
 };
+
+const Stack = createStackNavigator();
+export const Register = () => {
+  return (
+    <NavigationContainer>
+    <Stack.Navigator>
+        
+        <Stack.Screen
+        name="Register"
+        component={RegisterForm}
+        options={{
+          headerShown: false,
+        }}/>
+
+        <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          headerShown: false,
+        }}/>
+    </Stack.Navigator>
+    </NavigationContainer>)}

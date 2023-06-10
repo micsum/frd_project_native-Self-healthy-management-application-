@@ -21,7 +21,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('signUp')
-  @UsePipes(new ValidationPipe())
+   @UsePipes(new ValidationPipe())
   async create(@Body() createUserDto: CreateUserDto) {
     //console.log('body', createUserDto); //check bodydata
     try {
