@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Knex } from 'nestjs-knex';
+import { InjectKnex, Knex } from 'nestjs-knex';
 
 @Injectable()
 export class UserService {
   findAll() {
     throw new Error('Method not implemented.');
   }
-  constructor(private knex: Knex) {}
+  constructor(@InjectKnex() private knex: Knex) {}
 
   async create(createUserDto: CreateUserDto) {
     await this.knex('user').insert(createUserDto);

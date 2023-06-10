@@ -1,12 +1,16 @@
 // Buffer Line
 import { Fragment, useState, useMemo, useEffect } from "react";
 import { Provider } from "react-redux";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  SafeAreaProvider,
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { store } from "../store";
 import DateSelectionPanel from "../components/mealPageComponents/DateSelectionPanel";
 import MealTypeSelection from "../components/mealPageComponents/MealTypeSelection";
-import { FullItemInfo } from "../utils/type";
 import { fakeFoodNutritionData } from "../components/mealPageComponents/fakeFoodNutritionData";
+import { FullItemInfo } from "../utils/type";
 import { NativeBaseProvider } from "native-base";
 
 const MealPage: React.FC = () => {
@@ -27,14 +31,28 @@ const MealPage: React.FC = () => {
     updateMealData();
   }, [date]);
 
+  const selectNewDate = (date: Date) => {
+    console.log(date);
+    updateSelectedDate(() => {
+      return date;
+    });
+  };
+
   return (
     <SafeAreaProvider>
       <NativeBaseProvider>
         <Provider store={store}>
-          {/* <DateSelectionPanel date={date} selectNewDate={updateSelectedDate} /> */}
-          <MealTypeSelection
-            foodItemFullInfo={dateMealData}
-          ></MealTypeSelection>
+          <SafeAreaView
+            style={{
+              paddingTop: useSafeAreaInsets().top,
+              paddingBottom: useSafeAreaInsets().bottom,
+            }}
+          >
+            <DateSelectionPanel date={date} selectNewDate={selectNewDate} />
+            <MealTypeSelection
+              foodItemFullInfo={dateMealData}
+            ></MealTypeSelection>
+          </SafeAreaView>
         </Provider>
       </NativeBaseProvider>
     </SafeAreaProvider>

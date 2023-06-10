@@ -10,6 +10,7 @@
   "dependencies": {
     "@expo/webpack-config": "^18.0.1",
     "@kilohealth/rn-fitness-tracker": "^3.1.0",
+    "@mohalla-tech/react-native-date-time-picker": "^2.0.1",
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/material-bottom-tabs": "^6.2.15",
     "@react-navigation/native": "^6.1.6",
@@ -28,7 +29,6 @@
     "native-base": "^3.4.28",
     "nativewind": "^2.0.11",
     "react": "18.2.0",
-    "react-calendar": "^4.2.1",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.44.3",
     "react-native": "0.71.8",

@@ -1,6 +1,6 @@
 // Buffer Line
 import { Fragment, useState, useRef, useEffect } from "react";
-import { View, Text, Button, TextInput } from "react-native";
+import { View, Text, Button, TextInput, ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
 import { action, AppDispatch } from "../../store";
 import { FoodItemBasicInfo, mealIDObject } from "../../utils/type";
@@ -68,18 +68,19 @@ function FoodItemEntryPanel(props: {
     updateMealData(formItemInfo);
   };
 
-  const enterItemName = (event: any) => {
+  const enterItemName = (text: string) => {
     foodItemInfo.current = {
       ...foodItemInfo.current,
-      foodName: event.target.value,
+      foodName: text,
     };
   };
 
-  const enterItemServingSize = (event: any) => {
+  const enterItemServingSize = (text: string) => {
     foodItemInfo.current = {
       ...foodItemInfo.current,
-      servingSize: parseFloat(event.target.value),
+      servingSize: parseFloat(text),
     };
+    console.log(foodItemInfo.current.servingSize);
   };
 
   const changeSelectedUnit = () => {
@@ -95,14 +96,13 @@ function FoodItemEntryPanel(props: {
   };
 
   return (
-    <View style={mps.detailPanel}>
+    <ScrollView style={mps.detailPanel}>
       <View style={mps.foodItemInputDiv}>
         <Text style={mps.foodItemInputTitle}>{"Food Item Name : "}</Text>
         <TextInput
-          value={foodName}
           placeholder="Enter Food Item Name Here"
           defaultValue={foodName}
-          onChange={enterItemName}
+          onChangeText={enterItemName}
           style={mps.foodItemInput}
         />
       </View>
@@ -110,10 +110,10 @@ function FoodItemEntryPanel(props: {
         <View style={mps.servingSizeInput}>
           <Text style={mps.foodItemInputTitle}>{"Serving Size : "}</Text>
           <TextInput
-            value={servingSize.toString()}
             placeholder="Enter Food Item Quantity / Weight Here"
+            keyboardType="numeric"
             defaultValue={servingSize.toString()}
-            onChange={enterItemServingSize}
+            onChangeText={enterItemServingSize}
             style={mps.foodItemInput}
           />
         </View>
@@ -156,7 +156,7 @@ function FoodItemEntryPanel(props: {
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

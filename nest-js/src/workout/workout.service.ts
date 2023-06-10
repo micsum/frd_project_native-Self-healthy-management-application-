@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Page, chromium } from 'playwright';
-import { InjectKnex, Knex } from 'nestjs-knex';
+import { InjectKnex , Knex} from 'nestjs-knex';
 import debug from 'debug';
 
 let log = debug('workout.service.ts');

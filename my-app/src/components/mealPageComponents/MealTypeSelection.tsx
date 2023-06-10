@@ -432,7 +432,7 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
   };
 
   return (
-    <SafeAreaView style={{ paddingTop: useSafeAreaInsets().top }}>
+    <Fragment>
       <View style={[mps.mealTypeSelection, { height: "10%", marginBottom: 5 }]}>
         <Text style={[mps.mealDisplayText, mps.defaultFontSize]}>
           Meal In Display :{" "}
@@ -452,9 +452,15 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
         )}
       </View>
       <ScrollView style={foodItemDisplayHeight}>
-        <View>
+        <View
+          style={{
+            alignItems: "center",
+          }}
+        >
           {mealDisplay.length === 0 ? (
-            <Text>{"** No Items Consumed **"}</Text>
+            <Text style={mps.foodItemInputTitle}>
+              {"** No Items Consumed **"}
+            </Text>
           ) : (
             mealDisplay.map((foodItem: FormattedFoodItemInfo) => {
               const itemIndex = mealDisplay.indexOf(foodItem) + 1;
@@ -497,7 +503,7 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
           showNutritionDetail={updateNutritionDisplayDetail}
         />
       )}
-    </SafeAreaView>
+    </Fragment>
   );
 }
 

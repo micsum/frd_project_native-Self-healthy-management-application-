@@ -10,12 +10,24 @@ const fullWidthDisplayElement: ViewStyle = {
 
 const defaultFontSize = 20;
 export const foodItemDisplayHeight = {
-  height: "30%",
+  height: "20%",
 };
 
 export const mps = StyleSheet.create({
   defaultFontSize: {
     fontSize: defaultFontSize,
+  },
+  calendarDiv: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    width: "100%",
+    backgroundColor: "cyan",
+  },
+  calendar: {
+    height: "40%",
+    borderWidth: 2,
+    borderColor: "gray",
   },
   mealTypeSelection: fullWidthDisplayElement,
   mealDisplayText: {
@@ -53,7 +65,7 @@ export const mps = StyleSheet.create({
     textDecorationLine: "underline",
   },
   detailPanel: {
-    height: "40%",
+    height: "30%",
     padding: 10,
     borderColor: "black",
     borderWidth: 2,
