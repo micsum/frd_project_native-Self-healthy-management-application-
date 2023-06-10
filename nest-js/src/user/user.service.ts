@@ -11,9 +11,7 @@ export class UserService {
   async create(createUserDto: CreateUserDto) {
     //console.log('new', createUserDto); check the confirm password drop
 
-    await this.knex('user').insert({
-      createUserDto,
-    });
+    await this.knex('user').insert(createUserDto);
     return 'Successfully registered';
   }
 
@@ -26,7 +24,7 @@ export class UserService {
     let dbResult = await query;
     if (dbResult.length === 1) {
       return {
-        error: 'User Existed',
+        error: 'User Existed. Please input another username / email',
       };
     }
     return {};
