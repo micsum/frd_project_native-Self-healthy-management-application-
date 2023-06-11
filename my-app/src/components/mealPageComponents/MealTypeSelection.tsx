@@ -27,6 +27,7 @@ import NutritionDetailPanel from "./NutritionDetailDisplay";
 import { foodItemDisplayHeight, mps } from "./mealPageComponentStyleSheet";
 import { AntDesign } from "@expo/vector-icons";
 import { createFakeFoodObject } from "./fakeFoodNutritionData";
+import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 
 function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
   const { foodItemFullInfo } = props;
@@ -403,9 +404,29 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
     dispatch(action("foodItemInfo", {}));
   };
 
-  const removeMealItem = (removedItem: FoodItemBasicInfo) => {
+  const removeMealItem = async (removedItem: FoodItemBasicInfo) => {
+    const res = await fetch(`${""}/mealItem`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(removedItem),
+    });
+    const result = await res.json();
+    if (result.error) {
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: result.error,
+        autoClose: 1500,
+      });
+    }
     updateChanges(() => {
       return [...changes, { info: removedItem, method: "delete" }];
+    });
+    Dialog.show({
+      type: ALERT_TYPE.SUCCESS,
+      title: `Successfully Removed ${removedItem.foodName}`,
+      button: "OK",
     });
   };
 
