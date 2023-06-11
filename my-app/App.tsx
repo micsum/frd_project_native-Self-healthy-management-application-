@@ -8,13 +8,17 @@ import { Login } from "./src/screens/LoginPage";
 import { WelcomeScreen } from "./src/screens/WelcomePage";
 import { Register } from "./src/screens/RegisterPage";
 import { MealScreen } from "./src/screens/MealPage";
+import { Provider } from "react-redux";
+import { store } from "./src/store";
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      {/* <WelcomeScreen></WelcomeScreen> */}
-      <Register />
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        {/* <WelcomeScreen></WelcomeScreen> */}
+        <Login />
+      </SafeAreaProvider>
+    </Provider>
   );
 }
 

@@ -10,6 +10,14 @@ export class JWTService {
   }
 
   decodedJWT(token: string) {
-    return jwt.verify(token, env.JWT_SECRET);
+    if (!token) {
+      return { error: 'empty jwt token' };
+    }
+
+    try {
+      return jwt.verify(token, env.JWT_SECRET);
+    } catch (error) {
+      return { error };
+    }
   }
 }
