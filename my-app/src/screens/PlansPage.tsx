@@ -1,30 +1,54 @@
 import { View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, Button, Box, NativeBaseProvider, ScrollView } from "native-base";
 import { PlanItem } from "../components/plansPageComponents/planItem";
 import { PlanSelect } from "../components/plansPageComponents/planSelect";
 import { createStackNavigator } from "@react-navigation/stack";
 import { PlanDetailScreen } from "./PlansDetailPage";
+import { Domain } from "@env";
 
 export function PlansHomeScreen() {
   const [plans, setPlans] = useState<any[]>([
-    {
-      id: 1,
-      image:
-        "https://www.holidify.com/images/cmsuploads/compressed/Bangalore_citycover_20190613234056.jpg",
-      title: "8 Week Mass Building Hypertrophy Workout",
-      introduction:
-        "This 4-day program will help intermediate and advanced trainees gain size and strength. Rest-pause set, drop sets, and negatives will kick your muscle gains into high gear!",
-    },
-    {
-      id: 2,
-      image:
-        "https://www.holidify.com/images/cmsuploads/compressed/Bangalore_citycover_20190613234056.jpg",
-      title: "8 Week Mass Building Hypertrophy Workout",
-      introduction:
-        "This 4-day program will help intermediate and advanced trainees gain size and strength. Rest-pause set, drop sets, and negatives will kick your muscle gains into high gear!",
-    },
+    // {
+    //   id: 1,
+    //   image:
+    //     "https://www.holidify.com/images/cmsuploads/compressed/Bangalore_citycover_20190613234056.jpg",
+    //   title: "8 Week Mass Building Hypertrophy Workout",
+    //   introduction:
+    //     "This 4-day program will help intermediate and advanced trainees gain size and strength. Rest-pause set, drop sets, and negatives will kick your muscle gains into high gear!",
+    // },
+    // {
+    //   id: 2,
+    //   image:
+    //     "https://www.holidify.com/images/cmsuploads/compressed/Bangalore_citycover_20190613234056.jpg",
+    //   title: "8 Week Mass Building Hypertrophy Workout",
+    //   introduction:
+    //     "This 4-day program will help intermediate and advanced trainees gain size and strength. Rest-pause set, drop sets, and negatives will kick your muscle gains into high gear!",
+    // },
   ]);
+  // useEffect(() => {
+  //   const fetchMealData = async () => {
+  //     let res = await fetch(`${Domain}/meal`);
+  //     let mealplan_data = await res.json();
+  //     console.log(mealplan_data);
+
+  //   };
+  //   fetchMealData();
+  // }, []);
+
+  useEffect(() => {
+    const fetchWorkoutData = async () => {
+      let res = await fetch(`${Domain}/workout`);
+      let workout_data = await res.json();
+      console.log(workout_data);
+
+      setPlans(() => {
+        return workout_data;
+      });
+    };
+    fetchWorkoutData();
+  }, []);
+
   return (
     <ScrollView>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -32,10 +56,10 @@ export function PlansHomeScreen() {
         <PlanSelect />
         {plans.map((plan) => (
           <PlanItem
-            image={plan.image}
+            image={plan.cover_image}
             title={plan.title}
             id={plan.id}
-            introduction={plan.introduction}
+            introduction={"plan.introduction"}
           />
         ))}
 

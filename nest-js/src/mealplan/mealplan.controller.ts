@@ -7,6 +7,7 @@ export class MealPlanController {
 
   @Get()
   getMealPlanList() {
+    console.log('received the request');
     return this.mealplanService.getMealPlanList();
   }
 

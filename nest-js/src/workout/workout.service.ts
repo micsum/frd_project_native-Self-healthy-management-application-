@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Page, chromium } from 'playwright';
-import { InjectKnex , Knex} from 'nestjs-knex';
+import { InjectKnex, Knex } from 'nestjs-knex';
 import debug from 'debug';
 
 let log = debug('workout.service.ts');
@@ -15,16 +15,17 @@ export class WorkoutService {
       'id',
       'title',
       'cover_image',
+      'href',
     );
     for (let workout of workouts) {
       let days = await this.knex('workout_day')
-        .select('id', 'title', 'headers', 'rows')
+        .select('id', 'workout_id', 'title', 'headers', 'rows')
         .where({
           workout_id: workout.id,
         });
       workout.days = days;
     }
-    return { workouts };
+    return workouts;
   }
 
   async scrapWorkoutList() {
@@ -89,6 +90,9 @@ export class WorkoutService {
         let workout_id = row.id;
 
         await knex('workout_day').where({ workout_id }).delete();
+        if (days.length === 0) {
+          await knex('workout').where({ id: workout_id }).delete();
+        }
 
         for (let day of days) {
           await knex('workout_day').insert({

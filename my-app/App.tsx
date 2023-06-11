@@ -8,12 +8,17 @@ import { Login } from "./src/screens/LoginPage";
 import { WelcomeScreen } from "./src/screens/WelcomePage";
 import { Register } from "./src/screens/RegisterPage";
 import { MealScreen } from "./src/screens/MealPage";
+import { PlansScreen } from "./src/screens/PlansPage";
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      {/* <WelcomeScreen></WelcomeScreen> */}
-      <Register />
+      <NativeBaseProvider>
+        <NavigationContainer>
+          {/* <WelcomeScreen></WelcomeScreen> */}
+          <PlansScreen />
+        </NavigationContainer>
+      </NativeBaseProvider>
     </SafeAreaProvider>
   );
 }
