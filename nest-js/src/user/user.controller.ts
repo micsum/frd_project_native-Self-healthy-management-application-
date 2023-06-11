@@ -42,10 +42,14 @@ export class UserController {
 
   @Post('login')
   findAll(@Body() LoginData: LoginData) {
-    this.userService.findAll();
+    try{this.userService.findAll(LoginData);
     // console.log(LoginData); test LoginData
-    return { success: true }; //res.json
-  }
+    return { success: "true" }; //res.json}
+    
+  }catch(error){
+    console.error("dbServer",error)
+    return {error:'Server Erro'}
+  }}
 
   @Get(':id')
   findOne(@Param('id') id: string) {
