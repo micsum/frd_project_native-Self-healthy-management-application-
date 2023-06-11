@@ -26,6 +26,9 @@ export class CreateUserDto {
 
   @IsString()
   target: string;
+
+  @IsNotEmpty()
+  @IsString()
   username: string;
 }
 

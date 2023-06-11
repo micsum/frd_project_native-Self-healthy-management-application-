@@ -99,3 +99,7 @@ export type SignUpData = {
   height: string;
   target: string;
 };
+
+export type ForgotPwEmail = {
+  email: string;
+};

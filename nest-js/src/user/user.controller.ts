@@ -12,7 +12,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 //import { UpdateUserDto } from './dto/update-user.dto';
-import { LoginData, SignUpData } from 'type';
+import { LoginData } from './dto/login-user.dto';
 import { hashPassword } from 'hash';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -21,7 +21,6 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('signUp')
-   @UsePipes(new ValidationPipe())
   async create(@Body() createUserDto: CreateUserDto) {
     //console.log('body', createUserDto); //check bodydata
     try {
@@ -35,21 +34,21 @@ export class UserController {
       await this.userService.create(createUserDto);
       return { message: 'Successfully registered' };
     } catch (error) {
-      console.error('dtoDbcheck', error); //check dto or db error
+      console.error('dtoDbCheck', error); //check dto or db error
       return { error: 'Server Error' };
     }
   }
 
   @Post('login')
   findAll(@Body() LoginData: LoginData) {
-    try{this.userService.findAll(LoginData);
-    // console.log(LoginData); test LoginData
-    return { success: "true" }; //res.json}
-    
-  }catch(error){
-    console.error("dbServer",error)
-    return {error:'Server Erro'}
-  }}
+    try {
+      //console.log(LoginData); //test LoginData
+      return this.userService.findAll(LoginData);
+    } catch (error) {
+      console.error('dbServer', error);
+      return { error: 'Server Error' };
+    }
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

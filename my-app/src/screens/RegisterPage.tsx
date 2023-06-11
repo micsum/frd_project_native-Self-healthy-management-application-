@@ -26,7 +26,7 @@ import { Login } from "./LoginPage";
 import { createStackNavigator } from "@react-navigation/stack";
 
 export const RegisterForm = () => {
-  const navigation=useNavigation()
+  const navigation = useNavigation();
   const {
     control,
     handleSubmit,
@@ -43,10 +43,10 @@ export const RegisterForm = () => {
     },
   });
 
-  const returnLogin = ()=>{
+  const returnLogin = () => {
     //@ts-ignore
-    navigation.navigate("Login")
-  }
+    navigation.navigate("Login");
+  };
 
   const onSubmit = async (signUpData: SignUpData) => {
     try {
@@ -78,7 +78,7 @@ export const RegisterForm = () => {
           title: "Success",
           textBody: response.message,
           button: "OK",
-          onPressButton: returnLogin
+          onPressButton: returnLogin,
         });
         //console.log(response.message); //success registered
       }
@@ -329,20 +329,23 @@ const Stack = createStackNavigator();
 export const Register = () => {
   return (
     <NavigationContainer>
-    <Stack.Navigator>
-        
+      <Stack.Navigator>
         <Stack.Screen
-        name="Register"
-        component={RegisterForm}
-        options={{
-          headerShown: false,
-        }}/>
+          name="Register"
+          component={RegisterForm}
+          options={{
+            headerShown: false,
+          }}
+        />
 
         <Stack.Screen
-        name="Login"
-        component={Login}
-        options={{
-          headerShown: false,
-        }}/>
-    </Stack.Navigator>
-    </NavigationContainer>)}
+          name="Login"
+          component={Login}
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};

@@ -2,13 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectKnex, Knex } from 'nestjs-knex';
-import { LoginData } from 'type';
+import { LoginData } from './dto/login-user.dto';
 import { checkPassword } from 'hash';
+import { JWTService } from 'src/jwt/jwt.service';
 
 @Injectable()
 export class UserService {
-  //@ts-ignore
-  constructor(@InjectKnex() private knex: Knex) {}
+  constructor(
+    //@ts-ignore
+    @InjectKnex() private knex: Knex,
+    private jwtService: JWTService,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     //console.log('new', createUserDto); check the confirm password drop
@@ -32,25 +36,28 @@ export class UserService {
     return {};
   }
 
-  async findAll(LoginData:LoginData) {
-    const inputPassword = LoginData.password
-    let query = this.knex('user')
+  async findAll(LoginData: LoginData) {
+    const inputPassword = LoginData.password;
+    let dbResult = await this.knex('user')
       .select('*')
-      .where({ email: LoginData.email })
+      .where({ email: LoginData.email });
 
-    let dbResult = await query;
-    let dbPassword = dbResult[0].password
     if (dbResult.length === 0) {
       return {
-        error: 'User Not Exist.\n Please input correct email.',
+        error: 'User does not exist.\n Please input correct email.',
       };
     }
-    await checkPassword(inputPassword, dbPassword)?{success:
-    "success"}:{error:"Wrong Password"}
+
+    let dbPassword = dbResult[0].password;
+    let id = dbResult[0].id;
+    let email = dbResult[0].email;
+    let payload = { email, id };
+
+    return (await checkPassword(inputPassword, dbPassword))
+      ? { token: this.jwtService.encodeJWT(payload) }
+      : { error: 'Wrong Password' };
   }
 
-
-  
   findOne(id: number) {
     return `This action returns a #${id} user`;
   }

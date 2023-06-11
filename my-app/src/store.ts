@@ -7,6 +7,7 @@ export interface RootState {
   foodInputPanelOpen: boolean;
   itemNutritionPanelOpen: boolean;
   foodItemInConsideration: FoodItemBasicInfo | undefined;
+  token: string | null;
 }
 
 export function action(actionType: string, properties: ObjectAny) {
@@ -39,6 +40,15 @@ export function action(actionType: string, properties: ObjectAny) {
     };
   };
 
+  const storeToken = (token: string | null) => {
+    return {
+      type: "storeToken" as const,
+      payload: {
+        token,
+      },
+    };
+  };
+
   switch (actionType) {
     case "foodPanelVisibility":
       return setFoodInputPanelVisibility(properties.visible);
@@ -46,6 +56,8 @@ export function action(actionType: string, properties: ObjectAny) {
       return setNutritionDetailPanelVisibility(properties.visible);
     case "foodItemInfo":
       return updateFoodItemInConsideration(properties.foodItem);
+    case "storeToken":
+      return storeToken(properties.token);
 
     default:
       return { type: null, payload: null };
@@ -58,6 +70,7 @@ const initState: RootState = {
   foodInputPanelOpen: false,
   itemNutritionPanelOpen: false,
   foodItemInConsideration: undefined,
+  token: null,
 };
 
 const rootReducer = produce((draft = initState, action: IRootAction) => {
@@ -75,6 +88,11 @@ const rootReducer = produce((draft = initState, action: IRootAction) => {
     case "updateFoodItemInConsideration": {
       const { foodItem } = action.payload || undefined;
       draft.foodItemInConsideration = foodItem;
+      return draft;
+    }
+    case "storeToken": {
+      const { token } = action.payload;
+      draft.token = token;
       return draft;
     }
     default:
