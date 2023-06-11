@@ -4,7 +4,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Put,
   Param,
   Delete,
@@ -29,8 +28,13 @@ export class MealItemController {
   @Post()
   @UsePipes(new ValidationPipe())
   async addNewItem(@Body() foodItemBasicInfo: CreateMealItemDto) {
-    console.log(foodItemBasicInfo);
-    return {};
+    console.log('controller', foodItemBasicInfo);
+    try {
+      return await this.mealItemService.createNewItem(foodItemBasicInfo);
+    } catch (error) {
+      console.log(error);
+      return { error: 'Server Error' };
+    }
   }
 
   @Put()
@@ -43,7 +47,12 @@ export class MealItemController {
   @Delete()
   @UsePipes(new ValidationPipe())
   async deleteItem(@Body() foodItemBasicInfo: CreateMealItemDto) {
-    console.log(foodItemBasicInfo);
-    return {};
+    console.log('controller', foodItemBasicInfo);
+    try {
+      return await this.mealItemService.deleteExistingItem(foodItemBasicInfo);
+    } catch (error) {
+      console.log(error);
+      return { error: 'Server Error' };
+    }
   }
 }

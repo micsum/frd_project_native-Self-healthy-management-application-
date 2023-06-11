@@ -20,6 +20,7 @@ let knexProfile = knexConfig[env.NODE_ENV];
     UserModule,
     WorkoutModule,
     MealPlanModule,
+    MealItemModule,
     KnexModule.forRootAsync({
       useFactory: () => ({
         config: knexProfile,

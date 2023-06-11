@@ -11,11 +11,7 @@ export class CreateMealItemDto {
   meal_id: number;
 
   @IsNotEmpty()
-  @IsEnum({
-    enum: {
-      mealType: ['breakfast', 'lunch', 'dinner', 'snack'],
-    },
-  })
+  @IsEnum(['breakfast', 'lunch', 'dinner', 'snack'])
   meal_time: string;
 
   @IsNotEmpty()
@@ -28,6 +24,6 @@ export class CreateMealItemDto {
   servingSize: number;
 
   @IsNotEmpty()
-  @IsEnum({ enum: { units: ['g', 'kg', 'lb'] } })
+  @IsEnum(['g', 'kg', 'lb'])
   sizeUnit: string;
 }
