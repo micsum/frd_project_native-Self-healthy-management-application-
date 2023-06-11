@@ -58,7 +58,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
   },
   {
     id: 3,
-    meal_id: 1,
+    meal_id: 2,
     meal_time: "lunch",
     name: "pasta",
     calories: 467.9,
@@ -76,7 +76,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
   },
   {
     id: 4,
-    meal_id: 1,
+    meal_id: 2,
     meal_time: "lunch",
     name: "pork",
     calories: 472.3,
@@ -94,7 +94,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
   },
   {
     id: 5,
-    meal_id: 1,
+    meal_id: 2,
     meal_time: "lunch",
     name: "broccoli",
     calories: 69.9,
@@ -112,7 +112,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
   },
   {
     id: 6,
-    meal_id: 1,
+    meal_id: 3,
     meal_time: "dinner",
     name: "rice",
     calories: 382.2,
@@ -130,7 +130,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
   },
   {
     id: 7,
-    meal_id: 1,
+    meal_id: 3,
     meal_time: "dinner",
     name: "beef",
     calories: 583.8,
@@ -148,7 +148,7 @@ export const fakeFoodNutritionData: FullItemInfo[] = [
   },
   {
     id: 8,
-    meal_id: 1,
+    meal_id: 3,
     meal_time: "dinner",
     name: "carrot",
     calories: 50.9,

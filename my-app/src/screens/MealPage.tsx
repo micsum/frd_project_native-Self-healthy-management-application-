@@ -12,6 +12,7 @@ import MealTypeSelection from "../components/mealPageComponents/MealTypeSelectio
 import { fakeFoodNutritionData } from "../components/mealPageComponents/fakeFoodNutritionData";
 import { FullItemInfo } from "../utils/type";
 import { NativeBaseProvider } from "native-base";
+import { AlertNotificationRoot } from "react-native-alert-notification";
 
 const MealPage: React.FC = () => {
   const [date, updateSelectedDate] = useState<Date>(new Date());
@@ -42,17 +43,19 @@ const MealPage: React.FC = () => {
     <SafeAreaProvider>
       <NativeBaseProvider>
         <Provider store={store}>
-          <SafeAreaView
-            style={{
-              paddingTop: useSafeAreaInsets().top,
-              paddingBottom: useSafeAreaInsets().bottom,
-            }}
-          >
-            <DateSelectionPanel date={date} selectNewDate={selectNewDate} />
-            <MealTypeSelection
-              foodItemFullInfo={dateMealData}
-            ></MealTypeSelection>
-          </SafeAreaView>
+          <AlertNotificationRoot>
+            <SafeAreaView
+              style={{
+                paddingTop: useSafeAreaInsets().top,
+                paddingBottom: useSafeAreaInsets().bottom,
+              }}
+            >
+              <DateSelectionPanel date={date} selectNewDate={selectNewDate} />
+              <MealTypeSelection
+                foodItemFullInfo={dateMealData}
+              ></MealTypeSelection>
+            </SafeAreaView>
+          </AlertNotificationRoot>
         </Provider>
       </NativeBaseProvider>
     </SafeAreaProvider>

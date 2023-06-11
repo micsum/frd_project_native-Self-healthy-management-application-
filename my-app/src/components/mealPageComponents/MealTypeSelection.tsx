@@ -298,6 +298,22 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
         }
       );
     }
+
+    for (let mealTypeItemArray of newVariables) {
+      if (mealTypeItemArray.length === 0) {
+        continue;
+      }
+      let currentMealType =
+        mealTypeList[newVariables.indexOf(mealTypeItemArray)];
+      let currentMealID = mealTypeItemArray[0].basicInfo.meal_id;
+      if (currentMealID !== -1) {
+        mealID.current = {
+          ...mealID.current,
+          [currentMealType]: currentMealID,
+        };
+      }
+    }
+
     [breakfast, lunch, dinner, snack] = newVariables;
     return { breakfast, lunch, dinner, snack };
   }, []);

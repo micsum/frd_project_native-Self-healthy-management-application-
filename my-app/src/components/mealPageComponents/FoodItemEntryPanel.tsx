@@ -6,6 +6,7 @@ import { action, AppDispatch } from "../../store";
 import { FoodItemBasicInfo, mealIDObject } from "../../utils/type";
 import { mps } from "./mealPageComponentStyleSheet";
 import { FontAwesome } from "@expo/vector-icons";
+import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 
 function FoodItemEntryPanel(props: {
   foodItem?: FoodItemBasicInfo;
@@ -54,15 +55,30 @@ function FoodItemEntryPanel(props: {
       formItemInfo.servingSize === foodItem?.servingSize &&
       formItemInfo.sizeUnit === foodItem?.sizeUnit
     ) {
-      console.log("No Changes Detected");
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: "No Changes Detected",
+        textBody: 'Press "Cancel" to cancel the edit',
+        autoClose: 1500,
+      });
       return;
     }
 
     if (formItemInfo.foodName === "") {
-      console.log("missing item name");
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Missing Item Name",
+        textBody: "Please Input a Name for the Item",
+        autoClose: 1800,
+      });
       return;
     } else if (formItemInfo.servingSize <= 0) {
-      console.log("Inappropriate Quantity Submitted");
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Inappropriate Quantity Submitted",
+        textBody: "Please Input an appropriate quantity for the Item",
+        autoClose: 1800,
+      });
       return;
     }
     updateMealData(formItemInfo);
