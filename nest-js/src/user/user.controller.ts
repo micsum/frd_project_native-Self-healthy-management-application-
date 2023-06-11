@@ -21,7 +21,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('signUp')
-  @UsePipes(new ValidationPipe())
+   @UsePipes(new ValidationPipe())
   async create(@Body() createUserDto: CreateUserDto) {
     //console.log('body', createUserDto); //check bodydata
     try {
@@ -42,10 +42,14 @@ export class UserController {
 
   @Post('login')
   findAll(@Body() LoginData: LoginData) {
-    this.userService.findAll();
+    try{this.userService.findAll(LoginData);
     // console.log(LoginData); test LoginData
-    return { success: true }; //res.json
-  }
+    return { success: "true" }; //res.json}
+    
+  }catch(error){
+    console.error("dbServer",error)
+    return {error:'Server Erro'}
+  }}
 
   @Get(':id')
   findOne(@Param('id') id: string) {

@@ -4,8 +4,8 @@ export type JWTPayload = {
 };
 
 export interface LoginData {
-  email: String;
-  password: String;
+  email: string;
+  password: string;
 }
 
 export type SignUpData = {

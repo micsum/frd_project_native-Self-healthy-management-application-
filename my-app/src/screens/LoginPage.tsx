@@ -37,9 +37,12 @@ export const Login = () => {
     <SafeAreaView className="flex-1 items-center justify-center bg-[#38668E]">
       <View className="p-8 w-full max-w-sm">
         <Text className="text-5xl font-bold mb-6 text-white">Login</Text>
-        <Controller
+        {errors.email && (
+                  <Text className="text-red-400">{errors.email.message}</Text>
+                )}
+        <Controller 
           control={control}
-          rules={{ required: true }}
+          rules={{ required: "Email is required" }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               keyboardType="email-address"
