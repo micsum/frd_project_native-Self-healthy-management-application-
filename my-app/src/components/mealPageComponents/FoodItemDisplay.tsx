@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { action, AppDispatch, store } from "../../store";
 import { mps } from "./mealPageComponentStyleSheet";
 import { Entypo, AntDesign } from "@expo/vector-icons";
+import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 
 function FoodItemDisplay(props: {
   itemIndex: number;
@@ -52,7 +53,20 @@ function FoodItemDisplay(props: {
   };
 
   const deleteFoodItem = () => {
-    removeMealItem(foodItemBasicInfo);
+    Dialog.show({
+      type: ALERT_TYPE.DANGER,
+      title: `Delete ${foodName} ?`,
+      textBody: `(Click Outside the Warning to CANCEL)`,
+      button: "Confirm",
+      onPressButton: () => {
+        removeMealItem(foodItemBasicInfo);
+        Dialog.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: `Successfully Removed ${foodName}`,
+          button: "OK",
+        });
+      },
+    });
   };
 
   return (

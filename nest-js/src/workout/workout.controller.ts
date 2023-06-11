@@ -7,6 +7,7 @@ export class WorkoutController {
 
   @Get()
   getWorkoutList() {
+    console.log('received the request');
     return this.workoutService.getWorkoutList();
   }
 

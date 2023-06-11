@@ -9,6 +9,7 @@ import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
 import { env } from '../env';
 import { MealPlanModule } from './mealplan/mealplan.module';
+import { MealItemModule } from './meal-item/meal-item.module';
 
 let knexConfig = require('../knexfile');
 let knexProfile = knexConfig[env.NODE_ENV];
@@ -19,11 +20,13 @@ let knexProfile = knexConfig[env.NODE_ENV];
     UserModule,
     WorkoutModule,
     MealPlanModule,
+    MealItemModule,
     KnexModule.forRootAsync({
       useFactory: () => ({
         config: knexProfile,
       }),
     }),
+    MealItemModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -38,7 +38,6 @@ export class MealPlanService {
       'title',
       'cover_image',
     );
-    console.log(mealplans);
     for (let mealplan_day of mealplans) {
       let days = await this.knex('mealplan_day')
         .select('id', 'mealplan_id', 'name', 'cover_image')
@@ -47,6 +46,7 @@ export class MealPlanService {
         });
       mealplan_day.days = days;
     }
+    //ask beeno how to retrieve contents
 
     return { mealplans };
   }
@@ -110,7 +110,6 @@ export class MealPlanService {
             })
             .returning('id');
         }
-        // console.log(row);
 
         let mealplan_id = row.id;
 
@@ -132,7 +131,6 @@ export class MealPlanService {
           await knex('mealplan').where({ id }).delete();
         }
 
-        //   // console.log({ meal });
         let days = await this.scrapMealPlanDetail(page, href, id);
 
         console.dir(days, { depth: 20 });
@@ -144,8 +142,6 @@ export class MealPlanService {
           return;
         }
         for (let day of days) {
-          // console.log(day.name);
-
           if (day.meals.length === 0) {
             await deleteAll();
             return;
@@ -262,7 +258,6 @@ export class MealPlanService {
       return days;
     });
     return mealPlan;
-    // console.dir(mealPlan, { depth: 20 });
     // throw new Error('todo');
   }
 }
