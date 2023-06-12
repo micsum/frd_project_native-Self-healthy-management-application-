@@ -11,12 +11,9 @@ export class WorkoutService {
   constructor(@InjectKnex() private knex: Knex) {}
   async getWorkoutList() {
     log('get workout plans');
-    let workouts = await this.knex('workout').select(
-      'id',
-      'title',
-      'cover_image',
-      'href',
-    );
+    let workouts = await this.knex('workout')
+      .select('id', 'title', 'cover_image', 'href')
+      .limit(10);
     for (let workout of workouts) {
       let days = await this.knex('workout_day')
         .select('id', 'workout_id', 'title', 'headers', 'rows')

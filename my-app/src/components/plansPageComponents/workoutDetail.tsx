@@ -1,7 +1,8 @@
 import { Domain } from "@env";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Table, Row, Rows } from "react-native-table-component";
 
-export function PlanDetailItem() {
+export function WorkoutDetailItem() {
   useEffect(() => {
     const fetchWorkoutData = async () => {
       console.log("123");
@@ -11,6 +12,31 @@ export function PlanDetailItem() {
     };
     fetchWorkoutData();
   }, []);
+  const [tableHead, setTableHead] = useState<string[]>([
+    "Exercise",
+    "Sets",
+    "Reps",
+  ]);
 
-  return <></>;
+  const [tableData, setTableData] = useState<any>([
+    ["Bench Press - Power", "2-4", "3 to 5"],
+    ["Incline Bench Press  - Muscle", "2-3", "6 to 12"],
+    ["Dumbbell Bench Press - Muscle", "2-3", "6 to 12"],
+    ["Dumbbell Flys - Burn", "1", "40"],
+    ["Closegrip Bench Press - Power", "2", "3 to 5"],
+    ["Seated French Press  - Muscle", "2", "6 to 12"],
+    ["Cable Tricep Extension - Burn", "1", "40"],
+  ]);
+  return (
+    <>
+      <Table borderStyle={{ borderWidth: 2, borderColor: "#c8e1ff" }}>
+        <Row
+          data={tableHead}
+          // style={styles.head}
+          // textStyle={styles.text}
+        />
+        <Rows data={tableData} />
+      </Table>
+    </>
+  );
 }

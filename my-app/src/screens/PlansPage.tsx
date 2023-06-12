@@ -6,6 +6,7 @@ import { PlanSelect } from "../components/plansPageComponents/planSelect";
 import { createStackNavigator } from "@react-navigation/stack";
 import { PlanDetailScreen } from "./PlansDetailPage";
 import { Domain } from "@env";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export function PlansHomeScreen() {
   const [plans, setPlans] = useState<any[]>([
@@ -51,25 +52,33 @@ export function PlansHomeScreen() {
   }, []);
 
   return (
-    <ScrollView>
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Please choose your workout plan or diet plan!</Text>
-        {/* <PlanSelect /> */}
-        {plans.map((plan) => (
-          <PlanItem
-            type={""}
-            image={plan.cover_image}
-            title={plan.title}
-            id={plan.id}
-            key={plan.id}
-          />
-        ))}
+    <SafeAreaProvider>
+      <SafeAreaView>
+        <ScrollView>
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <Text>Please choose your workout plan or diet plan!</Text>
+            {/* <PlanSelect /> */}
+            {plans.map((plan) => (
+              <PlanItem
+                type={""}
+                image={plan.cover_image}
+                title={plan.title}
+                id={plan.id}
+                key={plan.id}
+              />
+            ))}
 
-        <Box alignItems="center">
-          <Button onPress={() => console.log("hello world")}>Click Me</Button>
-        </Box>
-      </View>
-    </ScrollView>
+            <Box alignItems="center">
+              <Button onPress={() => console.log("hello world")}>
+                Click Me
+              </Button>
+            </Box>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 //Create Stack
