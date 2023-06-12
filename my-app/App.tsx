@@ -10,30 +10,59 @@ import { Register } from "./src/screens/RegisterPage";
 import { MealScreen } from "./src/screens/MealPage";
 import { Provider } from "react-redux";
 import { store } from "./src/store";
-import { AuthProvider, useAuth } from "./src/context/AuthContext";
 import { createStackNavigator } from "@react-navigation/stack";
+import { useEffect, useState } from "react";
+import { getFromSecureStore } from "./src/storage/secureStore";
 
 export default function App() {
-
   const Stack = createStackNavigator();
-  const {authState, setAuthState} = useAuth( )
+  const [authState, setAuthState] = useState<boolean>(false);
+
+  store.subscribe(() => {
+    const storeInfo = store.getState();
+    setAuthState(() => {
+      return storeInfo.login;
+    });
+  });
+
+  const getToken = async () => {
+    const token = await getFromSecureStore("token");
+    if (token) {
+      setAuthState(true);
+    }
+  };
+
+  useEffect(() => {
+    getToken();
+  }, []);
+
   return (
-    <AuthProvider>
     <Provider store={store}>
       <SafeAreaProvider>
         <NavigationContainer>
           <Stack.Navigator>
-        {/* <WelcomeScreen></WelcomeScreen> */}
-        {authState?.authenticated? (
-          <Stack.Screen name="Main" component={Main}></Stack.Screen>
-        ):<Stack.Screen name="Login" component={Login} options={{
-          headerShown: false,
-        }}></Stack.Screen>}
-        </Stack.Navigator>
+            {/* <WelcomeScreen></WelcomeScreen> */}
+            {authState ? (
+              <Stack.Screen
+                name="Main"
+                component={Main}
+                options={{
+                  headerShown: false,
+                }}
+              ></Stack.Screen>
+            ) : (
+              <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{
+                  headerShown: false,
+                }}
+              ></Stack.Screen>
+            )}
+          </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>
     </Provider>
-    </AuthProvider>
   );
 }
 
@@ -41,9 +70,7 @@ export const Main = () => {
   return (
     <SafeAreaProvider>
       <NativeBaseProvider>
-        <NavigationContainer>
-          <MyTabs />
-        </NavigationContainer>
+        <MyTabs />
       </NativeBaseProvider>
     </SafeAreaProvider>
   );

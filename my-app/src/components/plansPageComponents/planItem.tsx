@@ -14,9 +14,10 @@ import { useNavigation } from "@react-navigation/native";
 
 interface Props {
   id: number;
+  type: string;
   image: string;
   title: string;
-  introduction: string;
+  // introduction: string;
 }
 
 export function PlanItem(props: Props) {
@@ -88,11 +89,14 @@ export function PlanItem(props: Props) {
               The Silicon Valley of India.
             </Text> */}
           </Stack>
-          <Text fontWeight="400">{props.introduction}</Text>
+          {/* <Text fontWeight="400">{props.introduction}</Text> */}
           <Button
             onPress={() => {
               //@ts-ignore
-              navigation.navigate("PlanDetail", { id: props.id });
+              navigation.navigate("PlanDetail", {
+                id: props.id,
+                type: props.type,
+              });
             }}
           >
             View more

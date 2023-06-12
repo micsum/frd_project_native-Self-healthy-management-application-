@@ -27,6 +27,7 @@ import { foodItemDisplayHeight, mps } from "./mealPageComponentStyleSheet";
 import { AntDesign } from "@expo/vector-icons";
 import { createFakeFoodObject } from "./fakeFoodNutritionData";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
+import { Domain } from "@env";
 
 function MealTypeSelection(props: {
   date: Date;
@@ -438,7 +439,7 @@ function MealTypeSelection(props: {
   };
 
   const removeMealItem = async (removedItem: FoodItemBasicInfo) => {
-    const res = await fetch(`${process.env.Domain}/mealItem`, {
+    const res = await fetch(`${Domain}/mealItem`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

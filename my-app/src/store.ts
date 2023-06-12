@@ -8,6 +8,7 @@ export interface RootState {
   itemNutritionPanelOpen: boolean;
   foodItemInConsideration: FoodItemBasicInfo | undefined;
   token: string | null;
+  isLogin: boolean;
 }
 
 export function action(actionType: string, properties: ObjectAny) {
@@ -49,6 +50,15 @@ export function action(actionType: string, properties: ObjectAny) {
     };
   };
 
+  const isLogin = (login: boolean) => {
+    return {
+      type: "isLogin" as const,
+      payload: {
+        login,
+      },
+    };
+  };
+
   switch (actionType) {
     case "foodPanelVisibility":
       return setFoodInputPanelVisibility(properties.visible);
@@ -58,6 +68,8 @@ export function action(actionType: string, properties: ObjectAny) {
       return updateFoodItemInConsideration(properties.foodItem);
     case "storeToken":
       return storeToken(properties.token);
+    case "isLogin":
+      return isLogin(properties.login);
 
     default:
       return { type: null, payload: null };
@@ -71,6 +83,7 @@ const initState: RootState = {
   itemNutritionPanelOpen: false,
   foodItemInConsideration: undefined,
   token: null,
+  isLogin: false,
 };
 
 const rootReducer = produce((draft = initState, action: IRootAction) => {
@@ -93,6 +106,12 @@ const rootReducer = produce((draft = initState, action: IRootAction) => {
     case "storeToken": {
       const { token } = action.payload;
       draft.token = token;
+      return draft;
+    }
+
+    case "isLogin": {
+      const { login } = action.payload;
+      draft.login = login;
       return draft;
     }
     default:

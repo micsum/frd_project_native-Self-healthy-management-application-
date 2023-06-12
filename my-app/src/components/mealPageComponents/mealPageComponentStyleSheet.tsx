@@ -76,13 +76,13 @@ export const mps = StyleSheet.create({
     textDecorationLine: "underline",
   },
   detailPanel: {
-    height: "40%",
+    height: "30%",
     padding: 10,
     margin: 5,
     borderWidth: 2,
     borderColor: "black",
     borderRadius: 10,
-    overflow: "visible",
+    overflow: "hidden",
   },
   nutritionContentDisplay: fullWidthDisplayElement,
   nutritionContentText: {
@@ -122,7 +122,7 @@ export const mps = StyleSheet.create({
     justifyContent: "center",
   },
   formButton: {
-    height: "30%",
+    height: "80%",
     width: "60%",
   },
 });

@@ -13,6 +13,7 @@ import { fakeFoodNutritionData } from "../components/mealPageComponents/fakeFood
 import { FullItemInfo } from "../utils/type";
 import { NativeBaseProvider } from "native-base";
 import { AlertNotificationRoot } from "react-native-alert-notification";
+import { createStackNavigator } from "@react-navigation/stack";
 
 const MealPage: React.FC = () => {
   const [date, updateSelectedDate] = useState<Date>(new Date());
@@ -46,7 +47,7 @@ const MealPage: React.FC = () => {
           <AlertNotificationRoot>
             <SafeAreaView
               style={{
-                paddingTop: useSafeAreaInsets().top,
+                marginTop: 10,
                 paddingBottom: useSafeAreaInsets().bottom,
               }}
             >
@@ -64,5 +65,22 @@ const MealPage: React.FC = () => {
 };
 
 export function MealScreen({}) {
-  return <MealPage />;
+  const Stack = createStackNavigator();
+
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="HomeNoStack"
+        component={MealPage}
+        options={{
+          headerShown: true,
+          title: "Meal History",
+          headerTitleAlign: "center",
+          headerStyle: { backgroundColor: "#38668E" },
+          headerTintColor: "#a5f3fc",
+          headerBackTitle: " ",
+        }}
+      ></Stack.Screen>
+    </Stack.Navigator>
+  );
 }

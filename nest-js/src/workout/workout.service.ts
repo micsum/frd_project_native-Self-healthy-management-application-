@@ -11,21 +11,28 @@ export class WorkoutService {
   constructor(@InjectKnex() private knex: Knex) {}
   async getWorkoutList() {
     log('get workout plans');
-    let workouts = await this.knex('workout').select(
-      'id',
-      'title',
-      'cover_image',
-      'href',
-    );
+    let workouts = await this.knex('workout')
+      .select('id', 'title', 'cover_image', 'href')
+      .limit(10);
     for (let workout of workouts) {
       let days = await this.knex('workout_day')
         .select('id', 'workout_id', 'title', 'headers', 'rows')
         .where({
           workout_id: workout.id,
         });
+      // if (days.length >= 1) {
       workout.days = days;
+      // }
     }
-    return workouts;
+    return workouts.filter((v) => v.days.length >= 1);
+  }
+
+  async getWorkoutDetail(workout_id: number) {
+    let workout_detail = await this.knex('workout_day')
+      .select('title', 'headers', 'rows')
+      .where({ workout_id });
+
+    return workout_detail;
   }
 
   async scrapWorkoutList() {

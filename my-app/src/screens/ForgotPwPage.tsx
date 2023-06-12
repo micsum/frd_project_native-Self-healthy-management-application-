@@ -9,6 +9,7 @@ import {
   AlertNotificationRoot,
   Dialog,
 } from "react-native-alert-notification";
+import { Domain } from "@env";
 
 export const ForgotPwForm = () => {
   const {
@@ -21,7 +22,7 @@ export const ForgotPwForm = () => {
     },
   });
   const onSubmit = async (forgotPwEmail: ForgotPwEmail) => {
-    await axios.post(`${process.env.Domain}/user/forgotPw`, forgotPwEmail).then(
+    await axios.post(`${Domain}/user/forgotPw`, forgotPwEmail).then(
       (response) => {
         if (response.data) {
           // not yet finished in reset pw
