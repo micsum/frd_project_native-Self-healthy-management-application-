@@ -12,27 +12,33 @@ import { Provider } from "react-redux";
 import { store } from "./src/store";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
 import { createStackNavigator } from "@react-navigation/stack";
+import { PlansScreen } from "./src/screens/PlansPage";
 
 export default function App() {
-
   const Stack = createStackNavigator();
-  const {authState, setAuthState} = useAuth( )
+  const { authState, setAuthState } = useAuth();
   return (
     <AuthProvider>
-    <Provider store={store}>
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <Stack.Navigator>
-        {/* <WelcomeScreen></WelcomeScreen> */}
-        {authState?.authenticated? (
+      <Provider store={store}>
+        <SafeAreaProvider>
+          <NativeBaseProvider>
+            <NavigationContainer>
+              <Stack.Navigator>
+                {/* <WelcomeScreen></WelcomeScreen> */}
+                {/* {authState?.authenticated? (
           <Stack.Screen name="Main" component={Main}></Stack.Screen>
         ):<Stack.Screen name="Login" component={Login} options={{
           headerShown: false,
-        }}></Stack.Screen>}
-        </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </Provider>
+        }}></Stack.Screen>} */}
+                <Stack.Screen
+                  name="Main"
+                  component={PlansScreen}
+                ></Stack.Screen>
+              </Stack.Navigator>
+            </NavigationContainer>
+          </NativeBaseProvider>
+        </SafeAreaProvider>
+      </Provider>
     </AuthProvider>
   );
 }

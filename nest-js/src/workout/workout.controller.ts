@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Param, Post } from '@nestjs/common';
 import { WorkoutService } from './workout.service';
 
 @Controller('workout')
@@ -7,8 +7,14 @@ export class WorkoutController {
 
   @Get()
   getWorkoutList() {
-    console.log('received the request');
+    console.log('received the request of getting workout list');
     return this.workoutService.getWorkoutList();
+  }
+
+  @Get('/detail/:id')
+  getWorkoutDetail(@Param('id') id: number) {
+    console.log('received the request of getting workout detail');
+    return this.workoutService.getWorkoutDetail(id);
   }
 
   @Post('/scrap')

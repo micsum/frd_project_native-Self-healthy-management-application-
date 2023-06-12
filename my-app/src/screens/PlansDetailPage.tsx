@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import { Button, Center, NativeBaseProvider } from "native-base";
 
 export const PlanDetailScreen = ({ route }: any) => {
-  const { id } = route.params;
+  const { id, type } = route.params;
   return (
     <View
       style={{
@@ -17,7 +17,7 @@ export const PlanDetailScreen = ({ route }: any) => {
       <NativeBaseProvider>
         <Center flex={1} px="3"></Center>
       </NativeBaseProvider>
-      <Text>djfhsjdfhsjdfhsdjh{id}</Text>
+      <Text>id:{id}</Text>
     </View>
   );
 };

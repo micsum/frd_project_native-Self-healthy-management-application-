@@ -23,9 +23,19 @@ export class WorkoutService {
         .where({
           workout_id: workout.id,
         });
+      // if (days.length >= 1) {
       workout.days = days;
+      // }
     }
-    return workouts;
+    return workouts.filter((v) => v.days.length >= 1);
+  }
+
+  async getWorkoutDetail(workout_id: number) {
+    let workout_detail = await this.knex('workout_day')
+      .select('title', 'headers', 'rows')
+      .where({ workout_id });
+
+    return workout_detail;
   }
 
   async scrapWorkoutList() {

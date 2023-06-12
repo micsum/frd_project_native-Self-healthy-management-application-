@@ -38,6 +38,7 @@ export function PlansHomeScreen() {
 
   useEffect(() => {
     const fetchWorkoutData = async () => {
+      console.log("123");
       let res = await fetch(`${Domain}/workout`);
       let workout_data = await res.json();
       console.log(workout_data);
@@ -53,13 +54,13 @@ export function PlansHomeScreen() {
     <ScrollView>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text>Please choose your workout plan or diet plan!</Text>
-        <PlanSelect />
+        {/* <PlanSelect /> */}
         {plans.map((plan) => (
           <PlanItem
+            type={""}
             image={plan.cover_image}
             title={plan.title}
             id={plan.id}
-            introduction={"plan.introduction"}
           />
         ))}
 
@@ -80,7 +81,7 @@ export const PlansScreen = () => {
         name="PlanHome"
         component={PlansHomeScreen}
         options={{
-          headerShown: true,
+          headerShown: false,
           title: "Plan Item Detail",
           headerTitleAlign: "center",
           headerStyle: { backgroundColor: "#38668E" },
@@ -91,7 +92,7 @@ export const PlansScreen = () => {
         name="PlanDetail"
         component={PlanDetailScreen}
         options={{
-          headerShown: true,
+          headerShown: false,
           title: "Plan Item Detail",
           headerTitleAlign: "center",
           headerStyle: { backgroundColor: "#38668E" },
