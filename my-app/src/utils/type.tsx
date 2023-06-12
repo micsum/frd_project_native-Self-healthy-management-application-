@@ -74,7 +74,7 @@ export type NutritionContentDisplay = {
 };
 
 export type ItemChange = {
-  info: FoodItemBasicInfo;
+  info: FoodItemBasicInfo | FullItemInfo;
   method: string;
 };
 

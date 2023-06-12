@@ -86,40 +86,11 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
     "sugar_g",
   ];
 
-  const unitConversion: (
-    oldSize: number,
-    oldUnit: string,
-    newSize: number,
-    newUnit: string
-  ) => number = (oldSize, oldUnit, newSize, newUnit) => {
-    let unitConversion = 1;
-    if (oldUnit !== newUnit) {
-      const unitConversionList = [
-        { from: "g", to: "kg", factor: 1000 },
-        { from: "kg", to: "lb", factor: 1 / 2.2 },
-        { from: "lb", to: "g", factor: 1 / 453.592 },
-      ];
-
-      for (let i = 0; i < 6; i++) {
-        const { from, to, factor } = unitConversionList[i % 3];
-        if (oldUnit === from) {
-          unitConversion *= factor;
-          oldUnit = to;
-        }
-        if (newUnit === oldUnit) {
-          break;
-        }
-      }
-    }
-    return parseFloat(((newSize * unitConversion) / oldSize).toFixed(4));
-  };
-
   const applyChanges = useCallback(
     (originalData: FullItemInfo[], changes: ItemChange[]) => {
       for (let change of changes) {
         const { info, method } = change;
-        const { id, meal_id, meal_time, foodName, servingSize, sizeUnit } =
-          info;
+        const { id, meal_id, meal_time } = info;
         switch (method) {
           case "add":
             {
@@ -137,71 +108,24 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
             }
             break;
           case "update":
-            let itemIndex = -1;
-            let itemInConsideration;
-            let newItem: any = {};
-            for (let existingItem of originalData) {
-              if (
-                existingItem.id === id &&
-                existingItem.meal_id === meal_id &&
-                existingItem.meal_time === meal_time &&
-                existingItem.name === foodName
-              ) {
-                itemIndex = originalData.indexOf(existingItem);
-                itemInConsideration = existingItem;
-                break;
-              }
-            }
+            const originalDataID = originalData.map((foodItem) => {
+              return foodItem.id;
+            });
+            const itemIndex = originalDataID.indexOf(id);
 
-            if (itemInConsideration === undefined) {
-              break;
-            }
-
-            let [
-              originalItemServingSize,
-              originalItemSizeUnit,
-              newItemServingSize,
-              newItemSizeUnit,
-            ] = [
-              itemInConsideration.serving_size_g,
-              itemInConsideration.saved_size_unit,
-              info.servingSize,
-              info.sizeUnit,
-            ];
-            let multiplyFactor = unitConversion(
-              originalItemServingSize,
-              originalItemSizeUnit,
-              newItemServingSize,
-              newItemSizeUnit
-            );
-
-            for (let key of nutritionContentKey) {
-              let newValue =
-                parseFloat(
-                  itemInConsideration[key as keyof FullItemInfo].toString()
-                ) * multiplyFactor;
-              newItem[key] = newValue;
-            }
-
-            newItem.id = id;
-            newItem.meal_id = meal_id;
-            newItem.meal_time = meal_time;
-            newItem.name = foodName;
-            newItem.serving_size_g = servingSize;
-            newItem.saved_size_unit = sizeUnit;
-
+            //@ts-ignore
             originalData = [
               ...originalData.slice(0, itemIndex),
-              newItem,
+              change.info,
               ...originalData.slice(itemIndex + 1),
             ];
             break;
           case "delete": {
             originalData = originalData.filter((foodItem) => {
               return (
-                foodItem.id !== info.id ||
-                foodItem.meal_id !== info.meal_id ||
-                foodItem.meal_time !== info.meal_time
+                foodItem.id !== id ||
+                foodItem.meal_id !== meal_id ||
+                foodItem.meal_time !== meal_time
               );
             });
             break;
@@ -349,55 +273,163 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
 
   const mealDisplay = dateMealFullData[mealType as keyof DateMealFullData];
 
-  const updateItemBasicInfo = async (updatedItem: FoodItemBasicInfo) => {
-    if (updatedItem.id !== -1 && updatedItem.meal_id !== -1) {
-      // update Existing Item
-      updateChanges(() => {
-        return [...changes, { info: updatedItem, method: "update" }];
-      });
-    } else if (updatedItem.id === -1 && updatedItem.meal_id !== -1) {
-      // add Item to Existing Meal OR update new Item added in this session
-      let itemIndex = -1;
+  const unitConversion: (
+    oldSize: number,
+    oldUnit: string,
+    newSize: number,
+    newUnit: string
+  ) => number = (oldSize, oldUnit, newSize, newUnit) => {
+    let unitConversion = 1;
+    if (oldUnit !== newUnit) {
+      const unitConversionList = [
+        { from: "g", to: "kg", factor: 1000 },
+        { from: "kg", to: "lb", factor: 1 / 2.2 },
+        { from: "lb", to: "g", factor: 1 / 453.592 },
+      ];
 
-      for (let change of changes) {
-        const { info, method } = change;
-        if (
-          info.foodName === updatedItem.foodName &&
-          info.meal_time === updatedItem.meal_time &&
-          method === "add"
-        ) {
-          itemIndex = changes.indexOf(change);
+      for (let i = 0; i < 6; i++) {
+        const { from, to, factor } = unitConversionList[i % 3];
+        if (oldUnit === from) {
+          unitConversion *= factor;
+          oldUnit = to;
+        }
+        if (newUnit === oldUnit) {
           break;
         }
       }
+    }
+    return parseFloat(((newSize * unitConversion) / oldSize).toFixed(4));
+  };
 
-      if (itemIndex === -1) {
-        updateChanges(() => {
-          return [...changes, { info: updatedItem, method: "add" }];
-        });
-      } else {
-        updateChanges(() => {
-          return [
-            ...changes.slice(0, itemIndex),
-            { info: updatedItem, method: "add" },
-            ...changes.slice(itemIndex),
-          ];
-        });
+  const updateCurrentFoodItem: (
+    currenFoodItem: FoodItemBasicInfo
+  ) => FullItemInfo = (currentFoodItem) => {
+    const { id, meal_id, meal_time, foodName, servingSize, sizeUnit } =
+      currentFoodItem;
+
+    let itemInConsideration;
+    let newItem: any = {};
+    for (let existingItem of foodItemFullInfo) {
+      if (existingItem.id === id) {
+        itemInConsideration = existingItem;
+        break;
       }
-    } else {
-      const mealType = updatedItem.meal_time;
-      const existingItems =
-        dateMealFullData[mealType as keyof DateMealFullData];
-      const existingItemName = existingItems.map((foodItem) => {
-        return foodItem.basicInfo.foodName;
+    }
+
+    if (itemInConsideration === undefined) {
+      return;
+    }
+
+    const [
+      originalItemServingSize,
+      originalItemSizeUnit,
+      newItemServingSize,
+      newItemSizeUnit,
+    ] = [
+      itemInConsideration.serving_size_g,
+      itemInConsideration.saved_size_unit,
+      servingSize,
+      sizeUnit,
+    ];
+
+    const multiplyFactor = unitConversion(
+      originalItemServingSize,
+      originalItemSizeUnit,
+      newItemServingSize,
+      newItemSizeUnit
+    );
+
+    for (let key of nutritionContentKey) {
+      let newValue =
+        parseFloat(itemInConsideration[key as keyof FullItemInfo].toString()) *
+        multiplyFactor;
+      newItem[key] = newValue;
+    }
+
+    newItem.id = id;
+    newItem.meal_id = meal_id;
+    newItem.meal_time = meal_time;
+    newItem.name = foodName;
+    newItem.serving_size_g = servingSize;
+    newItem.saved_size_unit = sizeUnit;
+
+    return newItem;
+  };
+
+  const updateItemBasicInfo = async (updatedItem: FoodItemBasicInfo) => {
+    if (updatedItem.id !== -1 && updatedItem.meal_id !== -1) {
+      // update Existing Item
+      const newUpdatedItem = updateCurrentFoodItem(updatedItem);
+      const res = await fetch(`${""}/mealItem`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newUpdatedItem),
       });
-      if (existingItemName.indexOf(updatedItem.foodName) !== -1) {
-        console.log(`duplicated Items`);
+      const result = await res.json();
+      if (result.error) {
+        Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          title: result.error,
+          autoClose: 1500,
+        });
         return;
       }
       updateChanges(() => {
-        return [...changes, { info: updatedItem, method: "add" }];
+        return [...changes, { info: newUpdatedItem, method: "update" }];
       });
+      Dialog.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: `Successfully Updated ${updatedItem.foodName}`,
+        button: "OK",
+      });
+      return;
+
+      // else the item (and meal) is new and needs to be added
+      // } else if (updatedItem.id === -1 && updatedItem.meal_id !== -1) {
+      //   // add Item to Existing Meal OR update new Item added in this session
+      //   let itemIndex = -1;
+
+      //   for (let change of changes) {
+      //     const { info, method } = change;
+      //     if (
+      //       info.foodName === updatedItem.foodName &&
+      //       info.meal_time === updatedItem.meal_time &&
+      //       method === "add"
+      //     ) {
+      //       itemIndex = changes.indexOf(change);
+      //       break;
+      //     }
+      //   }
+
+      //   if (itemIndex === -1) {
+      //     updateChanges(() => {
+      //       return [...changes, { info: updatedItem, method: "add" }];
+      //     });
+      //   } else {
+      //     updateChanges(() => {
+      //       return [
+      //         ...changes.slice(0, itemIndex),
+      //         { info: updatedItem, method: "add" },
+      //         ...changes.slice(itemIndex),
+      //       ];
+      //     });
+      //   }
+      // } else {
+      //   const mealType = updatedItem.meal_time;
+      //   const existingItems =
+      //     dateMealFullData[mealType as keyof DateMealFullData];
+      //   const existingItemName = existingItems.map((foodItem) => {
+      //     return foodItem.basicInfo.foodName;
+      //   });
+      //   if (existingItemName.indexOf(updatedItem.foodName) !== -1) {
+      //     console.log(`duplicated Items`);
+      //     return;
+      //   }
+      //   updateChanges(() => {
+      //     return [...changes, { info: updatedItem, method: "add" }];
+      //   });
     }
 
     dispatch(action("foodPanelVisibility", { visible: false }));
@@ -419,6 +451,7 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
         title: result.error,
         autoClose: 1500,
       });
+      return;
     }
     updateChanges(() => {
       return [...changes, { info: removedItem, method: "delete" }];
@@ -428,6 +461,7 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
       title: `Successfully Removed ${removedItem.foodName}`,
       button: "OK",
     });
+    return;
   };
 
   const updateNutritionDisplayDetail = (

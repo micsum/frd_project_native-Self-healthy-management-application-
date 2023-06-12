@@ -27,9 +27,10 @@ export class MealItemService {
     ];
   }
 
-  async createNewItem(foodItemBasicInfo: CreateMealItemDto) {
+  async createNewItem(date: Date, foodItemBasicInfo: CreateMealItemDto) {
     console.log('service', foodItemBasicInfo);
-    const { foodName, servingSize, sizeUnit } = foodItemBasicInfo;
+    const { meal_id, meal_time, foodName, servingSize, sizeUnit } =
+      foodItemBasicInfo;
     let nutritionInfo: APIFoodItemNutritionInfo[] = [];
     let itemNutritionInfo: any = {};
 
@@ -75,10 +76,18 @@ export class MealItemService {
     }
     console.log(itemNutritionInfo);
 
+    let mealID = meal_id;
+    if (mealID === -1) {
+      let [{ id }] = await this.knex('meal_input_record')
+        .insert({ date_of_meal: date, userID: '??', meal_time })
+        .returning('id');
+      mealID = id;
+    }
+
     const existingResult = await this.knex
       .select('*')
       .from('meal_food_item')
-      .where({ meal_id: foodItemBasicInfo.meal_id })
+      .where({ meal_id: mealID })
       .andWhere({ foodName: foodItemBasicInfo.foodName });
 
     if (existingResult.length !== 0) {
