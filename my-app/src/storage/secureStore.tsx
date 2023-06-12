@@ -11,3 +11,7 @@ export async function getFromSecureStore(key: string) {
   }
   console.error("error, no this key");
 }
+
+export async function deleteInSecureStore(key:string){
+  await SecureStore.deleteItemAsync(key);
+}
