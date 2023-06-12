@@ -21,7 +21,7 @@ export default function App() {
   store.subscribe(() => {
     const storeInfo = store.getState();
     setAuthState(() => {
-      return storeInfo.login;
+      return storeInfo.isLogin;
     });
   });
 
