@@ -25,12 +25,15 @@ export class MealItemController {
     return {};
   }
 
-  @Post()
+  @Post(':date')
   @UsePipes(new ValidationPipe())
-  async addNewItem(@Body() foodItemBasicInfo: CreateMealItemDto) {
+  async addNewItem(
+    @Param() date: Date,
+    @Body() foodItemBasicInfo: CreateMealItemDto,
+  ) {
     console.log('controller', foodItemBasicInfo);
     try {
-      return await this.mealItemService.createNewItem(foodItemBasicInfo);
+      return await this.mealItemService.createNewItem(date, foodItemBasicInfo);
     } catch (error) {
       console.log(error);
       return { error: 'Server Error' };
