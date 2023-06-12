@@ -18,7 +18,6 @@ import {
 } from "../../utils/type";
 import { View, Text, Button, SafeAreaView } from "react-native";
 import { ScrollView } from "native-base";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import { store, action, RootState, AppDispatch } from "../../store";
 import FoodItemDisplay from "./FoodItemDisplay";
@@ -29,8 +28,11 @@ import { AntDesign } from "@expo/vector-icons";
 import { createFakeFoodObject } from "./fakeFoodNutritionData";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 
-function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
-  const { foodItemFullInfo } = props;
+function MealTypeSelection(props: {
+  date: Date;
+  foodItemFullInfo: FullItemInfo[];
+}) {
+  const { date, foodItemFullInfo } = props;
 
   const [mealType, updateMealType] = useState<string>("breakfast");
   const [storeInfo, updateStoreInfo] = useState<RootState>(store.getState());
@@ -358,9 +360,8 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
 
   const updateItemBasicInfo = async (updatedItem: FoodItemBasicInfo) => {
     if (updatedItem.id !== -1 && updatedItem.meal_id !== -1) {
-      // update Existing Item
       const newUpdatedItem = updateCurrentFoodItem(updatedItem);
-      const res = await fetch(`${""}/mealItem`, {
+      const res = await fetch(`${process.env.Domain}/mealItem`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -437,7 +438,7 @@ function MealTypeSelection(props: { foodItemFullInfo: FullItemInfo[] }) {
   };
 
   const removeMealItem = async (removedItem: FoodItemBasicInfo) => {
-    const res = await fetch(`${""}/mealItem`, {
+    const res = await fetch(`${process.env.Domain}/mealItem`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

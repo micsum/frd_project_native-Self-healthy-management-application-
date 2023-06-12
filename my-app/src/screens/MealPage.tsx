@@ -52,6 +52,7 @@ const MealPage: React.FC = () => {
             >
               <DateSelectionPanel date={date} selectNewDate={selectNewDate} />
               <MealTypeSelection
+                date={date}
                 foodItemFullInfo={dateMealData}
               ></MealTypeSelection>
             </SafeAreaView>
