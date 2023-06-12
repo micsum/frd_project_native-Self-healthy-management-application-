@@ -96,7 +96,6 @@ function FoodItemEntryPanel(props: {
       ...foodItemInfo.current,
       servingSize: parseFloat(text),
     };
-    console.log(foodItemInfo.current.servingSize);
   };
 
   const changeSelectedUnit = () => {
