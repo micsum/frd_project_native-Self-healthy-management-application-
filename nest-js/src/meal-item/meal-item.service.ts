@@ -111,7 +111,7 @@ export class MealItemService {
       .select('*')
       .from('meal_food_item')
       .where({ meal_id })
-      .andWhere({ foodName });
+      .andWhere({ name: foodName });
 
     if (existingResult.length === 0) {
       return {

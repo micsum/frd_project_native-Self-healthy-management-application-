@@ -16,19 +16,19 @@ import { getFromSecureStore } from "./src/storage/secureStore";
 
 export default function App() {
   const Stack = createStackNavigator();
-  const [authState, setAuthState] = useState<string>();
+  const [authState, setAuthState] = useState<boolean>(false);
 
   store.subscribe(() => {
     const storeInfo = store.getState();
     setAuthState(() => {
-      return storeInfo.token;
+      return storeInfo.login;
     });
   });
 
   const getToken = async () => {
     const token = await getFromSecureStore("token");
     if (token) {
-      setAuthState(token);
+      setAuthState(true);
     }
   };
 

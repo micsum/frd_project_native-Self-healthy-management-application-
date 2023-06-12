@@ -40,6 +40,7 @@ export const Login = () => {
           let token = response.data.token;
           saveInSecureStore("token", token);
           dispatch(action("storeToken", { token }));
+          dispatch(action("isLogin", { login: true }));
           axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
           //console.log("response", token);
         }
