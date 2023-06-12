@@ -111,7 +111,7 @@ const rootReducer = produce((draft = initState, action: IRootAction) => {
 
     case "isLogin": {
       const { login } = action.payload;
-      draft.login = login;
+      draft.isLogin = login;
       return draft;
     }
     default:
