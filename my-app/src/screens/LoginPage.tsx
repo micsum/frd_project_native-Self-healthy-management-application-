@@ -18,6 +18,8 @@ import {
 import { saveInSecureStore } from "../storage/secureStore";
 import { action, AppDispatch } from "../store";
 import { useDispatch } from "react-redux";
+import { useAuth } from "../context/AuthContext";
+
 
 export const Login = () => {
   const {
@@ -30,6 +32,8 @@ export const Login = () => {
       password: "",
     },
   });
+
+  const {authState, setAuthState} = useAuth()
   const dispatch = useDispatch<AppDispatch>();
   const onSubmit = async (data: LoginData) => {
     await axios.post(`${process.env.Domain}/user/login`, data).then(
@@ -38,7 +42,9 @@ export const Login = () => {
           let token = response.data.token;
           saveInSecureStore("token", token);
           dispatch(action("storeToken", { token }));
-          console.log("response", token);
+          setAuthState({token, authenticated:true})
+          axios.defaults.headers.common['Authorization']=`Bearer ${token}`
+          //console.log("response", token);
         }
         // test response.data thought axios
         else if (response.data.error) {
