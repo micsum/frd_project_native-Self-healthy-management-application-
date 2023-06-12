@@ -44,7 +44,7 @@ export class UserService {
 
     if (dbResult.length === 0) {
       return {
-        error: 'User does not exist.\n Please input correct email.',
+        error: 'User does not exist.\nPlease input correct email.',
       };
     }
 
