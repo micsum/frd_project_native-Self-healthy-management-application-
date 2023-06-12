@@ -91,8 +91,8 @@ export const PlansScreen = () => {
         name="PlanHome"
         component={PlansHomeScreen}
         options={{
-          headerShown: false,
-          title: "Plan Item Detail",
+          headerShown: true,
+          title: "Plans",
           headerTitleAlign: "center",
           headerStyle: { backgroundColor: "#38668E" },
           headerTintColor: "#a5f3fc",
@@ -102,7 +102,7 @@ export const PlansScreen = () => {
         name="PlanDetail"
         component={PlanDetailScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
           title: "Plan Item Detail",
           headerTitleAlign: "center",
           headerStyle: { backgroundColor: "#38668E" },

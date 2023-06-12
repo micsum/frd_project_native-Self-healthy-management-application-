@@ -44,11 +44,36 @@ export class MealPlanService {
         .where({
           mealplan_id: mealplan_day.id,
         });
+
+      for (let dayContent of days) {
+        let meal_content = await this.knex('meal_content')
+          .select('id', 'mealplan_day_id', 'name', 'calories', 'foods')
+          .where({ mealplan_day_id: dayContent.id });
+        dayContent.content = meal_content;
+      }
       mealplan_day.days = days;
     }
     //ask beeno how to retrieve contents
 
-    return { mealplans };
+    return mealplans;
+  }
+
+  async getMealPlanDetail(mealplan_id: number) {
+    log('get meal plan details');
+    let days = await this.knex('mealplan_day')
+      .select('id', 'mealplan_id', 'name', 'cover_image')
+      .where({
+        mealplan_id: mealplan_id,
+      });
+
+    for (let dayContent of days) {
+      let meal_content = await this.knex('meal_content')
+        .select('id', 'mealplan_day_id', 'name', 'calories', 'foods')
+        .where({ mealplan_day_id: dayContent.id });
+      dayContent.content = meal_content;
+    }
+
+    return days;
   }
 
   async scrapMealPlanList() {
