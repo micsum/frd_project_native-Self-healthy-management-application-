@@ -61,6 +61,7 @@ export function PlansHomeScreen() {
             image={plan.cover_image}
             title={plan.title}
             id={plan.id}
+            key={plan.id}
           />
         ))}
 

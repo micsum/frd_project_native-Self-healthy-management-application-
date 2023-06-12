@@ -86,7 +86,6 @@ id integer PK
 email string unique
 username string
 password string
-phone_number string unique
 weight number
 height number
 target string
