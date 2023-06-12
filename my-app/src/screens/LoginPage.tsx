@@ -15,7 +15,7 @@ import {
   AlertNotificationRoot,
   Dialog,
 } from "react-native-alert-notification";
-import { saveInSecureStore } from "../storage/secureStore";
+import { getFromSecureStore, saveInSecureStore } from "../storage/secureStore";
 import { action, AppDispatch } from "../store";
 import { useDispatch } from "react-redux";
 import { Domain } from "@env";
@@ -33,6 +33,7 @@ export const Login = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const onSubmit = async (data: LoginData) => {
+    console.log("get", getFromSecureStore("token"));
     await axios.post(`${Domain}/user/login`, data).then(
       (response) => {
         if (response.data.token) {
@@ -40,7 +41,7 @@ export const Login = () => {
           saveInSecureStore("token", token);
           dispatch(action("storeToken", { token }));
           axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-          console.log("response", token);
+          //console.log("response", token);
         }
         // test response.data thought axios
         else if (response.data.error) {

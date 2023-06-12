@@ -11,17 +11,31 @@ import { MealScreen } from "./src/screens/MealPage";
 import { Provider } from "react-redux";
 import { store } from "./src/store";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getFromSecureStore } from "./src/storage/secureStore";
 
 export default function App() {
   const Stack = createStackNavigator();
-  const [authState, setAuthState] = useState(null);
+  const [authState, setAuthState] = useState<string>();
+
   store.subscribe(() => {
     const storeInfo = store.getState();
     setAuthState(() => {
       return storeInfo.token;
     });
   });
+
+  const getToken = async () => {
+    const token = await getFromSecureStore("token");
+    if (token) {
+      setAuthState(token);
+    }
+  };
+
+  useEffect(() => {
+    getToken();
+  }, []);
+
   return (
     <Provider store={store}>
       <SafeAreaProvider>
