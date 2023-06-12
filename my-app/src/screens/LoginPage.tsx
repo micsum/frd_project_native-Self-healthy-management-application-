@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller } from "react-hook-form";
 import { LoginData } from "../utils/type";
@@ -19,6 +19,7 @@ import { getFromSecureStore, saveInSecureStore } from "../storage/secureStore";
 import { action, AppDispatch } from "../store";
 import { useDispatch } from "react-redux";
 import { Domain } from "@env";
+
 export const Login = () => {
   const {
     control,
@@ -32,6 +33,17 @@ export const Login = () => {
   });
 
   const dispatch = useDispatch<AppDispatch>();
+
+  const getToken = async () => {
+    const token = await getFromSecureStore("token");
+    if (token) {
+      dispatch(action("isLogin", { login: true }));
+    }
+  };
+  useEffect(() => {
+    getToken();
+  }, []);
+
   const onSubmit = async (data: LoginData) => {
     console.log("get", getFromSecureStore("token"));
     await axios.post(`${Domain}/user/login`, data).then(

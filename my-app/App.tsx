@@ -21,20 +21,13 @@ export default function App() {
   store.subscribe(() => {
     const storeInfo = store.getState();
     setAuthState(() => {
-      return storeInfo.login;
+      return storeInfo.isLogin;
     });
   });
 
-  const getToken = async () => {
-    const token = await getFromSecureStore("token");
-    if (token) {
-      setAuthState(true);
-    }
-  };
-
   useEffect(() => {
-    getToken();
-  }, []);
+    console.log("authState : ", authState);
+  }, [authState]);
 
   return (
     <Provider store={store}>

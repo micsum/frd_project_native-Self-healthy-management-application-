@@ -103,7 +103,3 @@ export type SignUpData = {
 export type ForgotPwEmail = {
   email: string;
 };
-
-export interface AuthProps {
-  authState?:{ token: string | null , authenticated :boolean|null};
-  setAuthState: (authState: { token: string | null, authenticated: boolean | null }) => Promise<any>;}
