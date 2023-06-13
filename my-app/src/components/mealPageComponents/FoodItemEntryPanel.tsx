@@ -110,10 +110,10 @@ function FoodItemEntryPanel(props: {
   return (
     <ScrollView style={[{ minHeight: 250 }, mps.detailPanel]}>
       <View style={mps.foodItemInputDiv}>
-        <Text style={mps.foodItemInputTitle}>{"Food Item Name : "}</Text>
-        {foodItem ? (
-          <Text>{foodName}</Text>
-        ) : (
+        <Text style={mps.foodItemInputTitle}>{`Food Item Name : ${
+          foodItem ? foodName : null
+        }`}</Text>
+        {foodItem ? null : (
           <TextInput
             placeholder="Enter Food Item Name Here"
             defaultValue={foodName}
