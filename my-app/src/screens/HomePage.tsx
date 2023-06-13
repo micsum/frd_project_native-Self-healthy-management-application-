@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Text, View, Animated } from "react-native";
+import { Text, View, PanResponder, Animated } from "react-native";
 import { CardGoal } from "../components/homeCardGoal";
 import { ScrollView, HStack, Avatar as NativeAvatar } from "native-base";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -14,7 +14,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ChatRoomPage } from "./ChatroomPage";
 import { SpeedDial } from "@rneui/themed";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
 export const AvatarPic = () => {
   const navigation = useNavigation();
 
@@ -107,7 +106,7 @@ const AnimatedText = () => {
   );
 };
 
-const ChatButton = () => {
+const HomeNoStackWithChat = () => {
   const [open, setOpen] = useState(false);
 
   const RobotIcon = () => {
@@ -116,28 +115,36 @@ const ChatButton = () => {
     );
   };
   return (
-    <SpeedDial
-      isOpen={open}
-      icon={{ name: "chat", color: "#fff" }}
-      openIcon={{ name: "close", color: "#fff" }}
-      onOpen={() => setOpen(!open)}
-      onClose={() => setOpen(!open)}
-      buttonStyle={{ backgroundColor: "#649c98" }}
-    >
-      <SpeedDial.Action
-        icon={{ name: "people", color: "#fff" }}
-        title="Chat with experts"
-        onPress={() => console.log("Add Something")}
+    <View style={{ position: "relative", height: "100%" }}>
+      <HomeScreenNoStack></HomeScreenNoStack>
+      <SpeedDial
+        isOpen={open}
+        icon={{ name: "chat", color: "#fff" }}
+        openIcon={{ name: "close", color: "#fff" }}
+        onOpen={() => setOpen(!open)}
+        onClose={() => setOpen(!open)}
         buttonStyle={{ backgroundColor: "#649c98" }}
-      />
-      <SpeedDial.Action
-        key="custom"
-        icon={<RobotIcon />}
-        title="ChatGPT"
-        onPress={() => console.log("Delete Something")}
-        buttonStyle={{ backgroundColor: "#649c98" }}
-      />
-    </SpeedDial>
+      >
+        <SpeedDial.Action
+          icon={{ name: "people", color: "#fff" }}
+          title="Chat with experts"
+          titleStyle={{
+            backgroundColor: "#649c98",
+            color: "#fff",
+          }}
+          onPress={() => console.log("chat with experts")}
+          buttonStyle={{ backgroundColor: "#649c98" }}
+        />
+        <SpeedDial.Action
+          key="custom"
+          icon={<RobotIcon />}
+          title="ChatGPT"
+          titleStyle={{ backgroundColor: "#649c98", color: "#fff" }}
+          onPress={() => console.log("gpt")}
+          buttonStyle={{ backgroundColor: "#649c98" }}
+        />
+      </SpeedDial>
+    </View>
   );
 };
 
@@ -165,7 +172,6 @@ export function HomeScreenNoStack() {
       <CardFitnessData />
       <CardExercise />
       <CardWeight />
-      <ChatButton />
     </ScrollView>
   );
 }
@@ -177,7 +183,7 @@ export const HomeScreen = () => {
     <Stack.Navigator>
       <Stack.Screen
         name="HomeNoStack"
-        component={HomeScreenNoStack}
+        component={HomeNoStackWithChat}
         options={{
           headerShown: false,
         }}
