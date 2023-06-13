@@ -11,6 +11,8 @@ import { CardWeight } from "../components/homeCardWeight";
 import { ProfileScreen } from "./ProfilePage";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SpeedDial } from "@rneui/themed";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export const AvatarPic = () => {
   const navigation = useNavigation();
@@ -103,6 +105,41 @@ const AnimatedText = () => {
     </View>
   );
 };
+
+const ChatButton = () => {
+  const [open, setOpen] = useState(false);
+
+  const RobotIcon = () => {
+    return (
+      <MaterialCommunityIcons name="robot-confused" size={24} color="#fff" />
+    );
+  };
+  return (
+    <SpeedDial
+      isOpen={open}
+      icon={{ name: "chat", color: "#fff" }}
+      openIcon={{ name: "close", color: "#fff" }}
+      onOpen={() => setOpen(!open)}
+      onClose={() => setOpen(!open)}
+      buttonStyle={{ backgroundColor: "#649c98" }}
+    >
+      <SpeedDial.Action
+        icon={{ name: "people", color: "#fff" }}
+        title="Chat with experts"
+        onPress={() => console.log("Add Something")}
+        buttonStyle={{ backgroundColor: "#649c98" }}
+      />
+      <SpeedDial.Action
+        key="custom"
+        icon={<RobotIcon />}
+        title="ChatGPT"
+        onPress={() => console.log("Delete Something")}
+        buttonStyle={{ backgroundColor: "#649c98" }}
+      />
+    </SpeedDial>
+  );
+};
+
 export function HomeScreenNoStack() {
   const insets = useSafeAreaInsets();
   return (
@@ -127,6 +164,7 @@ export function HomeScreenNoStack() {
       <CardFitnessData />
       <CardExercise />
       <CardWeight />
+      <ChatButton />
     </ScrollView>
   );
 }
