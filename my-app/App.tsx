@@ -25,10 +25,6 @@ export default function App() {
     });
   });
 
-  useEffect(() => {
-    console.log("authState : ", authState);
-  }, [authState]);
-
   return (
     <Provider store={store}>
       <SafeAreaProvider>
