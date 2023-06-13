@@ -66,8 +66,10 @@ export const Login = () => {
             autoClose: 5000,
           });
         }
+        return;
       },
       (error) => {
+        console.log("ran");
         console.log(error.response.data.message);
         return Dialog.show({
           type: ALERT_TYPE.WARNING,
