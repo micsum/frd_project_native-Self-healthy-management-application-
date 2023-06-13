@@ -1,5 +1,5 @@
 // Buffer Line
-import { Fragment, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { View, Text, Button, TextInput, ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
 import { action, AppDispatch } from "../../store";
@@ -31,8 +31,7 @@ function FoodItemEntryPanel(props: {
 
   const dispatch = useDispatch<AppDispatch>();
   const weightUnitList = ["g", "kg", "lb"];
-  let { id, meal_id, meal_time, foodName, servingSize, sizeUnit } =
-    foodItemCopy;
+  let { foodName, servingSize, sizeUnit } = foodItemCopy;
 
   useEffect(() => {
     updateSelectedUnit(sizeUnit);

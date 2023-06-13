@@ -25,7 +25,6 @@ import FoodItemEntryPanel from "./FoodItemEntryPanel";
 import NutritionDetailPanel from "./NutritionDetailDisplay";
 import { foodItemDisplayHeight, mps } from "./mealPageComponentStyleSheet";
 import { AntDesign } from "@expo/vector-icons";
-import { createFakeFoodObject } from "../../utils/fakeFoodNutritionData";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import { Domain } from "@env";
 import { getFromSecureStore } from "../../storage/secureStore";

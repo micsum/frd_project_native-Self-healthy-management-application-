@@ -9,7 +9,6 @@ import {
 import { store } from "../store";
 import DateSelectionPanel from "../components/mealPageComponents/DateSelectionPanel";
 import MealTypeSelection from "../components/mealPageComponents/MealTypeSelection";
-import { fakeFoodNutritionData } from "../utils/fakeFoodNutritionData";
 import { FullItemInfo } from "../utils/type";
 import { NativeBaseProvider } from "native-base";
 import {
@@ -26,10 +25,8 @@ const MealPage: React.FC = () => {
     new Date(new Date().getTime() + 8 * 3600000)
   );
   const [dateMealData, updateDateMealData] = useState<FullItemInfo[]>([]);
-  const [dateChanging, toggleDateChanging] = useState<boolean>(false);
 
   const updateMealData = async () => {
-    //let newData = await getDateMealData(date);
     const token = await getFromSecureStore("token");
     if (typeof token !== "string") {
       return;
@@ -72,12 +69,7 @@ const MealPage: React.FC = () => {
               }}
             >
               <DateSelectionPanel updateSelectedDate={selectNewDate} />
-              {!dateChanging ? (
-                <MealTypeSelection
-                  date={date}
-                  foodItemFullInfo={dateMealData}
-                />
-              ) : null}
+              <MealTypeSelection date={date} foodItemFullInfo={dateMealData} />
             </SafeAreaView>
           </AlertNotificationRoot>
         </Provider>

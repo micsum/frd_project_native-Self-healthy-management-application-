@@ -7,14 +7,11 @@ import {
   Put,
   Param,
   Delete,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { MealItemService } from './meal-item.service';
 import { CreateMealItemDto } from './dto/create-meal-item.dto';
 import { UpdateMealItemDto } from './dto/update-meal-item.dto';
 import { JWTService } from 'src/jwt/jwt.service';
-import { JWTPayload } from 'type';
 
 @Controller('mealItem')
 export class MealItemController {
@@ -48,7 +45,7 @@ export class MealItemController {
     }
 
     try {
-      return await this.mealItemService.getMealData(userID, date); //userID, date);
+      return await this.mealItemService.getMealData(userID, date);
     } catch (error) {
       console.log(error);
       return { error: 'Server Error' };
