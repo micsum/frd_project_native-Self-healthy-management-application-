@@ -45,7 +45,6 @@ export const Login = () => {
   }, []);
 
   const onSubmit = async (data: LoginData) => {
-    console.log("get", getFromSecureStore("token"));
     await axios.post(`${Domain}/user/login`, data).then(
       (response) => {
         if (response.data.token) {

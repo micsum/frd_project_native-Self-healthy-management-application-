@@ -362,7 +362,7 @@ function MealTypeSelection(props: {
   const updateItemBasicInfo = async (updatedItem: FoodItemBasicInfo) => {
     if (updatedItem.id !== -1 && updatedItem.meal_id !== -1) {
       const newUpdatedItem = updateCurrentFoodItem(updatedItem);
-      const res = await fetch(`${process.env.Domain}/mealItem`, {
+      const res = await fetch(`${Domain}/mealItem`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
