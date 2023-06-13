@@ -5,5 +5,6 @@ import { MealPlanService } from './mealplan.service';
 @Module({
   controllers: [MealPlanController],
   providers: [MealPlanService],
+  exports: [MealPlanService],
 })
 export class MealPlanModule {}

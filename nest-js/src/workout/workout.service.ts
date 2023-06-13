@@ -12,19 +12,12 @@ export class WorkoutService {
   async getWorkoutList() {
     log('get workout plans');
     let workouts = await this.knex('workout')
-      .select('id', 'title', 'cover_image', 'href')
+      .select('workout.id', 'workout.title', 'workout.cover_image')
+      .count('workout_day.id as days')
+      .innerJoin('workout_day', 'workout_day.workout_id', 'workout.id')
+      .groupBy('workout.id')
       .limit(10);
-    for (let workout of workouts) {
-      let days = await this.knex('workout_day')
-        .select('id', 'workout_id', 'title', 'headers', 'rows')
-        .where({
-          workout_id: workout.id,
-        });
-      // if (days.length >= 1) {
-      workout.days = days;
-      // }
-    }
-    return workouts.filter((v) => v.days.length >= 1);
+    return workouts;
   }
 
   async getWorkoutDetail(workout_id: number) {

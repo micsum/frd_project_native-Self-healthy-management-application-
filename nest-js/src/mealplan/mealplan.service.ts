@@ -33,27 +33,12 @@ export class MealPlanService {
 
   async getMealPlanList() {
     log('get meal plan');
-    let mealplans = await this.knex('mealplan').select(
-      'id',
-      'title',
-      'cover_image',
-    );
-    for (let mealplan_day of mealplans) {
-      let days = await this.knex('mealplan_day')
-        .select('id', 'mealplan_id', 'name', 'cover_image')
-        .where({
-          mealplan_id: mealplan_day.id,
-        });
-
-      for (let dayContent of days) {
-        let meal_content = await this.knex('meal_content')
-          .select('id', 'mealplan_day_id', 'name', 'calories', 'foods')
-          .where({ mealplan_day_id: dayContent.id });
-        dayContent.content = meal_content;
-      }
-      mealplan_day.days = days;
-    }
-    //ask beeno how to retrieve contents
+    let mealplans = await this.knex
+      .from('mealplan')
+      .innerJoin('mealplan_day', 'mealplan_day.mealplan_id', 'mealplan.id')
+      .select('mealplan.id', 'mealplan.title', 'mealplan.cover_image')
+      .groupBy('mealplan.id')
+      .count('mealplan_day.id as days');
 
     return mealplans;
   }

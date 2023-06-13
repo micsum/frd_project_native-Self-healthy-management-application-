@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
+  Image,
   Text,
   Button,
   Center,
@@ -24,6 +25,7 @@ export const PlanDetailScreen = ({ route }: any) => {
     };
     fetchWorkoutData();
   }, []);
+
   useEffect(() => {
     const fetchMealPlanData = async () => {
       let res = await fetch(`${Domain}/meal/detail/${id}`);
@@ -32,16 +34,8 @@ export const PlanDetailScreen = ({ route }: any) => {
     };
     fetchMealPlanData();
   }, []);
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 16,
-      paddingTop: 30,
-      backgroundColor: "#fff",
-    },
-    head: { height: 40, backgroundColor: "#f1f8ff" },
-    text: { textAlign: "center" },
-  });
+
+  // console.log(mealplanData);
   return (
     // <View
     //   style={{
@@ -55,29 +49,66 @@ export const PlanDetailScreen = ({ route }: any) => {
     <SafeAreaProvider>
       <SafeAreaView>
         <ScrollView>
-          <NativeBaseProvider>
-            <Center flex={1} px="3"></Center>
-          </NativeBaseProvider>
+          <NativeBaseProvider></NativeBaseProvider>
           {/* <WorkoutDetailItem /> */}
           <Text>id:{id}</Text>
 
-          {workoutData.map((workout) => (
+          {mealplanData.map((mealplan) => (
             <>
+              <View key={mealplan.id}>
+                <Text fontSize="2xl" underline>
+                  {mealplan.name}
+                </Text>
+
+                <Image
+                  source={{
+                    uri: mealplan.cover_image,
+                  }}
+                  // alt="Alternate Text"
+                  size="2xl"
+                  alt="image"
+                />
+                {mealplan.content.map((k: any) => (
+                  <>
+                    <Text fontSize="lg">
+                      {k.name} (Calories:{k.calories})
+                    </Text>
+                    {k.foods.map((food: any) => (
+                      <Text>- {food.name}</Text>
+                    ))}
+                  </>
+                ))}
+              </View>
+            </>
+          ))}
+
+          {workoutData.map((workout) => (
+            <View key={workout.id}>
               <Text fontSize={"xl"}>{workout.title}</Text>
 
               <Table borderStyle={{ borderWidth: 2, borderColor: "#c8e1ff" }}>
                 <Row
                   data={workout.headers}
                   style={styles.head}
-                  textStyle={styles.text}
+                  // textStyle={styles.text}
                 />
                 <Rows data={workout.rows} />
               </Table>
               <Text></Text>
-            </>
+            </View>
           ))}
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 };
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    paddingTop: 30,
+    backgroundColor: "#fff",
+  },
+  head: { height: 40, backgroundColor: "#f1f8ff" },
+  text: { textAlign: "center" },
+});
