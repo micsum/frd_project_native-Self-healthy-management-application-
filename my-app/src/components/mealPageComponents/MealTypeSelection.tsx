@@ -391,11 +391,25 @@ function MealTypeSelection(props: {
         button: "OK",
       });
     } else {
+      const existingFoodItems = mealDisplay.map((food) => {
+        return food.basicInfo.foodName.toLowerCase();
+      });
+
+      if (
+        existingFoodItems.indexOf(updatedItem.foodName.toLowerCase()) !== -1
+      ) {
+        Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          title: `${updatedItem.foodName} is already present in ${updatedItem.meal_time}`,
+          autoClose: 1500,
+        });
+        return;
+      }
+
       const token = await getFromSecureStore("token");
       if (typeof token !== "string") {
         return;
       }
-
       const dateString = date.toISOString().split("T")[0];
       const res = await fetch(`${Domain}/mealItem/${token}/${dateString}`, {
         method: "POST",
