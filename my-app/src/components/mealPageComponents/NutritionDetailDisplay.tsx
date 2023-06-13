@@ -24,9 +24,7 @@ function NutritionDetailPanel(props: {
 
   store.subscribe(() => {
     const storeInfo = store.getState();
-    updateItemNutritionPanelVisibility(() => {
-      return storeInfo.itemNutritionPanelOpen;
-    });
+    updateItemNutritionPanelVisibility(storeInfo.itemNutritionPanelOpen);
   });
 
   const nutritionContentKey: string[] = [

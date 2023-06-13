@@ -9,24 +9,45 @@ import {
 import { store } from "../store";
 import DateSelectionPanel from "../components/mealPageComponents/DateSelectionPanel";
 import MealTypeSelection from "../components/mealPageComponents/MealTypeSelection";
-import { fakeFoodNutritionData } from "../components/mealPageComponents/fakeFoodNutritionData";
+import { fakeFoodNutritionData } from "../utils/fakeFoodNutritionData";
 import { FullItemInfo } from "../utils/type";
 import { NativeBaseProvider } from "native-base";
-import { AlertNotificationRoot } from "react-native-alert-notification";
+import {
+  ALERT_TYPE,
+  AlertNotificationRoot,
+  Dialog,
+} from "react-native-alert-notification";
 import { createStackNavigator } from "@react-navigation/stack";
+import { getFromSecureStore } from "../storage/secureStore";
+import { Domain } from "@env";
 
 const MealPage: React.FC = () => {
-  const [date, updateSelectedDate] = useState<Date>(new Date());
+  const [date, updateSelectedDate] = useState<Date>(
+    new Date(new Date().getTime() + 8 * 3600000)
+  );
   const [dateMealData, updateDateMealData] = useState<FullItemInfo[]>([]);
-
-  const getDateMealData = async (date: Date) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return fakeFoodNutritionData;
-  };
+  const [dateChanging, toggleDateChanging] = useState<boolean>(false);
 
   const updateMealData = async () => {
-    let newData = await getDateMealData(date);
-    updateDateMealData(newData);
+    //let newData = await getDateMealData(date);
+    const token = await getFromSecureStore("token");
+    if (typeof token !== "string") {
+      return;
+    }
+    const dateString = date?.toISOString().split("T")[0];
+    const res = await fetch(`${Domain}/mealItem/${token}/${dateString}`);
+    const result = await res.json();
+    if (result.error) {
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: result.error,
+        autoClose: 1500,
+      });
+      return;
+    }
+    updateDateMealData(() => {
+      return result.mealData;
+    });
   };
 
   useMemo(() => {
@@ -34,7 +55,6 @@ const MealPage: React.FC = () => {
   }, [date]);
 
   const selectNewDate = (date: Date) => {
-    console.log(date);
     updateSelectedDate(() => {
       return date;
     });
@@ -51,11 +71,13 @@ const MealPage: React.FC = () => {
                 paddingBottom: useSafeAreaInsets().bottom,
               }}
             >
-              <DateSelectionPanel date={date} selectNewDate={selectNewDate} />
-              <MealTypeSelection
-                date={date}
-                foodItemFullInfo={dateMealData}
-              ></MealTypeSelection>
+              <DateSelectionPanel updateSelectedDate={selectNewDate} />
+              {!dateChanging ? (
+                <MealTypeSelection
+                  date={date}
+                  foodItemFullInfo={dateMealData}
+                />
+              ) : null}
             </SafeAreaView>
           </AlertNotificationRoot>
         </Provider>

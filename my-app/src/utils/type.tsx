@@ -3,7 +3,6 @@ export type ObjectAny = {
   [key: string]: any;
 };
 
-// Need to add an extra column for saved unit
 export type FullItemInfo = {
   id: number;
   meal_id: number;

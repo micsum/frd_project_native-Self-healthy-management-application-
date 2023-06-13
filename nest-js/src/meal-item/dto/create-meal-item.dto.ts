@@ -1,5 +1,12 @@
 // Buffer Line
-import { IsEnum, IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsNumberString,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class CreateMealItemDto {
   @IsNotEmpty()

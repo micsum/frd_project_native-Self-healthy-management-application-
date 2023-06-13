@@ -27,8 +27,33 @@ export class MealItemService {
     ];
   }
 
-  async createNewItem(date: Date, foodItemBasicInfo: CreateMealItemDto) {
-    console.log('service', foodItemBasicInfo);
+  async getMealData(userID: number, date: Date) {
+    const mealDataResult = await this.knex('meal_food_item')
+      .join('meal_input_record', {
+        'meal_input_record.id': 'meal_food_item.meal_id',
+      })
+      .select(
+        'meal_input_record.id as mealInputID',
+        'meal_food_item.id as foodItemID',
+        '*',
+      )
+      .where('meal_input_record.user_id', '=', userID)
+      .andWhere('meal_input_record.date_of_meal', '=', date);
+
+    const mealData = mealDataResult.map((foodItem) => {
+      //@ts-ignore
+      const { date_of_meal, user_id, mealInputID, foodItemID, ...clone } =
+        foodItem;
+      return { ...clone, id: foodItemID };
+    });
+    return { mealData };
+  }
+
+  async createNewItem(
+    userID: number,
+    date: Date,
+    foodItemBasicInfo: CreateMealItemDto,
+  ) {
     const { meal_id, meal_time, foodName, servingSize, sizeUnit } =
       foodItemBasicInfo;
     let nutritionInfo: APIFoodItemNutritionInfo[] = [];
@@ -49,50 +74,64 @@ export class MealItemService {
     //   return { error: 'API Error' };
     // }
 
+    let newServingSize: number;
+    switch (sizeUnit) {
+      case 'kg':
+        newServingSize = servingSize * 1000;
+        break;
+      case 'lb':
+        newServingSize = servingSize * 453.592;
+        break;
+      default:
+        newServingSize = servingSize;
+    }
+    newServingSize = parseFloat(newServingSize.toFixed(2));
     if (nutritionInfo.length === 0) {
-      let newServingSize: number;
-      switch (sizeUnit) {
-        case 'kg':
-          newServingSize = servingSize * 1000;
-          break;
-        case 'lb':
-          newServingSize = servingSize * 453.592;
-          break;
-        default:
-          newServingSize = servingSize;
-      }
-      newServingSize = parseFloat(newServingSize.toFixed(2));
       itemNutritionInfo = {
         ...createFakeFoodObject(foodItemBasicInfo),
-        serving_size_g: newServingSize,
-        saved_size_unit: sizeUnit,
       };
     } else {
       itemNutritionInfo = {
         ...nutritionInfo[0],
-        saved_size_unit: sizeUnit,
-        serving_size_g: sizeUnit,
       };
     }
-    console.log(itemNutritionInfo);
+    itemNutritionInfo = {
+      ...itemNutritionInfo,
+      serving_size_g: newServingSize,
+      saved_size_unit: sizeUnit,
+      name: foodItemBasicInfo.foodName,
+    };
 
     let mealID = meal_id;
     if (mealID === -1) {
-      let [{ id }] = await this.knex('meal_input_record')
-        .insert({ date_of_meal: date, userID: '??', meal_time })
-        .returning('id');
-      mealID = id;
+      let idResult = await this.knex('meal_input_record')
+        .select('*')
+        .where({ date_of_meal: date })
+        .andWhere({ meal_time });
+
+      if (idResult.length !== 0) {
+        mealID = idResult[0].id;
+      } else {
+        let [{ id }] = await this.knex('meal_input_record')
+          .insert({ date_of_meal: date, user_id: userID, meal_time })
+          .returning('id');
+        mealID = id;
+      }
+      itemNutritionInfo = {
+        ...itemNutritionInfo,
+        meal_id: mealID,
+      };
     }
 
     const existingResult = await this.knex
       .select('*')
       .from('meal_food_item')
       .where({ meal_id: mealID })
-      .andWhere({ foodName: foodItemBasicInfo.foodName });
+      .andWhere({ name: foodItemBasicInfo.foodName });
 
     if (existingResult.length !== 0) {
       return {
-        error: `${foodItemBasicInfo.foodName} already exists in ${foodItemBasicInfo.meal_time}`,
+        error: `${foodName} already exists in ${meal_time}`,
       };
     }
 
@@ -100,12 +139,33 @@ export class MealItemService {
       .insert(itemNutritionInfo)
       .returning('id');
 
-    return { id };
+    return { itemInfo: { ...itemNutritionInfo, id, meal_time } };
+  }
+
+  async updateExistingItem(foodItemFullInfo: UpdateMealItemDto) {
+    const { id, meal_id } = foodItemFullInfo;
+
+    const existingResult = await this.knex
+      .select('*')
+      .from('meal_food_item')
+      .where({ meal_id })
+      .andWhere({ id });
+
+    if (existingResult.length === 0) {
+      return {
+        error: `This item does not exist in ${foodItemFullInfo.meal_time}`,
+      };
+    }
+
+    const { meal_time, name, ...clone } = foodItemFullInfo;
+
+    await this.knex('meal_food_item').update(clone).where({ id });
+
+    return {};
   }
 
   async deleteExistingItem(foodItemBasicInfo: CreateMealItemDto) {
     const { id, meal_id, foodName } = foodItemBasicInfo;
-    console.log(id, meal_id, foodName);
 
     const existingResult = await this.knex
       .select('*')

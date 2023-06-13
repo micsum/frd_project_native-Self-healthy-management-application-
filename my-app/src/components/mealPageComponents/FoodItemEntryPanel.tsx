@@ -35,9 +35,7 @@ function FoodItemEntryPanel(props: {
     foodItemCopy;
 
   useEffect(() => {
-    updateSelectedUnit(() => {
-      return sizeUnit;
-    });
+    updateSelectedUnit(sizeUnit);
   }, []);
 
   const cancelItemUpdate = () => {
