@@ -66,6 +66,7 @@ export const Login = () => {
             autoClose: 5000,
           });
         }
+        return;
       },
       (error) => {
         console.log(error.response.data.message);

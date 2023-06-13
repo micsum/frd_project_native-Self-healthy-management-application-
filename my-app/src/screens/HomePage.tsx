@@ -11,6 +11,7 @@ import { CardWeight } from "../components/homeCardWeight";
 import { ProfileScreen } from "./ProfilePage";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ChatRoomPage } from "./ChatroomPage";
 import { SpeedDial } from "@rneui/themed";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -181,6 +182,14 @@ export const HomeScreen = () => {
           headerShown: false,
         }}
       />
+      {/* <Stack.Screen
+        name="ChatRoom"
+        component={ChatRoomPage}
+        options={{
+          headerShown: false,
+        }}
+      /> */}
+
       <Stack.Screen
         name="Notify"
         component={NotifyScreen}

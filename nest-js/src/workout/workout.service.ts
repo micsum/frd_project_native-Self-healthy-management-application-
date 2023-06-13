@@ -22,7 +22,7 @@ export class WorkoutService {
 
   async getWorkoutDetail(workout_id: number) {
     let workout_detail = await this.knex('workout_day')
-      .select('title', 'headers', 'rows')
+      .select('id', 'title', 'headers', 'rows')
       .where({ workout_id });
 
     return workout_detail;
