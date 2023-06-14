@@ -6,7 +6,7 @@ import { UpdateMealItemDto } from './dto/update-meal-item.dto';
 import { createFakeFoodObject } from './utils/fakeNutritionData';
 import { APIFoodItemNutritionInfo } from './utils/type';
 
-const API_KEY = '';
+const API_KEY = 'UR7CbMoaeHktlvieC4JL4A==sNSnjWVf9xeQny0G';
 
 @Injectable()
 export class MealItemService {
@@ -59,20 +59,19 @@ export class MealItemService {
     let nutritionInfo: APIFoodItemNutritionInfo[] = [];
     let itemNutritionInfo: any = {};
 
-    // try {
-
-    //   const nutritionURL = `https://api.api-ninjas.com/v1/nutrition?query=${servingSize}${sizeUnit} ${foodName}`;
-    //   const res = await fetch(nutritionURL, {
-    //     method: 'GET',
-    //     headers: {
-    //       'X-Api-Key': API_KEY,
-    //     },
-    //   });
-    //   nutritionInfo = await res.json();
-    // } catch (error) {
-    //   console.log(error);
-    //   return { error: 'API Error' };
-    // }
+    try {
+      const nutritionURL = `https://api.api-ninjas.com/v1/nutrition?query=${servingSize}${sizeUnit} ${foodName}`;
+      const res = await fetch(nutritionURL, {
+        method: 'GET',
+        headers: {
+          'X-Api-Key': API_KEY,
+        },
+      });
+      nutritionInfo = await res.json();
+    } catch (error) {
+      console.log(error);
+      return { error: 'API Error' };
+    }
 
     let newServingSize: number;
     switch (sizeUnit) {
@@ -117,11 +116,11 @@ export class MealItemService {
           .returning('id');
         mealID = id;
       }
-      itemNutritionInfo = {
-        ...itemNutritionInfo,
-        meal_id: mealID,
-      };
     }
+    itemNutritionInfo = {
+      ...itemNutritionInfo,
+      meal_id: mealID,
+    };
 
     const existingResult = await this.knex
       .select('*')
