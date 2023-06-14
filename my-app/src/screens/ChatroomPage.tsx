@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
+import axios from "axios";
 
 export function ChatRoomScreen() {
   const [messages, setMessages] = useState<any[]>([]);
@@ -10,6 +11,7 @@ export function ChatRoomScreen() {
         _id: 1,
         text: "Hello developer",
         createdAt: new Date(),
+
         user: {
           _id: 2,
           name: "React Native",
@@ -27,7 +29,9 @@ export function ChatRoomScreen() {
     <>
       <GiftedChat
         messages={messages}
-        onSend={(messages: any) => onSend(messages)}
+        onSend={(messages: any) => {
+          onSend(messages);
+        }}
         user={{
           _id: 1,
         }}
