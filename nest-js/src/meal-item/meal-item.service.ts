@@ -27,6 +27,17 @@ export class MealItemService {
     ];
   }
 
+  private generatePassedDate(days: number, currentDate: Date) {
+    const nDaysAgo = (date: Date, n: number) => {
+      return new Date(date.getTime() - n * 24 * 3600 * 1000);
+    };
+    let dateArray: Date[] = [];
+    for (let i = 0; i < days; i++) {
+      dateArray.push(nDaysAgo(currentDate, days - i));
+    }
+    return dateArray;
+  }
+
   async getMealData(userID: number, date: Date) {
     const mealDataResult = await this.knex('meal_food_item')
       .join('meal_input_record', {
@@ -180,5 +191,49 @@ export class MealItemService {
 
     await this.knex('meal_food_item').where({ id }).del();
     return {};
+  }
+
+  async getPastItemNutrition(userID: number, date: Date) {
+    const dateArray = this.generatePassedDate(7, date);
+    const itemNutritionResult = await this.knex('meal_input_record')
+      .join('meal_food_item', {
+        'meal_food_item.meal_id': 'meal_input_record.id',
+      })
+      .select(
+        'meal_input_record.id as mealInputID',
+        'meal_food_item.id as foodItemID',
+        '*',
+      )
+      .where({ 'meal_input_record.user_id': userID })
+      .whereIn('meal_input_record.date_of_meal', dateArray);
+
+    let dateSortedObject: any = {};
+    dateArray.map((date: Date) => {
+      dateSortedObject[date.toISOString()] = [];
+    });
+
+    for (let foodItem of itemNutritionResult) {
+      const dateOfMeal: Date = foodItem.date_of_meal;
+      dateSortedObject[dateOfMeal.toISOString()].push(foodItem);
+    }
+
+    const dailyNutritionResult: any = [];
+    // const dailyNutritionObject: any = {};
+    // for (let nutritionKey of this.nutritionContentKey) {
+    //   dailyNutritionObject[nutritionKey] = 0;
+    // }
+
+    for (let date of dateArray) {
+      const nutritionObject: any = {}; //= { ...dailyNutritionObject };
+      for (let foodItem of dateSortedObject[date.toISOString()]) {
+        for (let nutritionKey of this.nutritionContentKey) {
+          nutritionObject[nutritionKey] += foodItem[nutritionKey];
+        }
+      }
+      const outputObject = { ...nutritionObject, date };
+      dailyNutritionResult.push(outputObject);
+    }
+
+    return { dailyNutritionResult };
   }
 }

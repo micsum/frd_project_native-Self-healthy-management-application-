@@ -40,7 +40,7 @@ export class MealItemController {
     const decodedToken = this.jwtService.decodedJWT(token);
     const userID = typeof decodedToken === 'string' ? -1 : decodedToken.id;
 
-    if (userID === undefined) {
+    if (userID === undefined || userID === -1) {
       return { error: 'User Not Found' };
     }
 
@@ -60,6 +60,11 @@ export class MealItemController {
   ) {
     const decodedToken = this.jwtService.decodedJWT(token);
     const userID = typeof decodedToken === 'string' ? -1 : decodedToken.id;
+
+    if (userID === undefined || userID === -1) {
+      return { error: 'User Not Found' };
+    }
+
     try {
       return await this.mealItemService.createNewItem(
         userID,
@@ -86,6 +91,25 @@ export class MealItemController {
   async deleteItem(@Body() foodItemBasicInfo: CreateMealItemDto) {
     try {
       return await this.mealItemService.deleteExistingItem(foodItemBasicInfo);
+    } catch (error) {
+      console.log(error);
+      return { error: 'Server Error' };
+    }
+  }
+
+  @Get('nutritionDetail/:token/:date')
+  async getNutrition(@Param() token: string, @Param() date: Date) {
+    const decodedToken = this.jwtService.decodedJWT(token);
+    const userID = typeof decodedToken === 'string' ? -1 : decodedToken.id;
+
+    if (userID === undefined || userID === -1) {
+      return { error: 'User Not Found' };
+    }
+
+    try {
+      const itemNutritionResult =
+        await this.mealItemService.getPastItemNutrition(userID, date);
+      return itemNutritionResult;
     } catch (error) {
       console.log(error);
       return { error: 'Server Error' };
