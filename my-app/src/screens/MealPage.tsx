@@ -53,7 +53,7 @@ const MealPage: React.FC = () => {
 
   const selectNewDate = (date: Date) => {
     updateSelectedDate(() => {
-      return date;
+      return new Date(date.getTime() + 8 * 3600000);
     });
   };
 

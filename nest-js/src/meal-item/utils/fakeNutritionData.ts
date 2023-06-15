@@ -1,5 +1,5 @@
 // Buffer Line
-import { FoodItemBasicInfo, FullItemInfo } from './type';
+import { FoodItemBasicInfo, FullItemInfo } from './mealPageType';
 
 const nutritionContentKey: string[] = [
   'calories',

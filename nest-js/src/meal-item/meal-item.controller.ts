@@ -97,8 +97,12 @@ export class MealItemController {
     }
   }
 
-  @Get('nutritionDetail/:token/:date')
-  async getNutrition(@Param() token: string, @Param() date: Date) {
+  @Get('nutritionDetail/:token/:date/:days')
+  async getNutritionDetail(
+    @Param('token') token: string,
+    @Param('date') date: string,
+    @Param('days') days: number,
+  ) {
     const decodedToken = this.jwtService.decodedJWT(token);
     const userID = typeof decodedToken === 'string' ? -1 : decodedToken.id;
 
@@ -107,9 +111,11 @@ export class MealItemController {
     }
 
     try {
-      const itemNutritionResult =
-        await this.mealItemService.getPastItemNutrition(userID, date);
-      return itemNutritionResult;
+      return await this.mealItemService.getPastItemNutrition(
+        userID,
+        date,
+        days,
+      );
     } catch (error) {
       console.log(error);
       return { error: 'Server Error' };

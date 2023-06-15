@@ -4,7 +4,7 @@ import { InjectKnex, Knex } from 'nestjs-knex';
 import { CreateMealItemDto } from './dto/create-meal-item.dto';
 import { UpdateMealItemDto } from './dto/update-meal-item.dto';
 import { createFakeFoodObject } from './utils/fakeNutritionData';
-import { APIFoodItemNutritionInfo } from './utils/type';
+import { APIFoodItemNutritionInfo } from './utils/mealPageType';
 
 const API_KEY = 'UR7CbMoaeHktlvieC4JL4A==sNSnjWVf9xeQny0G';
 
@@ -27,13 +27,14 @@ export class MealItemService {
     ];
   }
 
-  private generatePassedDate(days: number, currentDate: Date) {
+  private generatePassedDate(days: number, currentDate: string) {
     const nDaysAgo = (date: Date, n: number) => {
       return new Date(date.getTime() - n * 24 * 3600 * 1000);
     };
     let dateArray: Date[] = [];
     for (let i = 0; i < days; i++) {
-      dateArray.push(nDaysAgo(currentDate, days - i));
+      const date = nDaysAgo(new Date(currentDate), days - 1 - i);
+      dateArray.push(date);
     }
     return dateArray;
   }
@@ -193,8 +194,8 @@ export class MealItemService {
     return {};
   }
 
-  async getPastItemNutrition(userID: number, date: Date) {
-    const dateArray = this.generatePassedDate(7, date);
+  async getPastItemNutrition(userID: number, date: string, days: number) {
+    const dateArray = this.generatePassedDate(days, date);
     const itemNutritionResult = await this.knex('meal_input_record')
       .join('meal_food_item', {
         'meal_food_item.meal_id': 'meal_input_record.id',
@@ -209,31 +210,31 @@ export class MealItemService {
 
     let dateSortedObject: any = {};
     dateArray.map((date: Date) => {
-      dateSortedObject[date.toISOString()] = [];
+      dateSortedObject[date.toISOString().split('T')[0]] = [];
     });
 
     for (let foodItem of itemNutritionResult) {
       const dateOfMeal: Date = foodItem.date_of_meal;
-      dateSortedObject[dateOfMeal.toISOString()].push(foodItem);
+      dateSortedObject[dateOfMeal.toISOString().split('T')[0]].push(foodItem);
     }
 
     const dailyNutritionResult: any = [];
-    // const dailyNutritionObject: any = {};
-    // for (let nutritionKey of this.nutritionContentKey) {
-    //   dailyNutritionObject[nutritionKey] = 0;
-    // }
+    const dailyNutritionObject: any = {};
+    for (let nutritionKey of this.nutritionContentKey) {
+      dailyNutritionObject[nutritionKey] = 0;
+    }
 
     for (let date of dateArray) {
-      const nutritionObject: any = {}; //= { ...dailyNutritionObject };
-      for (let foodItem of dateSortedObject[date.toISOString()]) {
+      const nutritionObject: any = { ...dailyNutritionObject };
+      for (let foodItem of dateSortedObject[date.toISOString().split('T')[0]]) {
         for (let nutritionKey of this.nutritionContentKey) {
-          nutritionObject[nutritionKey] += foodItem[nutritionKey];
+          nutritionObject[nutritionKey] += parseFloat(foodItem[nutritionKey]);
         }
       }
       const outputObject = { ...nutritionObject, date };
       dailyNutritionResult.push(outputObject);
     }
 
-    return { dailyNutritionResult };
+    return { dateSortedObject, dailyNutritionResult };
   }
 }
