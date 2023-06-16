@@ -2,7 +2,7 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import { HomeScreen } from "../screens/HomePage";
 import { NavigationContainer } from "@react-navigation/native";
 import { MealScreen } from "../screens/MealPage";
-import { CalenderScreen } from "../screens/CalendarPage";
+import { CalendarScreen } from "../screens/CalendarPage";
 import { PlansScreen } from "../screens/PlansPage";
 import { MoreScreen } from "../screens/MorePage";
 import {
@@ -48,7 +48,7 @@ export function MyTabs() {
       />
       <Tab.Screen
         name="Calendar"
-        component={CalenderScreen}
+        component={CalendarScreen}
         options={{
           tabBarLabel: "Calendar",
           tabBarIcon: () => (
