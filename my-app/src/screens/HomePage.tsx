@@ -5,6 +5,7 @@ import {
   PanResponder,
   Animated,
   SafeAreaViewComponent,
+  TouchableOpacity,
 } from "react-native";
 import { CardGoal } from "../components/homeCardGoal";
 import { ScrollView, HStack, Avatar as NativeAvatar } from "native-base";
@@ -20,6 +21,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ChatRoomScreen } from "./ChatroomPage";
 import { SpeedDial } from "@rneui/themed";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { GetStepsWeekly } from "./StepPage";
 export const AvatarPic = () => {
   const navigation = useNavigation();
 
@@ -160,6 +162,8 @@ const HomeNoStackWithChat = () => {
 
 export function HomeScreenNoStack() {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+
   return (
     <ScrollView>
       <View
@@ -180,7 +184,14 @@ export function HomeScreenNoStack() {
       </View>
 
       <CardGoal />
-      <CardFitnessData />
+      <TouchableOpacity
+        onPress={() => {
+          //@ts-ignore
+          navigation.navigate("StepPage");
+        }}
+      >
+        <CardFitnessData />
+      </TouchableOpacity>
       <CardExercise />
       <CardWeight />
     </ScrollView>
@@ -204,6 +215,18 @@ export const HomeScreen = () => {
         component={ChatRoomScreen}
         options={{
           title: "Chat with ChatGPT",
+          headerShown: true,
+          headerTitleAlign: "center",
+          headerStyle: { backgroundColor: "#38668E" },
+          headerTintColor: "#a5f3fc",
+          headerBackTitle: " ",
+        }}
+      />
+      <Stack.Screen
+        name="StepPage"
+        component={GetStepsWeekly}
+        options={{
+          title: "Steps Record",
           headerShown: true,
           headerTitleAlign: "center",
           headerStyle: { backgroundColor: "#38668E" },
