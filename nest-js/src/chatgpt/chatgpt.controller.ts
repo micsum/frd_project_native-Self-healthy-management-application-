@@ -11,7 +11,7 @@ export class ChatgptController {
   }
 
   @Get()
-  getChatRoomHistory() {
-    return this.chatgptService.getChatRoomHistory(1);
+  getChatRoomId() {
+    return this.chatgptService.getChatRoomId(1);
   }
 }

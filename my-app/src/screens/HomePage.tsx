@@ -21,6 +21,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ChatRoomScreen } from "./ChatroomPage";
 import { SpeedDial } from "@rneui/themed";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import axios from "axios";
 import { GetStepsWeekly } from "./StepPage";
 export const AvatarPic = () => {
   const navigation = useNavigation();
@@ -149,8 +150,13 @@ const HomeNoStackWithChat = () => {
           icon={<RobotIcon />}
           title="ChatGPT"
           titleStyle={{ backgroundColor: "#649c98", color: "#fff" }}
-          onPress={() => {
-            //@ts-ignore
+          onPress={async () => {
+            await axios
+              .get("http://192.168.80.99:3000/chatgpt")
+              .then(function (response) {
+                console.log(response.data);
+              });
+            //@ts-ignore'
             navigation.navigate("ChatRoom");
           }}
           buttonStyle={{ backgroundColor: "#649c98" }}
