@@ -16,23 +16,28 @@ export class ChatgptService {
     console.log(chat_completion);
   }
 
-  async getChatRoomHistory(currentUserId: number) {
-    const hasChatroom = await this.knex('chatroom')
+  async getChatRoomId(currentUserId: number) {
+    const chatroom_record = await this.knex('chatroom')
       .select('id')
       .where({ member1_id: currentUserId })
       .orWhere({ member2_id: currentUserId });
 
-    console.log(hasChatroom.length);
-    let chatroom_id = hasChatroom[0].id;
-    if (hasChatroom.length >= 1) {
-      await this.knex('chatroom_message')
-        .select('*')
-        .where({ id: chatroom_id });
+    if (chatroom_record.length > 0) {
+      return chatroom_record[0].id;
     } else {
-      return null;
-    }
+      let chatgpt_id = (
+        await this.knex('user')
+          .select('id')
+          .where({ email: 'chatGPT@test.com' })
+      )[0].id;
 
-    // const message = await this.knex('chatroom').select('id').where({});
-    return;
+      let chatroom_id = (
+        await this.knex('chatroom')
+          .insert({ member1_id: currentUserId, member2_id: chatgpt_id })
+          .returning('id')
+      )[0].id;
+
+      return chatroom_id;
+    }
   }
 }
