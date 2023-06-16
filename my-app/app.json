@@ -11,7 +11,6 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-
     "assetBundlePatterns": ["**/*"],
     "plugins": [
       [
@@ -26,7 +25,13 @@
       "supportsTablet": true,
       "config": {
         "usesNonExemptEncryption": false
-      }
+      },
+      "infoPlist": {
+        "NSCalendarsUsageDescription": "The app needs to access your calendar.",
+        "NSRemindersUsageDescription": "Allow $(PRODUCT_NAME) to access your reminders"
+      },
+      "bundleIdentifier": "com.iosbehealthy.myapp",
+      "entitlements": { "com.apple.developer.healthkit": true }
     },
     "android": {
       "adaptiveIcon": {
@@ -36,7 +41,8 @@
       "permissions": [
         "android.permission.READ_CALENDAR",
         "android.permission.WRITE_CALENDAR"
-      ]
+      ],
+      "package": "com.behealthy.myapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"

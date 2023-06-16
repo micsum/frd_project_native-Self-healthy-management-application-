@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Text, View, PanResponder, Animated } from "react-native";
+import {
+  Text,
+  View,
+  PanResponder,
+  Animated,
+  SafeAreaViewComponent,
+} from "react-native";
 import { CardGoal } from "../components/homeCardGoal";
 import { ScrollView, HStack, Avatar as NativeAvatar } from "native-base";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -168,6 +174,7 @@ export function HomeScreenNoStack() {
         <AnimatedText />
         <Notification />
       </View>
+
       <CardGoal />
       <CardFitnessData />
       <CardExercise />

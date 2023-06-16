@@ -1,5 +1,6 @@
 import { View, StyleSheet, Text } from "react-native";
-import React, { useState } from "react";
+import { FontAwesome5 } from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
 import {
   HStack,
   VStack,
@@ -11,11 +12,60 @@ import {
   Stack,
   Button,
 } from "native-base";
-import { CardProps } from "../utils/type";
+
+import {
+  AuthorizationPermissions,
+  FitnessDataType,
+  FitnessTracker,
+  GoogleFitDataType,
+  HealthKitDataType,
+} from "@kilohealth/rn-fitness-tracker";
+import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 
 export const fitnessData = [{ title: "card1", description: "hihi" }];
 export const exerciseData = [{ title: "card2", description: "test" }];
 
+const permissions: AuthorizationPermissions = {
+  healthReadPermissions: [HealthKitDataType.StepCount],
+  googleFitReadPermissions: [GoogleFitDataType.Steps],
+};
+
+export const GetStepsToday = () => {
+  const [steps, setSteps] = useState<number | undefined>();
+
+  useEffect(() => {
+    const getStepsToday = async () => {
+      try {
+        const authorized = await FitnessTracker.authorize(permissions);
+
+        if (!authorized) return;
+
+        const stepsToday = await FitnessTracker.getStatisticTodayTotal(
+          FitnessDataType.Steps
+        );
+
+        // returns the number of steps walked today, e.g. 320
+        console.log(stepsToday);
+        setSteps(stepsToday);
+      } catch (error) {
+        // Handle error here
+        console.log("error", error);
+
+        Dialog.show({
+          type: ALERT_TYPE.WARNING,
+          title: `${error}`,
+          textBody: "Please try again",
+          button: "close",
+          autoClose: 5000,
+        });
+      }
+    };
+
+    getStepsToday();
+  }, []);
+
+  return steps ? <Text>{steps}</Text> : null;
+};
 export const CardFitnessData = () => {
   return (
     <Box alignItems="center">
@@ -59,14 +109,15 @@ export const CardFitnessData = () => {
             py="1.5"
             borderRadius={"sm"}
           >
-            hihi
+            Steps Today
           </Center>
         </Box>
 
         <Stack space={2}>
           <HStack alignItems="center" space={4} justifyContent="space-between">
             <HStack alignItems="center">
-              <Text>text</Text>
+              <FontAwesome5 name="shoe-prints" size={42} color="green" />
+              <GetStepsToday />
             </HStack>
           </HStack>
         </Stack>

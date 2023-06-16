@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "90584422345",
+    "project_id": "frdproject-389714",
+    "storage_bucket": "frdproject-389714.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:90584422345:android:aa1c4a40c303b45cb37a18",
+        "android_client_info": {
+          "package_name": "com.behealthy.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "90584422345-omgeku48j0v3vtchnuu4qctmmb2agaro.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLwm09JgsWTuEFmoDR_1J8D_EUfY0Y3Eo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "90584422345-omgeku48j0v3vtchnuu4qctmmb2agaro.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
