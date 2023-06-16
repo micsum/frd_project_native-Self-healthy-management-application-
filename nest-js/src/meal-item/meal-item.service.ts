@@ -6,8 +6,6 @@ import { UpdateMealItemDto } from './dto/update-meal-item.dto';
 import { createFakeFoodObject } from './utils/fakeNutritionData';
 import { APIFoodItemNutritionInfo } from './utils/mealPageType';
 
-const API_KEY = 'UR7CbMoaeHktlvieC4JL4A==sNSnjWVf9xeQny0G';
-
 @Injectable()
 export class MealItemService {
   nutritionContentKey: string[];
@@ -76,7 +74,7 @@ export class MealItemService {
       const res = await fetch(nutritionURL, {
         method: 'GET',
         headers: {
-          'X-Api-Key': API_KEY,
+          'X-Api-Key': `${process.env.API_KEY}`,
         },
       });
       nutritionInfo = await res.json();

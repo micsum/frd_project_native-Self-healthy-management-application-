@@ -102,3 +102,9 @@ export type SignUpData = {
 export type ForgotPwEmail = {
   email: string;
 };
+
+export type GoalInputData = {
+  targetType: string;
+  weightTarget: number;
+  expectedDate: Date;
+};
