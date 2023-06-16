@@ -1,5 +1,5 @@
 // Buffer Line
-import { Fragment, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { View, Text, Button, TextInput, ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
 import { action, AppDispatch } from "../../store";
@@ -31,13 +31,10 @@ function FoodItemEntryPanel(props: {
 
   const dispatch = useDispatch<AppDispatch>();
   const weightUnitList = ["g", "kg", "lb"];
-  let { id, meal_id, meal_time, foodName, servingSize, sizeUnit } =
-    foodItemCopy;
+  let { foodName, servingSize, sizeUnit } = foodItemCopy;
 
   useEffect(() => {
-    updateSelectedUnit(() => {
-      return sizeUnit;
-    });
+    updateSelectedUnit(sizeUnit);
   }, []);
 
   const cancelItemUpdate = () => {
@@ -113,10 +110,10 @@ function FoodItemEntryPanel(props: {
   return (
     <ScrollView style={[{ minHeight: 250 }, mps.detailPanel]}>
       <View style={mps.foodItemInputDiv}>
-        <Text style={mps.foodItemInputTitle}>{"Food Item Name : "}</Text>
-        {foodItem ? (
-          <Text>{foodName}</Text>
-        ) : (
+        <Text style={mps.foodItemInputTitle}>{`Food Item Name : ${
+          foodItem ? foodName : null
+        }`}</Text>
+        {foodItem ? null : (
           <TextInput
             placeholder="Enter Food Item Name Here"
             defaultValue={foodName}

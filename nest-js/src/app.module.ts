@@ -11,6 +11,7 @@ import { env } from '../env';
 import { MealPlanModule } from './mealplan/mealplan.module';
 import { MealItemModule } from './meal-item/meal-item.module';
 import { PlanModule } from './plan/plan.module';
+import { ChatgptModule } from './chatgpt/chatgpt.module';
 
 let knexConfig = require('../knexfile');
 let knexProfile = knexConfig[env.NODE_ENV];
@@ -28,6 +29,7 @@ let knexProfile = knexConfig[env.NODE_ENV];
     MealPlanModule,
     MealItemModule,
     PlanModule,
+    ChatgptModule,
   ],
   controllers: [AppController],
   providers: [AppService],

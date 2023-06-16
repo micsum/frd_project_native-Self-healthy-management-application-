@@ -1,5 +1,5 @@
 // Buffer Line
-import { FoodItemBasicInfo, FullItemInfo } from "../../utils/type";
+import { FoodItemBasicInfo, FullItemInfo } from "./type";
 
 export const fakeFoodNutritionData: FullItemInfo[] = [
   {

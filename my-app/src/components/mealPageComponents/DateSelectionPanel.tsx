@@ -6,11 +6,17 @@ import { store } from "../../store";
 import { mps } from "./mealPageComponentStyleSheet";
 
 export default function DateSelectionPanel(props: {
-  date: Date;
-  selectNewDate: (date: Date) => void;
+  updateSelectedDate: (date: Date) => void;
 }) {
-  const { date, selectNewDate } = props;
+  const { updateSelectedDate } = props;
 
+  const timeZoneDelta = (displayDate: Date, hours: number) => {
+    return new Date(displayDate.getTime() + hours * 3600000);
+  };
+
+  const [selectedDate, selectNewDate] = useState<Date>(
+    timeZoneDelta(new Date(), 8)
+  );
   const [open, setOpen] = useState<boolean>(false);
   const [foodInputVisible, updateFoodInputVisibility] = useState<boolean>(
     store.getState().foodInputPanelOpen
@@ -56,8 +62,8 @@ export default function DateSelectionPanel(props: {
               <View style={{ width: "80%" }}>
                 <DateTimePicker
                   mode="date"
-                  initialValue={date}
-                  onChange={(date: Date) => selectNewDate(date)}
+                  initialValue={selectedDate}
+                  onChange={(date: Date) => selectNewDate(() => date)}
                   setError={(err: string) => console.log(err)}
                 />
               </View>
@@ -66,7 +72,8 @@ export default function DateSelectionPanel(props: {
             <Text style={mps.calendarText}>
               <Text>Selected Date : {"\n"}</Text>
               <Text>
-                {date.getFullYear()} / {date.getMonth() + 1} / {date.getDate()}
+                {selectedDate.getFullYear()} / {selectedDate.getMonth() + 1} /{" "}
+                {selectedDate.getDate()}
               </Text>
             </Text>
           )}
@@ -78,14 +85,16 @@ export default function DateSelectionPanel(props: {
           }}
         >
           <Button
-            title={open ? "Close" : "Change"}
+            title={open ? "Confirm" : "Change"}
             onPress={
               foodInputVisible || itemNutritionPanelVisible
                 ? () => {}
                 : () => {
-                    setOpen(() => {
-                      return !open;
-                    });
+                    open
+                      ? updateSelectedDate(timeZoneDelta(selectedDate, 8))
+                      : null;
+
+                    setOpen((open) => !open);
                   }
             }
           />

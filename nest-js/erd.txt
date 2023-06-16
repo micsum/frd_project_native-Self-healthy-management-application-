@@ -31,6 +31,7 @@ cholesterol_mg numeric
 carbohydrates_total_g numeric
 fiber_g numeric
 name string
+saved_size_unit string
 
 
 user_relationship
@@ -89,7 +90,7 @@ password string
 weight number
 height number
 target string
-
+avatar string
 
 meal_input_record
 -----------------
@@ -138,6 +139,20 @@ name text
 calories integer
 foods jsonb
 
+chatroom
+--------
+id
+member1_id FK >0- user.id
+member2_id FK >0- user.id
+
+
+chatroom_message
+---------
+id
+chatroom_id FK >0- chatroom.id
+user_id FK >0- user.id
+text text
+created_at timestamp
 
 
 

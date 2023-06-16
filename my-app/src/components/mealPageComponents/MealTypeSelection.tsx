@@ -25,9 +25,9 @@ import FoodItemEntryPanel from "./FoodItemEntryPanel";
 import NutritionDetailPanel from "./NutritionDetailDisplay";
 import { foodItemDisplayHeight, mps } from "./mealPageComponentStyleSheet";
 import { AntDesign } from "@expo/vector-icons";
-import { createFakeFoodObject } from "./fakeFoodNutritionData";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import { Domain } from "@env";
+import { getFromSecureStore } from "../../storage/secureStore";
 
 function MealTypeSelection(props: {
   date: Date;
@@ -63,9 +63,7 @@ function MealTypeSelection(props: {
   const dispatch = useDispatch<AppDispatch>();
   store.subscribe(() => {
     const storeInfo = store.getState();
-    updateStoreInfo(() => {
-      return storeInfo;
-    });
+    updateStoreInfo(storeInfo);
   });
 
   const mealTypeDisplayList: string[] = [
@@ -90,24 +88,15 @@ function MealTypeSelection(props: {
   ];
 
   const applyChanges = useCallback(
-    (originalData: FullItemInfo[], changes: ItemChange[]) => {
+    (originalData: FullItemInfo[]) => {
       for (let change of changes) {
         const { info, method } = change;
         const { id, meal_id, meal_time } = info;
         switch (method) {
           case "add":
             {
-              let existingFoods = originalData.map((foodItem) => {
-                return foodItem.meal_time === info.meal_time
-                  ? foodItem.name
-                  : "";
-              });
-              if (
-                existingFoods.length === 0 ||
-                existingFoods.indexOf(info.foodName) === -1
-              ) {
-                originalData.push(createFakeFoodObject(info));
-              }
+              //@ts-ignore
+              originalData = [...originalData, change.info];
             }
             break;
           case "update":
@@ -139,7 +128,7 @@ function MealTypeSelection(props: {
       }
       return originalData;
     },
-    []
+    [changes]
   );
 
   const reformatMealData = useCallback((data: FullItemInfo[]) => {
@@ -211,7 +200,9 @@ function MealTypeSelection(props: {
             basicInfoDummy[param as keyof FoodItemBasicInfo] = value(param);
           });
           basicInfoDummy["foodName"] = value("name");
-          basicInfoDummy["servingSize"] = value("serving_size_g");
+          basicInfoDummy["servingSize"] = parseFloat(
+            value("serving_size_g").toString()
+          );
           basicInfoDummy["sizeUnit"] = value("saved_size_unit");
 
           nutritionInfoParams.map((param: string) => {
@@ -228,11 +219,12 @@ function MealTypeSelection(props: {
     }
 
     for (let mealTypeItemArray of newVariables) {
-      if (mealTypeItemArray.length === 0) {
-        continue;
-      }
       let currentMealType =
         mealTypeList[newVariables.indexOf(mealTypeItemArray)];
+      if (mealTypeItemArray.length === 0) {
+        mealID.current = { ...mealID.current, [currentMealType]: -1 };
+        continue;
+      }
       let currentMealID = mealTypeItemArray[0].basicInfo.meal_id;
       if (currentMealID !== -1) {
         mealID.current = {
@@ -247,7 +239,7 @@ function MealTypeSelection(props: {
   }, []);
 
   const dateMealFullData = useMemo(() => {
-    const appliedChanges = applyChanges(foodItemFullInfo, changes);
+    const appliedChanges = applyChanges(foodItemFullInfo);
     return reformatMealData(appliedChanges);
   }, [foodItemFullInfo, changes]);
 
@@ -267,11 +259,11 @@ function MealTypeSelection(props: {
   };
 
   useEffect(() => {
-    updateNutritionDetail(() => {
-      return retrieveFoodNutritionInformation(dateMealFullData)[
+    updateNutritionDetail(
+      retrieveFoodNutritionInformation(dateMealFullData)[
         mealType as keyof DateMealFullData
-      ];
-    });
+      ]
+    );
   }, [dateMealFullData, mealType]);
 
   const mealDisplay = dateMealFullData[mealType as keyof DateMealFullData];
@@ -312,8 +304,8 @@ function MealTypeSelection(props: {
 
     let itemInConsideration;
     let newItem: any = {};
-    for (let existingItem of foodItemFullInfo) {
-      if (existingItem.id === id) {
+    for (let existingItem of mealDisplay) {
+      if (existingItem.basicInfo.id === id) {
         itemInConsideration = existingItem;
         break;
       }
@@ -329,8 +321,8 @@ function MealTypeSelection(props: {
       newItemServingSize,
       newItemSizeUnit,
     ] = [
-      itemInConsideration.serving_size_g,
-      itemInConsideration.saved_size_unit,
+      itemInConsideration.basicInfo.servingSize,
+      itemInConsideration.basicInfo.sizeUnit,
       servingSize,
       sizeUnit,
     ];
@@ -344,9 +336,12 @@ function MealTypeSelection(props: {
 
     for (let key of nutritionContentKey) {
       let newValue =
-        parseFloat(itemInConsideration[key as keyof FullItemInfo].toString()) *
-        multiplyFactor;
-      newItem[key] = newValue;
+        parseFloat(
+          itemInConsideration.nutritionInfo[
+            key as keyof FoodItemNutritionInfo
+          ].toString()
+        ) * multiplyFactor;
+      newItem[key] = parseFloat(newValue.toFixed(4));
     }
 
     newItem.id = id;
@@ -362,7 +357,7 @@ function MealTypeSelection(props: {
   const updateItemBasicInfo = async (updatedItem: FoodItemBasicInfo) => {
     if (updatedItem.id !== -1 && updatedItem.meal_id !== -1) {
       const newUpdatedItem = updateCurrentFoodItem(updatedItem);
-      const res = await fetch(`${process.env.Domain}/mealItem`, {
+      const res = await fetch(`${Domain}/mealItem`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -370,6 +365,14 @@ function MealTypeSelection(props: {
         body: JSON.stringify(newUpdatedItem),
       });
       const result = await res.json();
+      if (result.message) {
+        Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          title: result.message[0],
+          autoClose: 1500,
+        });
+        return;
+      }
       if (result.error) {
         Dialog.show({
           type: ALERT_TYPE.DANGER,
@@ -378,7 +381,7 @@ function MealTypeSelection(props: {
         });
         return;
       }
-      updateChanges(() => {
+      updateChanges((changes) => {
         return [...changes, { info: newUpdatedItem, method: "update" }];
       });
       Dialog.show({
@@ -386,56 +389,74 @@ function MealTypeSelection(props: {
         title: `Successfully Updated ${updatedItem.foodName}`,
         button: "OK",
       });
-      return;
+    } else {
+      const existingFoodItems = mealDisplay.map((food) => {
+        return food.basicInfo.foodName.toLowerCase();
+      });
 
-      // else the item (and meal) is new and needs to be added
-      // } else if (updatedItem.id === -1 && updatedItem.meal_id !== -1) {
-      //   // add Item to Existing Meal OR update new Item added in this session
-      //   let itemIndex = -1;
+      if (
+        existingFoodItems.indexOf(updatedItem.foodName.toLowerCase()) !== -1
+      ) {
+        Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          title: `${updatedItem.foodName} is already present in ${updatedItem.meal_time}`,
+          autoClose: 1500,
+        });
+        return;
+      }
 
-      //   for (let change of changes) {
-      //     const { info, method } = change;
-      //     if (
-      //       info.foodName === updatedItem.foodName &&
-      //       info.meal_time === updatedItem.meal_time &&
-      //       method === "add"
-      //     ) {
-      //       itemIndex = changes.indexOf(change);
-      //       break;
-      //     }
-      //   }
+      const token = await getFromSecureStore("token");
+      if (typeof token !== "string") {
+        return;
+      }
+      const dateString = date.toISOString().split("T")[0];
+      const res = await fetch(`${Domain}/mealItem/${token}/${dateString}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedItem),
+      });
+      const result = await res.json();
 
-      //   if (itemIndex === -1) {
-      //     updateChanges(() => {
-      //       return [...changes, { info: updatedItem, method: "add" }];
-      //     });
-      //   } else {
-      //     updateChanges(() => {
-      //       return [
-      //         ...changes.slice(0, itemIndex),
-      //         { info: updatedItem, method: "add" },
-      //         ...changes.slice(itemIndex),
-      //       ];
-      //     });
-      //   }
-      // } else {
-      //   const mealType = updatedItem.meal_time;
-      //   const existingItems =
-      //     dateMealFullData[mealType as keyof DateMealFullData];
-      //   const existingItemName = existingItems.map((foodItem) => {
-      //     return foodItem.basicInfo.foodName;
-      //   });
-      //   if (existingItemName.indexOf(updatedItem.foodName) !== -1) {
-      //     console.log(`duplicated Items`);
-      //     return;
-      //   }
-      //   updateChanges(() => {
-      //     return [...changes, { info: updatedItem, method: "add" }];
-      //   });
+      if (result.message) {
+        Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          title: result.message[0],
+          autoClose: 1500,
+        });
+        return;
+      }
+      if (result.error) {
+        Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          title: result.error,
+          autoClose: 1500,
+        });
+        return;
+      }
+
+      const itemInfo: FullItemInfo = result.itemInfo;
+
+      if (updatedItem.meal_id === -1) {
+        mealID.current = {
+          ...mealID.current,
+          [updatedItem.meal_time]: itemInfo.meal_id,
+        };
+      }
+
+      updateChanges((changes) => {
+        return [...changes, { info: itemInfo, method: "add" }];
+      });
+      Dialog.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: `Successfully Added ${updatedItem.foodName}`,
+        autoClose: 1500,
+      });
     }
-
     dispatch(action("foodPanelVisibility", { visible: false }));
     dispatch(action("foodItemInfo", {}));
+    return;
   };
 
   const removeMealItem = async (removedItem: FoodItemBasicInfo) => {
@@ -447,6 +468,15 @@ function MealTypeSelection(props: {
       body: JSON.stringify(removedItem),
     });
     const result = await res.json();
+
+    if (result.message) {
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: result.message[0],
+        autoClose: 1500,
+      });
+      return;
+    }
     if (result.error) {
       Dialog.show({
         type: ALERT_TYPE.DANGER,
@@ -455,7 +485,8 @@ function MealTypeSelection(props: {
       });
       return;
     }
-    updateChanges(() => {
+
+    updateChanges((changes) => {
       return [...changes, { info: removedItem, method: "delete" }];
     });
     Dialog.show({

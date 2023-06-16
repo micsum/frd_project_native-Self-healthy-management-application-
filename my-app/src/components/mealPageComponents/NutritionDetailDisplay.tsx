@@ -1,5 +1,5 @@
 // Buffer Line
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { View, Text, Button } from "react-native";
 import { useDispatch } from "react-redux";
 import { store, action, AppDispatch } from "../../store";
@@ -24,9 +24,7 @@ function NutritionDetailPanel(props: {
 
   store.subscribe(() => {
     const storeInfo = store.getState();
-    updateItemNutritionPanelVisibility(() => {
-      return storeInfo.itemNutritionPanelOpen;
-    });
+    updateItemNutritionPanelVisibility(storeInfo.itemNutritionPanelOpen);
   });
 
   const nutritionContentKey: string[] = [

@@ -17,7 +17,7 @@ import { CardWeight } from "../components/homeCardWeight";
 import { ProfileScreen } from "./ProfilePage";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ChatRoomPage } from "./ChatroomPage";
+import { ChatRoomScreen } from "./ChatroomPage";
 import { SpeedDial } from "@rneui/themed";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 export const AvatarPic = () => {
@@ -114,6 +114,7 @@ const AnimatedText = () => {
 
 const HomeNoStackWithChat = () => {
   const [open, setOpen] = useState(false);
+  const navigation = useNavigation();
 
   const RobotIcon = () => {
     return (
@@ -146,7 +147,10 @@ const HomeNoStackWithChat = () => {
           icon={<RobotIcon />}
           title="ChatGPT"
           titleStyle={{ backgroundColor: "#649c98", color: "#fff" }}
-          onPress={() => console.log("gpt")}
+          onPress={() => {
+            //@ts-ignore
+            navigation.navigate("ChatRoom");
+          }}
           buttonStyle={{ backgroundColor: "#649c98" }}
         />
       </SpeedDial>
@@ -195,13 +199,18 @@ export const HomeScreen = () => {
           headerShown: false,
         }}
       />
-      {/* <Stack.Screen
+      <Stack.Screen
         name="ChatRoom"
-        component={ChatRoomPage}
+        component={ChatRoomScreen}
         options={{
-          headerShown: false,
+          title: "Chat with ChatGPT",
+          headerShown: true,
+          headerTitleAlign: "center",
+          headerStyle: { backgroundColor: "#38668E" },
+          headerTintColor: "#a5f3fc",
+          headerBackTitle: " ",
         }}
-      /> */}
+      />
 
       <Stack.Screen
         name="Notify"

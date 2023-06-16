@@ -58,7 +58,7 @@ function FoodItemDisplay(props: {
       title: `Delete ${foodName} ?`,
       textBody: `(Click Outside the Warning to CANCEL)`,
       button: "Confirm",
-      onPressButton: async () => removeMealItem(foodItemBasicInfo),
+      onPressButton: () => removeMealItem(foodItemBasicInfo),
     });
   };
 
