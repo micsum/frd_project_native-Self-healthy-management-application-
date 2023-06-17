@@ -42,10 +42,6 @@ export default function DateSelectionPanel(props: {
     }
   }, [foodInputVisible, itemNutritionPanelVisible]);
 
-  useEffect(() => {
-    console.log(`datePage ${selectedDate}`);
-  }, [selectedDate]);
-
   return (
     <View style={{ height: 120, padding: 5, paddingBottom: 0 }}>
       <View style={mps.calendarDisplayDiv}>
