@@ -1,12 +1,16 @@
 import { Domain } from "@env";
 import { useEffect, useState } from "react";
 import { Table, Row, Rows } from "react-native-table-component";
+import { getFromSecureStore } from "../../storage/secureStore";
 
-export function WorkoutDetailItem() {
+export async function WorkoutDetailItem() {
+  const token = await getFromSecureStore("token");
   useEffect(() => {
     const fetchWorkoutData = async () => {
       console.log("123");
-      let res = await fetch(`${Domain}/workout/detail`);
+      let res = await fetch(`${Domain}/workout/detail`, {
+        headers: { Authentication: `Bearer ${token}` },
+      });
       let workout_data = await res.json();
       console.log(workout_data);
     };

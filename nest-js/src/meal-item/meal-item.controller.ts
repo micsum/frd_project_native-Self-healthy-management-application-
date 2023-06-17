@@ -13,9 +13,7 @@ import { MealItemService } from './meal-item.service';
 import { CreateMealItemDto } from './dto/create-meal-item.dto';
 import { UpdateMealItemDto } from './dto/update-meal-item.dto';
 import { JWTService } from 'src/jwt/jwt.service';
-import { AuthGuard } from '@nestjs/passport';
 
-@UseGuards(AuthGuard('jwt'))
 @Controller('mealItem')
 export class MealItemController {
   constructor(
