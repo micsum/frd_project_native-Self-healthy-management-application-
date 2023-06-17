@@ -9,7 +9,7 @@ export async function WorkoutDetailItem() {
     const fetchWorkoutData = async () => {
       console.log("123");
       let res = await fetch(`${Domain}/workout/detail`, {
-        headers: { Authentication: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       let workout_data = await res.json();
       console.log(workout_data);
