@@ -32,6 +32,7 @@ const MealPage: React.FC = () => {
       return;
     }
     const dateString = date?.toISOString().split("T")[0];
+
     const res = await fetch(`${Domain}/mealItem/${token}/${dateString}`);
     const result = await res.json();
     if (result.error) {

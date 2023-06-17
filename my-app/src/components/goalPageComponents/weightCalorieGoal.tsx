@@ -5,13 +5,17 @@ import { getFromSecureStore } from "../../storage/secureStore";
 import { GoalInputData } from "../../utils/type";
 import { Domain } from "@env";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
+import GoalInputPanel from "./weightCalorieGoalInput";
 
 function GoalInputDisplayPanel() {
   const [inputPanelOpen, toggleInputPanel] = useState<boolean>(false);
+  const tokenRef = useRef<string>("");
   const inputInfo = useRef<GoalInputData>();
 
   const getInputData = async () => {
     const token = await getFromSecureStore("token");
+    tokenRef.current = token || "";
+
     const res = await fetch(`${Domain}/""/${token}`);
     const result = await res.json();
     if (result.error) {
@@ -31,9 +35,9 @@ function GoalInputDisplayPanel() {
     inputInfo.current = inputData;
   }, []);
 
-  useEffect(() => {
-    getInputInfo();
-  }, []);
+  //   useEffect(() => {
+  //     getInputInfo();
+  //   }, []);
 
   const toggleInputPanelVisibility = () => {
     toggleInputPanel((visible: boolean) => !visible);
@@ -41,7 +45,9 @@ function GoalInputDisplayPanel() {
 
   return (
     <Fragment>
-      {inputPanelOpen ? null : (
+      {inputPanelOpen ? (
+        <GoalInputPanel token={tokenRef.current} />
+      ) : (
         <Fragment>
           <View>
             <Text>

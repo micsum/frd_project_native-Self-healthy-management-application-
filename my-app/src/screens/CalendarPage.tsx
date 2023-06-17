@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import { StyleSheet, View, Text, Button, Platform } from "react-native";
 import * as Calendar from "expo-calendar";
+import GoalInputDisplayPanel from "../components/goalPageComponents/weightCalorieGoal";
 
 export function CalendarScreen() {
   useEffect(() => {
@@ -17,10 +18,13 @@ export function CalendarScreen() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text>Calendar Module Example</Text>
-      <Button title="Create a new calendar" onPress={createCalendar} />
-    </View>
+    <Fragment>
+      <GoalInputDisplayPanel />
+      <View style={styles.container}>
+        <Text>Calendar Module Example</Text>
+        <Button title="Create a new calendar" onPress={createCalendar} />
+      </View>
+    </Fragment>
   );
 }
 
