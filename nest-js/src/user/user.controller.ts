@@ -15,10 +15,15 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { LoginData } from './dto/login-user.dto';
 import { hashPassword } from 'hash';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { TargetInputDTO } from './dto/targetInput.dto';
+import { JWTService } from 'src/jwt/jwt.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JWTService,
+  ) {}
 
   @Post('signUp')
   async create(@Body() createUserDto: CreateUserDto) {
@@ -63,5 +68,42 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
+  }
+
+  @Get('personalTarget/:token')
+  async getPersonalTarget(@Param('token') token: string) {
+    const decodedToken = this.jwtService.decodedJWT(token);
+    const userID = typeof decodedToken === 'string' ? -1 : decodedToken.id;
+
+    if (userID === undefined || userID === -1) {
+      return { error: 'User Not Found' };
+    }
+
+    try {
+      await this.userService.getPersonalTarget(userID, targetInput);
+    } catch (error) {
+      console.log(error);
+      return { error: 'Server Error' };
+    }
+  }
+
+  @Post('personalTarget/:token')
+  async updatePersonalTarget(
+    @Param('token') token: string,
+    @Body() targetInput: TargetInputDTO,
+  ) {
+    const decodedToken = this.jwtService.decodedJWT(token);
+    const userID = typeof decodedToken === 'string' ? -1 : decodedToken.id;
+
+    if (userID === undefined || userID === -1) {
+      return { error: 'User Not Found' };
+    }
+
+    try {
+      await this.userService.updatePersonalTarget(userID, targetInput);
+    } catch (error) {
+      console.log(error);
+      return { error: 'Server Error' };
+    }
   }
 }
