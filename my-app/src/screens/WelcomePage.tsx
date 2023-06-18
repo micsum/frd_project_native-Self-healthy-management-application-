@@ -174,10 +174,14 @@ export const WelcomeScreen = () => {
         name="LogInPage"
         component={Login}
         options={{
-          title: "Log In",
+          title: "",
           headerShown: true,
           headerTitleAlign: "center",
-          headerStyle: { backgroundColor: "#38668E" },
+          headerStyle: {
+            backgroundColor: "#38668E",
+            borderBottomWidth: 0,
+            shadowOpacity: 0,
+          },
           headerTintColor: "#a5f3fc",
           headerBackTitle: " ",
         }}

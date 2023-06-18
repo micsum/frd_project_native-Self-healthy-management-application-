@@ -26,35 +26,31 @@ export default function App() {
   });
 
   return (
-    //<Provider store={store}>
-    //  <SafeAreaProvider>
-    //    <NavigationContainer>
-    //      <Stack.Navigator>
-    //        {/* <WelcomeScreen></WelcomeScreen> */}
-    //        {authState ? (
-    //          <Stack.Screen
-    //            name="Main"
-    //            component={Main}
-    //            options={{
-    //              headerShown: false,
-    //            }}
-    //          ></Stack.Screen>
-    //        ) : (
-    //          <Stack.Screen
-    //            name="Login"
-    //            component={Login}
-    //            options={{
-    //              headerShown: false,
-    //            }}
-    //          ></Stack.Screen>
-    //        )}
-    //      </Stack.Navigator>
-    //    </NavigationContainer>
-    //  </SafeAreaProvider>
-    //</Provider>
-    <NavigationContainer>
-      <WelcomeScreen></WelcomeScreen>
-    </NavigationContainer>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <Stack.Navigator>
+            {authState ? (
+              <Stack.Screen
+                name="Main"
+                component={Main}
+                options={{
+                  headerShown: false,
+                }}
+              ></Stack.Screen>
+            ) : (
+              <Stack.Screen
+                name="WelcomeScreen"
+                component={WelcomeScreen}
+                options={{
+                  headerShown: false,
+                }}
+              ></Stack.Screen>
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </Provider>
   );
 }
 
