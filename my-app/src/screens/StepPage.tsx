@@ -15,19 +15,39 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Button, Actionsheet, useDisclose } from "native-base";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
+const dateRangeOptions = [
+  { label: "1 Week", value: "1 Week" },
+  { label: "1 Month", value: "1 Month" },
+];
+
 export const SelectDateRange = () => {
   const { isOpen, onOpen, onClose } = useDisclose();
+  const [selectedRange, setSelectedRange] = useState(dateRangeOptions[0].value);
+
+  const handleSelectRange = (value: string) => {
+    setSelectedRange(value);
+    onClose();
+  };
+
   return (
     <TouchableOpacity onPress={onOpen} className="items-center justify-center">
       <Card.Title>
-        <MaterialIcons name="date-range" size={36} color="black" />
-        <Text>1 week</Text>
+        <View className="flex-row items-center justify-center">
+          <MaterialIcons name="date-range" size={36} color="black" />
+          <Text className="text-lg mx-3">{selectedRange}</Text>
+        </View>
 
         <Actionsheet isOpen={isOpen} onClose={onClose}>
           <Actionsheet.Content>
             <Text className="text-lg">Select a Date Range</Text>
-            <Actionsheet.Item>1 Week</Actionsheet.Item>
-            <Actionsheet.Item>1 Month</Actionsheet.Item>
+            {dateRangeOptions.map((option) => (
+              <Actionsheet.Item
+                key={option.value}
+                onPress={() => handleSelectRange(option.value)}
+              >
+                {option.label}
+              </Actionsheet.Item>
+            ))}
           </Actionsheet.Content>
         </Actionsheet>
       </Card.Title>
@@ -88,6 +108,66 @@ export const GetStepsWeekly = () => {
 
     getStepsWeekly();
   }, []);
+
+  let start = new Date();
+  start.setMonth(start.getMonth() - 1);
+
+  // let startDate = start.toLocaleDateString();
+  let end = new Date();
+
+  console.log("start", start, "end", end);
+
+  const getStepsMonthly = async () => {
+    let start = new Date();
+    start.setMonth(start.getMonth() - 1);
+    let startDate = new Date(Date.parse(start.toLocaleDateString()));
+    // let startDate = start.toLocaleDateString();
+    let end = new Date().toLocaleDateString();
+    let endDate = new Date(Date.parse(end));
+    try {
+      const authorized = await FitnessTracker.authorize(permissions);
+
+      if (!authorized) return;
+
+      const stepsMonthlyDaily = await FitnessTracker.queryDailyTotals(
+        FitnessDataType.Steps,
+        startDate,
+        endDate
+      );
+
+      console.log("monthly", stepsMonthlyDaily);
+      const reformatDateString = (dateString: string) => {
+        let newDateString = dateString.slice(5).split("-");
+        return `${newDateString[1]}/${newDateString[0]}`;
+      };
+
+      // returns the number of steps walked today, e.g. 320
+      //console.log(stepsWeeklyDaily);
+      const stepsMonthlyArray = Object.entries(stepsMonthlyDaily)
+        .sort()
+        .map(([date, value]) => ({
+          label: reformatDateString(date),
+          value: value,
+          spacing: 15,
+          barWidth: 25,
+        }));
+      //console.log("monthly", stepsMonthlyDaily);
+      setSteps(() => {
+        return stepsMonthlyArray;
+      });
+    } catch (error) {
+      // Handle error here
+      console.log("error", error);
+
+      Dialog.show({
+        type: ALERT_TYPE.WARNING,
+        title: `${error}`,
+        textBody: "Please try again",
+        button: "close",
+        autoClose: 5000,
+      });
+    }
+  };
 
   const [width, setWidth] = useState<number>(0);
 

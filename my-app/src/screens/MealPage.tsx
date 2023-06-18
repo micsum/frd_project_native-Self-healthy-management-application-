@@ -21,9 +21,7 @@ import { getFromSecureStore } from "../storage/secureStore";
 import { Domain } from "@env";
 
 const MealPage: React.FC = () => {
-  const [date, updateSelectedDate] = useState<Date>(
-    new Date(new Date().getTime() + 8 * 3600000)
-  );
+  const [date, updateSelectedDate] = useState<Date>(new Date());
   const [dateMealData, updateDateMealData] = useState<FullItemInfo[]>([]);
 
   const updateMealData = async () => {
@@ -53,7 +51,7 @@ const MealPage: React.FC = () => {
 
   const selectNewDate = (date: Date) => {
     updateSelectedDate(() => {
-      return new Date(date.getTime() + 8 * 3600000);
+      return new Date(date.getTime()); // + 8 * 3600000);
     });
   };
 
