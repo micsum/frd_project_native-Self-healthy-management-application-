@@ -75,9 +75,28 @@ function GoalInputDisplayPanel() {
     return remainingDays > 0 ? remainingDays : "Goal Due-Day has been reached";
   };
 
-  const BMRCalculation = (bodyParams: BodyParams) => {
-    const { height, weight } = bodyParams;
+  const BMRCalculation = () => {
+    const { height, weight } = bodyParams.current;
     return (10 * weight + 6.25 * height - 5 * 30 - 73) * 1.375;
+  };
+
+  const calculateAverageCalorieNeeded = (inputInfo: GoalInputData) => {
+    const { targetType, weightTarget, startDate, expectedDate } = inputInfo;
+    const numberOfDays = Math.ceil(
+      (expectedDate.getTime() - startDate.getTime()) / (24 * 3600 * 1000)
+    );
+    let avgCalorieNeeded: number;
+    avgCalorieNeeded = BMRCalculation();
+    if (targetType === "Maintain Weight") {
+      avgCalorieNeeded > 0 ? avgCalorieNeeded : 0;
+    } else {
+      const netWeight = Math.abs(weight - weightTarget);
+      const requiredCalories = (netWeight / 0.45) * 3500;
+      targetType === "Lose Weight"
+        ? (avgCalorieNeeded -= requiredCalories / numberOfDays)
+        : (avgCalorieNeeded += requiredCalories / numberOfDays);
+    }
+    return avgCalorieNeeded;
   };
 
   return (
@@ -107,10 +126,12 @@ function GoalInputDisplayPanel() {
                 : "Not Yet Set"}
             </Text>
           </View>
-          <View>
-            <Text>Recommended Daily Calories Needs</Text>
-            <Text>{}</Text>
-          </View>
+          {inputInfo ? (
+            <View>
+              <Text>{"Recommended Average Daily Calorie Consumption"}</Text>
+              <Text>{calculateAverageCalorieNeeded(inputInfo)}</Text>
+            </View>
+          ) : null}
         </Fragment>
       )}
 

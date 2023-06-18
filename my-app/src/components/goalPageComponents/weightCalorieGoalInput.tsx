@@ -42,6 +42,7 @@ function GoalInputPanel(props: {
     formInputs.current.expectedDate = new Date(
       new Date(selectedDate).getTime() + 8 * 3600000
     );
+    // Date May Fail
   }, [selectedDate]);
 
   const updateGoalInputs = async () => {
@@ -80,7 +81,7 @@ function GoalInputPanel(props: {
       return;
     }
 
-    // const res = await fetch(`${Domain}/""/${token}`, {
+    // const res = await fetch(`${Domain}/user/personalTarget/${token}`, {
     //   method: "POST",
     //   headers: {
     //     "Content-Type": "application/json",
