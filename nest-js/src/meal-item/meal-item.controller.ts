@@ -14,6 +14,7 @@ import { CreateMealItemDto } from './dto/create-meal-item.dto';
 import { UpdateMealItemDto } from './dto/update-meal-item.dto';
 import { JWTService } from 'src/jwt/jwt.service';
 
+// @UseGuards(AuthGuard('jwt'))
 @Controller('mealItem')
 export class MealItemController {
   constructor(
