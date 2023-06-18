@@ -20,110 +20,120 @@ const dateRangeOptions = [
   { label: "1 Month", value: "1 Month" },
 ];
 
-export const SelectDateRange = () => {
-  const { isOpen, onOpen, onClose } = useDisclose();
-  const [selectedRange, setSelectedRange] = useState(dateRangeOptions[0].value);
-
-  const handleSelectRange = (value: string) => {
-    setSelectedRange(value);
-    onClose();
-  };
-
-  return (
-    <TouchableOpacity onPress={onOpen} className="items-center justify-center">
-      <Card.Title>
-        <View className="flex-row items-center justify-center">
-          <MaterialIcons name="date-range" size={36} color="black" />
-          <Text className="text-lg mx-3">{selectedRange}</Text>
-        </View>
-
-        <Actionsheet isOpen={isOpen} onClose={onClose}>
-          <Actionsheet.Content>
-            <Text className="text-lg">Select a Date Range</Text>
-            {dateRangeOptions.map((option) => (
-              <Actionsheet.Item
-                key={option.value}
-                onPress={() => handleSelectRange(option.value)}
-              >
-                {option.label}
-              </Actionsheet.Item>
-            ))}
-          </Actionsheet.Content>
-        </Actionsheet>
-      </Card.Title>
-    </TouchableOpacity>
-  );
-};
-
-const permissions: AuthorizationPermissions = {
-  healthReadPermissions: [HealthKitDataType.StepCount],
-  googleFitReadPermissions: [GoogleFitDataType.Steps],
-};
-
-export const GetStepsWeekly = () => {
+export const GetSteps = () => {
   const [steps, setSteps] = useState<{ label: string; value: number }[]>([]);
+  const [selectedRange, setSelectedRange] = useState(dateRangeOptions[0].value);
+  const SelectDateRange = () => {
+    const { isOpen, onOpen, onClose } = useDisclose();
 
-  useEffect(() => {
-    const getStepsWeekly = async () => {
-      try {
-        const authorized = await FitnessTracker.authorize(permissions);
-
-        if (!authorized) return;
-
-        const stepsWeeklyDaily = await FitnessTracker.getStatisticWeekDaily(
-          FitnessDataType.Steps
-        );
-
-        const reformatDateString = (dateString: string) => {
-          let newDateString = dateString.slice(5).split("-");
-          return `${newDateString[1]}/${newDateString[0]}`;
-        };
-
-        // returns the number of steps walked today, e.g. 320
-        //console.log(stepsWeeklyDaily);
-        const stepsWeeklyArray = Object.entries(stepsWeeklyDaily)
-          .sort()
-          .map(([date, value]) => ({
-            label: reformatDateString(date),
-            value: value,
-            spacing: 15,
-            barWidth: 25,
-          }));
-        setSteps(() => {
-          return stepsWeeklyArray;
-        });
-      } catch (error) {
-        // Handle error here
-        console.log("error", error);
-
-        Dialog.show({
-          type: ALERT_TYPE.WARNING,
-          title: `${error}`,
-          textBody: "Please try again",
-          button: "close",
-          autoClose: 5000,
-        });
-      }
+    const handleSelectRange = (value: string) => {
+      setSelectedRange(value);
+      onClose();
     };
 
-    getStepsWeekly();
-  }, []);
+    return (
+      <TouchableOpacity
+        onPress={onOpen}
+        className="items-center justify-center"
+      >
+        <Card.Title>
+          <View className="flex-row items-center justify-center">
+            <MaterialIcons name="date-range" size={36} color="black" />
+            <Text className="text-lg mx-3">{selectedRange}</Text>
+          </View>
 
-  let start = new Date();
-  start.setMonth(start.getMonth() - 1);
+          <Actionsheet isOpen={isOpen} onClose={onClose}>
+            <Actionsheet.Content>
+              <Text className="text-lg">Select a Date Range</Text>
+              {dateRangeOptions.map((option) => (
+                <Actionsheet.Item
+                  key={option.value}
+                  onPress={() => handleSelectRange(option.value)}
+                >
+                  {option.label}
+                </Actionsheet.Item>
+              ))}
+            </Actionsheet.Content>
+          </Actionsheet>
+        </Card.Title>
+      </TouchableOpacity>
+    );
+  };
 
-  // let startDate = start.toLocaleDateString();
-  let end = new Date();
+  const permissions: AuthorizationPermissions = {
+    healthReadPermissions: [HealthKitDataType.StepCount],
+    googleFitReadPermissions: [GoogleFitDataType.Steps],
+  };
 
-  console.log("start", start, "end", end);
+  useEffect(() => {
+    /*
+    dataObject
+    {
+      weekData:[],
+      monthData:[]
+    }
+
+    useState => select weekData/ monthData
+
+    show => dataObject[selection]
+    */ if (selectedRange === "1 Week") {
+      getStepsWeekly();
+    }
+    if (selectedRange === "1 Month") {
+      getStepsMonthly();
+    }
+
+    //getStepsMonthly();
+  }, [selectedRange]);
+
+  const getStepsWeekly = async () => {
+    try {
+      const authorized = await FitnessTracker.authorize(permissions);
+
+      if (!authorized) return;
+
+      const stepsWeeklyDaily = await FitnessTracker.getStatisticWeekDaily(
+        FitnessDataType.Steps
+      );
+
+      const reformatDateString = (dateString: string) => {
+        let newDateString = dateString.slice(5).split("-");
+        return `${newDateString[1]}/${newDateString[0]}`;
+      };
+
+      // returns the number of steps walked today, e.g. 320
+      //console.log(stepsWeeklyDaily);
+      const stepsWeeklyArray = Object.entries(stepsWeeklyDaily)
+        .sort()
+        .map(([date, value]) => ({
+          label: reformatDateString(date),
+          value: value,
+          spacing: 15,
+          barWidth: 25,
+        }));
+      setSteps(() => {
+        return stepsWeeklyArray;
+      });
+    } catch (error) {
+      // Handle error here
+      console.log("error", error);
+
+      Dialog.show({
+        type: ALERT_TYPE.WARNING,
+        title: `${error}`,
+        textBody: "Please try again",
+        button: "close",
+        autoClose: 5000,
+      });
+    }
+  };
 
   const getStepsMonthly = async () => {
-    let start = new Date();
-    start.setMonth(start.getMonth() - 1);
-    let startDate = new Date(Date.parse(start.toLocaleDateString()));
-    // let startDate = start.toLocaleDateString();
-    let end = new Date().toLocaleDateString();
-    let endDate = new Date(Date.parse(end));
+    let startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - 1);
+
+    let endDate = new Date();
+
     try {
       const authorized = await FitnessTracker.authorize(permissions);
 
@@ -135,14 +145,13 @@ export const GetStepsWeekly = () => {
         endDate
       );
 
-      console.log("monthly", stepsMonthlyDaily);
+      //console.log("monthly", stepsMonthlyDaily);
       const reformatDateString = (dateString: string) => {
         let newDateString = dateString.slice(5).split("-");
         return `${newDateString[1]}/${newDateString[0]}`;
       };
 
       // returns the number of steps walked today, e.g. 320
-      //console.log(stepsWeeklyDaily);
       const stepsMonthlyArray = Object.entries(stepsMonthlyDaily)
         .sort()
         .map(([date, value]) => ({

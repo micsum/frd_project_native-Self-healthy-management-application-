@@ -10,7 +10,7 @@ import { store } from "../store";
 import DateSelectionPanel from "../components/mealPageComponents/DateSelectionPanel";
 import MealTypeSelection from "../components/mealPageComponents/MealTypeSelection";
 import { FullItemInfo } from "../utils/type";
-import { NativeBaseProvider } from "native-base";
+import { NativeBaseProvider, ScrollView } from "native-base";
 import {
   ALERT_TYPE,
   AlertNotificationRoot,
@@ -59,19 +59,24 @@ const MealPage: React.FC = () => {
   return (
     <SafeAreaProvider>
       <NativeBaseProvider>
-        <Provider store={store}>
-          <AlertNotificationRoot>
-            <SafeAreaView
-              style={{
-                marginTop: 10,
-                paddingBottom: useSafeAreaInsets().bottom,
-              }}
-            >
-              <DateSelectionPanel updateSelectedDate={selectNewDate} />
-              <MealTypeSelection date={date} foodItemFullInfo={dateMealData} />
-            </SafeAreaView>
-          </AlertNotificationRoot>
-        </Provider>
+        <ScrollView>
+          <Provider store={store}>
+            <AlertNotificationRoot>
+              <SafeAreaView
+                style={{
+                  marginTop: 10,
+                  paddingBottom: useSafeAreaInsets().bottom,
+                }}
+              >
+                <DateSelectionPanel updateSelectedDate={selectNewDate} />
+                <MealTypeSelection
+                  date={date}
+                  foodItemFullInfo={dateMealData}
+                />
+              </SafeAreaView>
+            </AlertNotificationRoot>
+          </Provider>
+        </ScrollView>
       </NativeBaseProvider>
     </SafeAreaProvider>
   );
