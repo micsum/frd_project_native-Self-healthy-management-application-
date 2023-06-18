@@ -21,6 +21,7 @@ function GoalInputPanel(props: {
     targetType: "",
     weightTarget: 0,
     expectedDate: new Date(),
+    startDate: new Date(),
   });
 
   const targetTypeSelections = [

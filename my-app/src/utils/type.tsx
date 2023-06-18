@@ -107,6 +107,7 @@ export type GoalInputData = {
   targetType: string;
   weightTarget: number;
   expectedDate: Date;
+  startDate: Date;
 };
 
 export type BodyParams = {

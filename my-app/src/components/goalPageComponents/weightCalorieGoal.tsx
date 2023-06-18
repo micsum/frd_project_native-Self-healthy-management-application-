@@ -37,7 +37,7 @@ function GoalInputDisplayPanel() {
   //     return result;
   //   };
 
-  //   const getWeight = async () => {
+  //   const getBodyParams = async () => {
   //     const res = await fetch(`${Domain}/""/${tokenRef.current}`);
   //     const result = await res.json();
 
@@ -55,7 +55,7 @@ function GoalInputDisplayPanel() {
 
   //   const getInputInfo = useCallback(async () => {
   //     const inputData = await getInputData();
-  //     getWeight()
+  //     getBodyParams()
   //     inputInfo(inputData);
   //   }, []);
 
