@@ -2,28 +2,31 @@ import React, { Fragment, useEffect } from "react";
 import { StyleSheet, View, Text, Button, Platform } from "react-native";
 import * as Calendar from "expo-calendar";
 import GoalInputDisplayPanel from "../components/goalPageComponents/weightCalorieGoal";
+import { AlertNotificationRoot } from "react-native-alert-notification";
 
 export function CalendarScreen() {
-  useEffect(() => {
-    (async () => {
-      const { status } = await Calendar.requestCalendarPermissionsAsync();
-      if (status === "granted") {
-        const calendars = await Calendar.getCalendarsAsync(
-          Calendar.EntityTypes.EVENT
-        );
-        console.log("Here are all your calendars:");
-        console.log({ calendars });
-      }
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     const { status } = await Calendar.requestCalendarPermissionsAsync();
+  //     if (status === "granted") {
+  //       const calendars = await Calendar.getCalendarsAsync(
+  //         Calendar.EntityTypes.EVENT
+  //       );
+  //       console.log("Here are all your calendars:");
+  //       console.log({ calendars });
+  //     }
+  //   })();
+  // }, []);
 
   return (
     <Fragment>
-      <GoalInputDisplayPanel />
-      <View style={styles.container}>
-        <Text>Calendar Module Example</Text>
-        <Button title="Create a new calendar" onPress={createCalendar} />
-      </View>
+      <AlertNotificationRoot>
+        <View style={styles.container}>
+          <Text>Calendar Module Example</Text>
+          <Button title="Create a new calendar" onPress={createCalendar} />
+        </View>
+        <GoalInputDisplayPanel />
+      </AlertNotificationRoot>
     </Fragment>
   );
 }

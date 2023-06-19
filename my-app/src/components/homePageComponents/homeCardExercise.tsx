@@ -64,7 +64,7 @@ export const GetStepsToday = () => {
     getStepsToday();
   }, []);
 
-  return steps ? <Text>{steps}</Text> : null;
+  return steps ? <Text>{steps}</Text> : <Text>0</Text>;
 };
 export const CardFitnessData = () => {
   return (

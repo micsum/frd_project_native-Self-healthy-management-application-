@@ -1,0 +1,218 @@
+// Buffer Line
+import { FoodItemBasicInfo, FullItemInfo } from "../../utils/type";
+
+export const fakeFoodNutritionData: FullItemInfo[] = [
+  {
+    id: 0,
+    meal_id: 1,
+    meal_time: "breakfast",
+    name: "bread",
+    calories: 261.6,
+    serving_size_g: 100,
+    fat_total_g: 3.4,
+    fat_saturated_g: 0.7,
+    protein_g: 8.8,
+    sodium_mg: 495,
+    potassium_mg: 98,
+    cholesterol_mg: 0,
+    carbohydrates_total_g: 50.2,
+    fiber_g: 2.7,
+    sugar_g: 5.7,
+    saved_size_unit: "g",
+  },
+  {
+    id: 1,
+    meal_id: 1,
+    meal_time: "breakfast",
+    name: "milk",
+    calories: 102.6,
+    serving_size_g: 200,
+    fat_total_g: 3.8,
+    fat_saturated_g: 2.4,
+    protein_g: 7,
+    sodium_mg: 105,
+    potassium_mg: 201,
+    cholesterol_mg: 16,
+    carbohydrates_total_g: 9.8,
+    fiber_g: 0,
+    sugar_g: 0,
+    saved_size_unit: "g",
+  },
+  {
+    id: 2,
+    meal_id: 1,
+    meal_time: "breakfast",
+    name: "egg",
+    calories: 220.6,
+    serving_size_g: 150,
+    fat_total_g: 14.5,
+    fat_saturated_g: 4.7,
+    protein_g: 18.8,
+    sodium_mg: 209,
+    potassium_mg: 299,
+    cholesterol_mg: 557,
+    carbohydrates_total_g: 1.1,
+    fiber_g: 0,
+    sugar_g: 0.6,
+    saved_size_unit: "g",
+  },
+  {
+    id: 3,
+    meal_id: 1,
+    meal_time: "lunch",
+    name: "pasta",
+    calories: 467.9,
+    serving_size_g: 300,
+    fat_total_g: 2.8,
+    fat_saturated_g: 0.5,
+    protein_g: 17.2,
+    sodium_mg: 3,
+    potassium_mg: 174,
+    cholesterol_mg: 0,
+    carbohydrates_total_g: 94,
+    fiber_g: 5.4,
+    sugar_g: 1.7,
+    saved_size_unit: "g",
+  },
+  {
+    id: 4,
+    meal_id: 1,
+    meal_time: "lunch",
+    name: "pork",
+    calories: 472.3,
+    serving_size_g: 200,
+    fat_total_g: 27.9,
+    fat_saturated_g: 9.9,
+    protein_g: 52.5,
+    sodium_mg: 115,
+    potassium_mg: 439,
+    cholesterol_mg: 176,
+    carbohydrates_total_g: 0,
+    fiber_g: 0,
+    sugar_g: 0,
+    saved_size_unit: "g",
+  },
+  {
+    id: 5,
+    meal_id: 1,
+    meal_time: "lunch",
+    name: "broccoli",
+    calories: 69.9,
+    serving_size_g: 200,
+    fat_total_g: 0.8,
+    fat_saturated_g: 0.2,
+    protein_g: 4.8,
+    sodium_mg: 82,
+    potassium_mg: 131,
+    cholesterol_mg: 0,
+    carbohydrates_total_g: 14.6,
+    fiber_g: 6.7,
+    sugar_g: 2.8,
+    saved_size_unit: "g",
+  },
+  {
+    id: 6,
+    meal_id: 1,
+    meal_time: "dinner",
+    name: "rice",
+    calories: 382.2,
+    serving_size_g: 300,
+    fat_total_g: 0.8,
+    fat_saturated_g: 0.2,
+    protein_g: 8,
+    sodium_mg: 3,
+    potassium_mg: 127,
+    cholesterol_mg: 0,
+    carbohydrates_total_g: 85.3,
+    fiber_g: 1.2,
+    sugar_g: 0.2,
+    saved_size_unit: "g",
+  },
+  {
+    id: 7,
+    meal_id: 1,
+    meal_time: "dinner",
+    name: "beef",
+    calories: 583.8,
+    serving_size_g: 200,
+    fat_total_g: 39.4,
+    fat_saturated_g: 15.6,
+    protein_g: 53.2,
+    sodium_mg: 127,
+    potassium_mg: 412,
+    cholesterol_mg: 175,
+    carbohydrates_total_g: 0,
+    fiber_g: 0,
+    sugar_g: 0,
+    saved_size_unit: "g",
+  },
+  {
+    id: 8,
+    meal_id: 1,
+    meal_time: "dinner",
+    name: "carrot",
+    calories: 50.9,
+    serving_size_g: 150,
+    fat_total_g: 0.3,
+    fat_saturated_g: 0,
+    protein_g: 1.1,
+    sodium_mg: 85,
+    potassium_mg: 45,
+    cholesterol_mg: 0,
+    carbohydrates_total_g: 12.4,
+    fiber_g: 4.6,
+    sugar_g: 5.2,
+    saved_size_unit: "g",
+  },
+];
+
+export const wrongFakeFoodData = {
+  breakfast: [
+    { foodName: "bread", servingSize: 100, sizeUnit: "g" },
+    { foodName: "milk", servingSize: 250, sizeUnit: "g" },
+    { foodName: "egg", servingSize: 2, sizeUnit: "" },
+  ],
+  lunch: [
+    { foodName: "pasta", servingSize: 300, sizeUnit: "g" },
+    { foodName: "pork", servingSize: 200, sizeUnit: "g" },
+    { foodName: "brocoli", servingSize: 200, sizeUnit: "g" },
+  ],
+  dinner: [
+    { foodName: "rice", servingSize: 300, sizeUnit: "g" },
+    { foodName: "beef", servingSize: 200, sizeUnit: "g" },
+    { foodName: "carrot", servingSize: 150, sizeUnit: "g" },
+  ],
+  snack: [],
+};
+
+const nutritionContentKey: string[] = [
+  "calories",
+  "fat_total_g",
+  "fat_saturated_g",
+  "protein_g",
+  "sodium_mg",
+  "potassium_mg",
+  "cholesterol_mg",
+  "carbohydrates_total_g",
+  "fiber_g",
+  "sugar_g",
+];
+
+export const createFakeFoodObject: (
+  foodItem: FoodItemBasicInfo
+) => FullItemInfo = (foodItem) => {
+  const { id, meal_id, meal_time, foodName, servingSize, sizeUnit } = foodItem;
+  let newFoodItem: any = {};
+  newFoodItem.id = id;
+  newFoodItem.meal_id = meal_id;
+  newFoodItem.meal_time = meal_time;
+  newFoodItem.name = foodName;
+  newFoodItem.serving_size_g = servingSize;
+  newFoodItem.saved_size_unit = sizeUnit;
+
+  for (let key of nutritionContentKey) {
+    newFoodItem[key] = 100;
+  }
+
+  return newFoodItem;
+};

@@ -108,7 +108,7 @@ function GoalInputPanel(props: {
       <View>
         <SelectDropdown
           data={targetTypeSelections}
-          defaultButtonText={"Weight Loss"}
+          defaultButtonText={"Lose Weight"}
           onSelect={(selectedItem, index) => updateTargetChoice(selectedItem)}
           buttonTextAfterSelection={(selectedItem, index) => selectedItem}
           renderDropdownIcon={() => {
