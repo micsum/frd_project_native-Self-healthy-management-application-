@@ -104,10 +104,10 @@ export type ForgotPwEmail = {
 };
 
 export type GoalInputData = {
-  targetType: string;
-  weightTarget: number;
-  startDate: Date;
-  expectedDate: Date;
+  target_type: string;
+  weight_target: number;
+  start_date: Date;
+  expected_date: Date;
 };
 
 export type BodyParams = {
