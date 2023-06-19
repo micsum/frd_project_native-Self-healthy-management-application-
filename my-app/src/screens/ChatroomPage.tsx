@@ -1,35 +1,21 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
 import axios from "axios";
+import { Text } from "native-base";
+import { Domain } from "@env";
 
-export function ChatRoomScreen() {
+export function ChatRoomScreen({ route }: any) {
+  const { id } = route.params;
+  useEffect(() => {
+    axios.get(Domain + `/chatgpt/history/${id}`).then(function (response) {
+      console.log(response.data);
+    });
+  }, []);
+
   const [messages, setMessages] = useState<any[]>([]);
 
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: "Hello developer",
-        createdAt: new Date(),
-
-        user: {
-          _id: 1,
-          name: "React Native",
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      },
-      {
-        _id: 2,
-        text: "Hello developer",
-        createdAt: new Date(),
-
-        user: {
-          _id: 2,
-          name: "React Native",
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      },
-    ]);
+    setMessages([]);
   }, []);
   const onSend = useCallback((messages = []) => {
     setMessages((previousMessages) =>
@@ -38,6 +24,7 @@ export function ChatRoomScreen() {
   }, []);
   return (
     <>
+      <Text>{id}</Text>
       <GiftedChat
         messages={messages}
         onSend={(messages: any) => {

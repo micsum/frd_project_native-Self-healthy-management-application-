@@ -40,4 +40,17 @@ export class ChatgptService {
       return chatroom_id;
     }
   }
+
+  async getChatRoomHistory(chatroom_id: number) {
+    const history = await this.knex('chatroom_message')
+      .select('*')
+      .where({ chatroom_id })
+      .orderByRaw('created_at DESC');
+
+    return history;
+  }
+
+  async askQuestion() {}
+
+  async answerQuestion() {}
 }

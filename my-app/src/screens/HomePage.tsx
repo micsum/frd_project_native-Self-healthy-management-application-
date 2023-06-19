@@ -152,10 +152,9 @@ const HomeNoStackWithChat = () => {
             await axios
               .get("http://192.168.80.99:3000/chatgpt")
               .then(function (response) {
-                console.log(response.data);
+                //@ts-ignore'
+                navigation.navigate("ChatRoom", { id: response.data });
               });
-            //@ts-ignore'
-            navigation.navigate("ChatRoom");
           }}
           buttonStyle={{ backgroundColor: "#649c98" }}
         />
