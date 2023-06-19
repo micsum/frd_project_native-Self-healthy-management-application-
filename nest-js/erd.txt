@@ -139,27 +139,20 @@ name text
 calories integer
 foods jsonb
 
-chatroom
---------
-id
-member1_id FK >0- user.id
-member2_id FK >0- user.id
-
-
 chatroom_message
 ---------
 id
-chatroom_id FK >0- chatroom.id
 user_id FK >0- user.id
-text text
+question text
+answer text
 created_at timestamp
 
 
 
 
 
-# zoom: 1.026
-# view: (508, -572)
+# zoom: 1.229
+# view: (-476, -254)
 # text-bg: #6495ed
 # text-color: #000000
 # diagram-bg: #f5f5f5
@@ -168,7 +161,7 @@ created_at timestamp
 # table-text: #000000
 # meal_food_item (154, 189)
 # user_relationship (1418, 246)
-# role_registration (1347, 710)
+# role_registration (1948, 445)
 # calendar_event (-120, 370)
 # text_message (991, 91)
 # exercise_history (522, 197)
@@ -182,3 +175,4 @@ created_at timestamp
 # mealplan (319, 1067)
 # mealplan_day (-19, 1063)
 # meal_content (-22, 1314)
+# chatroom_message (1394, 722)

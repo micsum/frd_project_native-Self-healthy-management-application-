@@ -137,13 +137,6 @@ export const Login = () => {
             )}
             name="password"
           />
-
-          <View className="flex-row justify-end my-8">
-            <TouchableOpacity onPress={() => {}}>
-              <Text className="text-white font-bold">Forgot password?</Text>
-            </TouchableOpacity>
-          </View>
-
           <TouchableOpacity
             onPress={handleSubmit(onSubmit)}
             className="h-12 border-2 border-white  rounded-md flex flex-row justify-center items-center px-6"
@@ -152,6 +145,11 @@ export const Login = () => {
               <Text className="text-white text-base font-medium">Login</Text>
             </View>
           </TouchableOpacity>
+          <View className="flex-row justify-end my-8">
+            {/* <TouchableOpacity onPress={() => {}}>
+              <Text className="text-white font-bold">Forgot password?</Text>
+            </TouchableOpacity> */}
+          </View>
         </View>
       </SafeAreaView>
     </AlertNotificationRoot>

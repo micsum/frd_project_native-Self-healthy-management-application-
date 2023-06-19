@@ -17,7 +17,7 @@ import {
   AuthorizationPermissions,
   FitnessDataType,
   FitnessTracker,
-  GoogleFitDataType,
+  // GoogleFitDataType,
   HealthKitDataType,
 } from "@kilohealth/rn-fitness-tracker";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
@@ -27,7 +27,7 @@ export const exerciseData = [{ title: "card2", description: "test" }];
 
 const permissions: AuthorizationPermissions = {
   healthReadPermissions: [HealthKitDataType.StepCount],
-  googleFitReadPermissions: [GoogleFitDataType.Steps],
+  // googleFitReadPermissions: [GoogleFitDataType.Steps],
 };
 
 export const GetStepsToday = () => {

@@ -6,11 +6,11 @@ import {
   AuthorizationPermissions,
   FitnessDataType,
   FitnessTracker,
-  GoogleFitDataType,
+  // GoogleFitDataType,
   HealthKitDataType,
 } from "@kilohealth/rn-fitness-tracker";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
-import { BarChart } from "react-native-gifted-charts";
+// import { BarChart } from "react-native-gifted-charts";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Button, Actionsheet, useDisclose } from "native-base";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -62,7 +62,7 @@ export const GetSteps = () => {
 
   const permissions: AuthorizationPermissions = {
     healthReadPermissions: [HealthKitDataType.StepCount],
-    googleFitReadPermissions: [GoogleFitDataType.Steps],
+    // googleFitReadPermissions: [GoogleFitDataType.Steps],
   };
 
   useEffect(() => {
@@ -191,7 +191,7 @@ export const GetSteps = () => {
       <Card>
         <SelectDateRange />
         <Card.Divider></Card.Divider>
-        <BarChart
+        {/* <BarChart
           initialSpacing={2}
           isThreeD
           isAnimated
@@ -231,7 +231,7 @@ export const GetSteps = () => {
               </View>
             );
           }}
-        />
+        /> */}
       </Card>
     </View>
   );
