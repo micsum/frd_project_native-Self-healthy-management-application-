@@ -51,7 +51,7 @@
     "react-native-screens": "~3.20.0",
     "react-native-segmented-control-tab": "^4.0.0",
     "react-native-select-dropdown": "^3.3.4",
-    "react-native-svg": "^13.6.0",
+    "react-native-svg": "^13.9.0",
     "react-native-table-component": "^1.2.2",
     "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.10",
@@ -91,6 +91,6 @@
     "StoreKit"
   ],
   "resolutions": {
-    "react-native-svg": "13.6.0"
+    "react-native-gifted-charts/react-native-svg": "13.9.0"
   }
 }
