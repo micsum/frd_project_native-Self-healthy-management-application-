@@ -31,7 +31,9 @@ const MealPage: React.FC = () => {
     }
     const dateString = date?.toISOString().split("T")[0];
 
-    const res = await fetch(`${Domain}/mealItem/${token}/${dateString}`);
+    const res = await fetch(`${Domain}/mealItem/${dateString}`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
     const result = await res.json();
     if (result.error) {
       Dialog.show({

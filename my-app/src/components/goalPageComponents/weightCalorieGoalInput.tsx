@@ -18,10 +18,10 @@ function GoalInputPanel(props: {
 
   const [selectedDate, selectNewDate] = useState<Date>(new Date());
   const formInputs = useRef<GoalInputData>({
-    targetType: "",
-    weightTarget: 0,
-    expectedDate: new Date(),
-    startDate: new Date(),
+    target_type: "",
+    weight_target: 0,
+    expected_date: new Date(),
+    start_date: new Date(),
   });
 
   const targetTypeSelections = [
@@ -31,23 +31,23 @@ function GoalInputPanel(props: {
   ];
 
   const updateTargetChoice = (choice: string) => {
-    formInputs.current.targetType = choice;
+    formInputs.current.target_type = choice;
   };
 
   const updateWeightTarget = (newWeight: number) => {
-    formInputs.current.weightTarget = newWeight;
+    formInputs.current.weight_target = newWeight;
   };
 
   useEffect(() => {
-    formInputs.current.expectedDate = new Date(
+    formInputs.current.expected_date = new Date(
       new Date(selectedDate).getTime() + 8 * 3600000
     );
     // Date May Fail
   }, [selectedDate]);
 
   const updateGoalInputs = async () => {
-    const { targetType, weightTarget } = formInputs.current;
-    if (weightTarget < 0.01) {
+    const { target_type, weight_target } = formInputs.current;
+    if (weight_target < 0.01) {
       Dialog.show({
         type: ALERT_TYPE.WARNING,
         title: "Invalid Weight",
@@ -65,14 +65,14 @@ function GoalInputPanel(props: {
       return;
     }
 
-    if (targetType === "Lose Weight" && weight < weightTarget) {
+    if (target_type === "Lose Weight" && weight < weight_target) {
       Dialog.show({
         type: ALERT_TYPE.WARNING,
         title: "Impossible Expectation",
         textBody: "Target weight can't be more than current weight",
       });
       return;
-    } else if (targetType === "Gain Weight" && weight > weightTarget) {
+    } else if (target_type === "Gain Weight" && weight > weight_target) {
       Dialog.show({
         type: ALERT_TYPE.WARNING,
         title: "Impossible Expectation",
@@ -81,23 +81,24 @@ function GoalInputPanel(props: {
       return;
     }
 
-    // const res = await fetch(`${Domain}/user/personalTarget/${token}`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(formInputs.current),
-    // });
-    // const result = await res.json();
-    // if (result.error) {
-    //   Dialog.show({
-    //     type: ALERT_TYPE.DANGER,
-    //     title: "An Error Occurred",
-    //     textBody: result.error,
-    //     autoClose: 1500,
-    //   });
-    //   return;
-    // }
+    const res = await fetch(`${Domain}/user/personalTarget}`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formInputs.current),
+    });
+    const result = await res.json();
+    if (result.error) {
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: "An Error Occurred",
+        textBody: result.error,
+        autoClose: 1500,
+      });
+      return;
+    }
     updateInputInfo(formInputs.current);
     togglePanelVisible();
   };

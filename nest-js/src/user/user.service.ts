@@ -59,28 +59,31 @@ export class UserService {
       : { error: 'Wrong Password' };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async getBodyParams(userID: number) {
+    return await this.knex('user')
+      .select('height', 'weight')
+      .where({ id: userID });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async getPersonalTarget(userID: number) {
+    const personalTargetResult = await this.knex('personal_target_input')
+      .select('*')
+      .where({ user_id: userID });
+    return { personalTargetResult };
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
-
-  async getPersonalTarget() {}
 
   async updatePersonalTarget(userID: number, inputInfo: TargetInputDTO) {
-    const targetInputResult = await this.knex()
+    const targetInputResult = await this.knex('personal_target_input')
       .select('*')
       .where({ user_id: userID });
 
     if (targetInputResult.length !== 0) {
-      await this.knex().where({ user_id: userID }).del();
+      await this.knex('personal_target_input').where({ user_id: userID }).del();
     }
-    await this.knex().insert(inputInfo);
+    await this.knex('personal_target_input').insert({
+      ...inputInfo,
+      user_id: userID,
+    });
+    return {};
   }
 }

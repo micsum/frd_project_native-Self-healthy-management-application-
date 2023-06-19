@@ -7,7 +7,10 @@ import {
   Param,
   Delete,
   UsePipes,
+  UseGuards,
   ValidationPipe,
+  Header,
+  Headers,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,13 +20,21 @@ import { hashPassword } from 'hash';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { TargetInputDTO } from './dto/targetInput.dto';
 import { JWTService } from 'src/jwt/jwt.service';
+import { JwtAuthGuard } from 'src/authguard/JwtAuthGuard.service';
 
+@UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JWTService,
   ) {}
+
+  private extractUserID(token: string) {
+    const trimmedToken = token.split(' ')[1];
+    const decodedToken = this.jwtService.decodedJWT(trimmedToken);
+    return typeof decodedToken === 'string' ? -1 : decodedToken.id;
+  }
 
   @Post('signUp')
   async create(@Body() createUserDto: CreateUserDto) {
@@ -55,50 +66,34 @@ export class UserController {
     }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
-  }
-
-  @Get('personalTarget/:token')
-  async getPersonalTarget(@Param('token') token: string) {
-    const decodedToken = this.jwtService.decodedJWT(token);
-    const userID = typeof decodedToken === 'string' ? -1 : decodedToken.id;
-
-    if (userID === undefined || userID === -1) {
-      return { error: 'User Not Found' };
-    }
-
+  @Get('bodyParams')
+  async getBodyParams(@Headers('authorization') token: string) {
+    const userID = this.extractUserID(token);
     try {
-      // await this.userService.getPersonalTarget(userID, targetInput);
+      return await this.userService.getBodyParams(userID);
     } catch (error) {
       console.log(error);
       return { error: 'Server Error' };
     }
   }
 
-  @Post('personalTarget/:token')
+  @Get('personalTarget')
+  async getPersonalTarget(@Headers('authorization') token: string) {
+    const userID = this.extractUserID(token);
+    try {
+      return await this.userService.getPersonalTarget(userID);
+    } catch (error) {
+      console.log(error);
+      return { error: 'Server Error' };
+    }
+  }
+
+  @Post('personalTarget')
   async updatePersonalTarget(
-    @Param('token') token: string,
+    @Headers('authorization') token: string,
     @Body() targetInput: TargetInputDTO,
   ) {
-    const decodedToken = this.jwtService.decodedJWT(token);
-    const userID = typeof decodedToken === 'string' ? -1 : decodedToken.id;
-
-    if (userID === undefined || userID === -1) {
-      return { error: 'User Not Found' };
-    }
-
+    const userID = this.extractUserID(token);
     try {
       await this.userService.updatePersonalTarget(userID, targetInput);
     } catch (error) {
