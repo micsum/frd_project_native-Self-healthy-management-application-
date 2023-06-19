@@ -114,3 +114,10 @@ export type BodyParams = {
   height: number;
   weight: number;
 };
+
+export type Messages = {
+  _id: string;
+  createdAt: Date;
+  text: string;
+  user: { _id: number };
+};

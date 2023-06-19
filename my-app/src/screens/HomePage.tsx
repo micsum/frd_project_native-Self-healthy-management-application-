@@ -26,6 +26,7 @@ import { SpeedDial } from "@rneui/themed";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { GetSteps } from "./StepPage";
+import { Domain } from "@env";
 export const AvatarPic = () => {
   const navigation = useNavigation();
 
@@ -154,12 +155,10 @@ const HomeNoStackWithChat = () => {
           title="ChatGPT"
           titleStyle={{ backgroundColor: "#649c98", color: "#fff" }}
           onPress={async () => {
-            await axios
-              .get("http://192.168.80.99:3000/chatgpt")
-              .then(function (response) {
-                //@ts-ignore'
-                navigation.navigate("ChatRoom", { id: response.data });
-              });
+            //@ts-ignore'
+            navigation.navigate("ChatRoom");
+            // await axios.get(`${Domain}/chatgpt/history`).then(function (response) {
+            // });
           }}
           buttonStyle={{ backgroundColor: "#649c98" }}
         />
