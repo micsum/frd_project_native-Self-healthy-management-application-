@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "90584422345-o9sbkclfpqc68jps9m87qt5rvm3i84ge.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.behealthy.myapp",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
           "client_id": "90584422345-omgeku48j0v3vtchnuu4qctmmb2agaro.apps.googleusercontent.com",
           "client_type": 3
         }
