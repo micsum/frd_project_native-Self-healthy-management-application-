@@ -4,6 +4,8 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ImageBackground,
+  PixelRatio,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,8 +21,12 @@ import { getFromSecureStore, saveInSecureStore } from "../storage/secureStore";
 import { action, AppDispatch } from "../store";
 import { useDispatch } from "react-redux";
 import { Domain } from "@env";
+import { useNavigation } from "@react-navigation/native";
+import { FontAwesome } from "@expo/vector-icons";
 
 export const Login = () => {
+  const navigation = useNavigation();
+
   const {
     control,
     handleSubmit,
@@ -84,8 +90,14 @@ export const Login = () => {
   return (
     <AlertNotificationRoot>
       <SafeAreaView className="flex-1 items-center justify-center bg-[#38668E]">
+        <ImageBackground
+          style={styles.imageStyle}
+          resizeMode="cover"
+          source={require("../assets/images/login-cuate.png")}
+        ></ImageBackground>
         <View className="p-8 w-full max-w-sm">
           <Text className="text-5xl font-bold mb-6 text-white">Login</Text>
+
           {errors.email && (
             <Text className="text-red-400">{errors.email.message}</Text>
           )}
@@ -145,3 +157,11 @@ export const Login = () => {
     </AlertNotificationRoot>
   );
 };
+
+const styles = StyleSheet.create({
+  imageStyle: {
+    height: PixelRatio.getPixelSizeForLayoutSize(120),
+    width: "100%",
+    alignSelf: "center",
+  },
+});

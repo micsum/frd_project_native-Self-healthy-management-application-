@@ -30,7 +30,6 @@ export default function App() {
       <SafeAreaProvider>
         <NavigationContainer>
           <Stack.Navigator>
-            {/* <WelcomeScreen></WelcomeScreen> */}
             {authState ? (
               <Stack.Screen
                 name="Main"
@@ -41,8 +40,8 @@ export default function App() {
               ></Stack.Screen>
             ) : (
               <Stack.Screen
-                name="Login"
-                component={Login}
+                name="WelcomeScreen"
+                component={WelcomeScreen}
                 options={{
                   headerShown: false,
                 }}

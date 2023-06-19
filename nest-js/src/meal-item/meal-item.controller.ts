@@ -7,12 +7,14 @@ import {
   Put,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { MealItemService } from './meal-item.service';
 import { CreateMealItemDto } from './dto/create-meal-item.dto';
 import { UpdateMealItemDto } from './dto/update-meal-item.dto';
 import { JWTService } from 'src/jwt/jwt.service';
 
+// @UseGuards(AuthGuard('jwt'))
 @Controller('mealItem')
 export class MealItemController {
   constructor(
@@ -32,7 +34,9 @@ export class MealItemController {
       dateString[1].length !== 2 ||
       dateString[2].length !== 2 ||
       parseInt(dateString[1]) > 12 ||
-      parseInt(dateString[2]) > 31
+      parseInt(dateString[1]) < 1 ||
+      parseInt(dateString[2]) > 31 ||
+      parseInt(dateString[2]) < 1
     ) {
       return { error: 'Inappropriate Date' };
     }

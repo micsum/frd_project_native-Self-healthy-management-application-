@@ -39,17 +39,17 @@ export async function seed(knex: Knex): Promise<void> {
         meal_time: 'dinner',
       },
       {
-        date_of_meal: new Date(new Date().getTime() - 1 * 3600000),
+        date_of_meal: new Date(new Date().getTime() - 24 * 3600000),
         user_id: id,
         meal_time: 'breakfast',
       },
       {
-        date_of_meal: new Date(new Date().getTime() - 1 * 3600000),
+        date_of_meal: new Date(new Date().getTime() - 24 * 3600000),
         user_id: id,
         meal_time: 'lunch',
       },
       {
-        date_of_meal: new Date(new Date().getTime() - 1 * 3600000),
+        date_of_meal: new Date(new Date().getTime() - 24 * 3600000),
         user_id: id,
         meal_time: 'dinner',
       },

@@ -24,6 +24,7 @@ import {
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { Login } from "./LoginPage";
 import { createStackNavigator } from "@react-navigation/stack";
+import { FontAwesome } from "@expo/vector-icons";
 
 export const RegisterForm = () => {
   const navigation = useNavigation();
@@ -116,9 +117,18 @@ export const RegisterForm = () => {
       <AlertNotificationRoot>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <NativeBaseProvider>
-            <Text className="text-5xl font-bold mt-16 mx-5 text-white">
-              Sign Up
-            </Text>
+            <View className="flex-row justify-between items-center">
+              <Text className="text-5xl font-bold mt-16 mx-5 text-white">
+                Sign Up
+              </Text>
+
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                className="mx-2 mb-10"
+              >
+                <FontAwesome name="close" size={24} color="#fff" />
+              </TouchableOpacity>
+            </View>
             <View className="p-8 w-full max-w-sm mt-2">
               <View>
                 {errors.username && (
@@ -328,24 +338,22 @@ export const RegisterForm = () => {
 const Stack = createStackNavigator();
 export const Register = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Register"
-          component={RegisterForm}
-          options={{
-            headerShown: false,
-          }}
-        />
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Register"
+        component={RegisterForm}
+        options={{
+          headerShown: false,
+        }}
+      />
 
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack.Navigator>
   );
 };

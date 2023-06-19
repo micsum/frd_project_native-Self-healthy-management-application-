@@ -5,6 +5,8 @@ import { InjectKnex, Knex } from 'nestjs-knex';
 import { LoginData } from './dto/login-user.dto';
 import { checkPassword } from 'hash';
 import { JWTService } from 'src/jwt/jwt.service';
+import { GoalInputData } from 'type';
+import { TargetInputDTO } from './dto/targetInput.dto';
 
 @Injectable()
 export class UserService {
@@ -68,5 +70,18 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async getPersonalTarget() {}
+
+  async updatePersonalTarget(userID: number, inputInfo: TargetInputDTO) {
+    const targetInputResult = await this.knex()
+      .select('*')
+      .where({ user_id: userID });
+
+    if (targetInputResult.length !== 0) {
+      await this.knex().where({ user_id: userID }).del();
+    }
+    await this.knex().insert(inputInfo);
   }
 }

@@ -5,15 +5,19 @@ import {
   PanResponder,
   Animated,
   SafeAreaViewComponent,
+  TouchableOpacity,
 } from "react-native";
-import { CardGoal } from "../components/homeCardGoal";
+import { CardGoal } from "../components/homePageComponents/homeCardGoal";
 import { ScrollView, HStack, Avatar as NativeAvatar } from "native-base";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NotifyScreen } from "./NotificationPage";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { CardExercise, CardFitnessData } from "../components/homeCardExercise";
-import { CardWeight } from "../components/homeCardWeight";
+import {
+  CardExercise,
+  CardFitnessData,
+} from "../components/homePageComponents/homeCardExercise";
+import { CardWeight } from "../components/homePageComponents/homeCardWeight";
 import { ProfileScreen } from "./ProfilePage";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,6 +25,7 @@ import { ChatRoomScreen } from "./ChatroomPage";
 import { SpeedDial } from "@rneui/themed";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import axios from "axios";
+import { GetSteps } from "./StepPage";
 export const AvatarPic = () => {
   const navigation = useNavigation();
 
@@ -165,6 +170,8 @@ const HomeNoStackWithChat = () => {
 
 export function HomeScreenNoStack() {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+
   return (
     <ScrollView>
       <View
@@ -185,7 +192,14 @@ export function HomeScreenNoStack() {
       </View>
 
       <CardGoal />
-      <CardFitnessData />
+      <TouchableOpacity
+        onPress={() => {
+          //@ts-ignore
+          navigation.navigate("StepPage");
+        }}
+      >
+        <CardFitnessData />
+      </TouchableOpacity>
       <CardExercise />
       <CardWeight />
     </ScrollView>
@@ -209,6 +223,18 @@ export const HomeScreen = () => {
         component={ChatRoomScreen}
         options={{
           title: "Chat with ChatGPT",
+          headerShown: true,
+          headerTitleAlign: "center",
+          headerStyle: { backgroundColor: "#38668E" },
+          headerTintColor: "#a5f3fc",
+          headerBackTitle: " ",
+        }}
+      />
+      <Stack.Screen
+        name="StepPage"
+        component={GetSteps}
+        options={{
+          title: "Steps Record",
           headerShown: true,
           headerTitleAlign: "center",
           headerStyle: { backgroundColor: "#38668E" },

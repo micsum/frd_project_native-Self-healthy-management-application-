@@ -14,9 +14,7 @@ export default function DateSelectionPanel(props: {
     return new Date(displayDate.getTime() + hours * 3600000);
   };
 
-  const [selectedDate, selectNewDate] = useState<Date>(
-    timeZoneDelta(new Date(), 8)
-  );
+  const [selectedDate, selectNewDate] = useState<Date>(new Date());
   const [open, setOpen] = useState<boolean>(false);
   const [foodInputVisible, updateFoodInputVisibility] = useState<boolean>(
     store.getState().foodInputPanelOpen
