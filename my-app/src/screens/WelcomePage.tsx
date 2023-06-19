@@ -16,40 +16,23 @@ import {
 import { Button, NativeBaseProvider } from "native-base";
 import { Register } from "./RegisterPage";
 import { Login } from "./LoginPage";
-import { color } from "@rneui/themed/dist/config";
+import { SwiperFlatList } from "react-native-swiper-flatlist";
 
 export const WelcomeScreenNoStack = () => {
   const navigation = useNavigation();
-  const [sliderState, setSliderState] = useState({ currentPage: 0 });
   const { width, height } = Dimensions.get("window");
-
-  const setSliderPage = (event: any) => {
-    const { currentPage } = sliderState;
-    const { x } = event.nativeEvent.contentOffset;
-    const indexOfNextScreen = Math.floor(x / width);
-    if (indexOfNextScreen !== currentPage) {
-      setSliderState({
-        ...sliderState,
-        currentPage: indexOfNextScreen,
-      });
-    }
-  };
-
-  const { currentPage: pageIndex } = sliderState;
-
   return (
     <NativeBaseProvider>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={{ flex: 1 }} className="bg-[#38668E]">
-        <ScrollView
-          style={{ flex: 1 }}
-          horizontal={true}
-          scrollEventThrottle={16}
-          pagingEnabled={true}
-          showsHorizontalScrollIndicator={false}
-          onScroll={(event: any) => {
-            setSliderPage(event);
-          }}
+        <SwiperFlatList
+          autoplay
+          autoplayDelay={5}
+          autoplayLoop
+          index={4}
+          showPagination
+          paginationActiveColor="#0898A0"
+          paginationStyleItem={styles.paginationDots}
         >
           <View style={{ width, height }}>
             <ImageBackground
@@ -109,18 +92,8 @@ export const WelcomeScreenNoStack = () => {
               </Text>
             </View>
           </View>
-        </ScrollView>
-        <View style={styles.paginationWrapper}>
-          {Array.from(Array(5).keys()).map((key, index) => (
-            <View
-              style={[
-                styles.paginationDots,
-                { opacity: pageIndex === index ? 1 : 0.2 },
-              ]}
-              key={index}
-            />
-          ))}
-        </View>
+        </SwiperFlatList>
+
         <View className="mb-20">
           <Button
             onPress={() => {
@@ -139,7 +112,7 @@ export const WelcomeScreenNoStack = () => {
             }}
             className="flex-row justify-center items-center px-6"
           >
-            <View className="flex-1 flex items-center">
+            <View className="flex-1 flex items-center mt-3">
               <Text className="text-white text-base font-medium">Log In</Text>
             </View>
           </TouchableOpacity>
@@ -211,15 +184,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 17,
   },
-  paginationWrapper: {
-    position: "absolute",
-    bottom: 200,
-    left: 0,
-    right: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
-  },
+
   paginationDots: {
     height: 10,
     width: 10,
@@ -227,5 +192,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#0898A0",
     marginLeft: 10,
     marginBottom: 45,
+    bottom: 200,
+    left: 0,
+    right: 0,
   },
 });
