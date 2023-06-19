@@ -79,12 +79,12 @@ export class UserController {
       return { error: 'User Not Found' };
     }
 
-    try {
-      await this.userService.getPersonalTarget(userID, targetInput);
-    } catch (error) {
-      console.log(error);
-      return { error: 'Server Error' };
-    }
+    //try {
+    //  await this.userService.getPersonalTarget(userID, targetInput);
+    //} catch (error) {
+    //  console.log(error);
+    //  return { error: 'Server Error' };
+    //}
   }
 
   @Post('personalTarget/:token')

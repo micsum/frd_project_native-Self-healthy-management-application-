@@ -5,7 +5,7 @@ import { InjectKnex, Knex } from 'nestjs-knex';
 import { LoginData } from './dto/login-user.dto';
 import { checkPassword } from 'hash';
 import { JWTService } from 'src/jwt/jwt.service';
-import { GoalInputData } from 'type';
+//import { GoalInputData } from 'type';
 import { TargetInputDTO } from './dto/targetInput.dto';
 
 @Injectable()
