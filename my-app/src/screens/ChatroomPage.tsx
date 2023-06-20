@@ -6,7 +6,12 @@ import { Messages } from "../utils/type";
 import { getFromSecureStore } from "../storage/secureStore";
 
 export function ChatRoomScreen() {
+  async function getToken() {
+    const token = await getFromSecureStore("token");
+    return token;
+  }
   useEffect(() => {
+    let token = getToken();
     axios
       .get(Domain + `/chatgpt/history`, {
         headers: { Authorization: `Bearer ${token}` },
