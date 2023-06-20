@@ -67,7 +67,9 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Get('bodyParams')
   async getBodyParams(@Headers('authorization') token: string) {
+    console.log(token);
     const userID = this.extractUserID(token);
+    console.log(`user ID : ${userID}`);
     try {
       return await this.userService.getBodyParams(userID);
     } catch (error) {

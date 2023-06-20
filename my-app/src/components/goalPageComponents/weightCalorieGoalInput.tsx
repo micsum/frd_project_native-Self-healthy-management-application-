@@ -7,6 +7,7 @@ import SelectDropdown from "react-native-select-dropdown";
 import DateTimePicker from "@mohalla-tech/react-native-date-time-picker";
 import { AntDesign } from "@expo/vector-icons";
 import { Domain } from "@env";
+import { gps } from "./goalPageComponentStyleSheet";
 
 function GoalInputPanel(props: {
   token: string;
@@ -81,7 +82,7 @@ function GoalInputPanel(props: {
       return;
     }
 
-    const res = await fetch(`${Domain}/user/personalTarget}`, {
+    const res = await fetch(`${Domain}/user/personalTarget`, {
       method: "POST",
       headers: {
         authorization: `Bearer ${token}`,
@@ -105,38 +106,53 @@ function GoalInputPanel(props: {
 
   return (
     <Fragment>
-      <View>
-        <SelectDropdown
-          data={targetTypeSelections}
-          defaultButtonText={"Lose Weight"}
-          onSelect={(selectedItem, index) => updateTargetChoice(selectedItem)}
-          buttonTextAfterSelection={(selectedItem, index) => selectedItem}
-          renderDropdownIcon={() => {
-            return <AntDesign name="caretdown" size={24} color="black" />;
-          }}
-          dropdownIconPosition="right"
-        />
+      <View style={gps.goalDisplayDiv}>
+        <Text style={gps.goalDisplayTitle}>Target Type : </Text>
+        <View style={{ borderWidth: 1, borderColor: "black" }}>
+          <SelectDropdown
+            data={targetTypeSelections}
+            defaultButtonText={"Lose Weight"}
+            onSelect={(selectedItem, index) => updateTargetChoice(selectedItem)}
+            buttonTextAfterSelection={(selectedItem, index) => selectedItem}
+            renderDropdownIcon={() => {
+              return <AntDesign name="caretdown" size={24} color="black" />;
+            }}
+            dropdownIconPosition="right"
+          />
+        </View>
       </View>
-      <View>
-        <Text>Target Weight : </Text>
+      <View style={gps.goalDisplayDiv}>
+        <Text style={gps.goalDisplayTitle}>Target Weight : </Text>
         <TextInput
           inputMode={"decimal"}
           placeholder="Enter Weight Target Here"
           onChangeText={(e: any) => {
             updateWeightTarget(parseFloat(e));
           }}
+          style={{
+            borderWidth: 1,
+            borderColor: "black",
+            fontSize: 20,
+            padding: 5,
+          }}
         />
       </View>
       <View>
-        <DateTimePicker
-          mode="date"
-          initialValue={selectedDate}
-          onChange={(date: Date) => selectNewDate(() => date)}
-          setError={(err: string) => console.log(err)}
-        />
+        <Text style={gps.goalDisplayTitle}> Expected Target Date : </Text>
+        <View>
+          <DateTimePicker
+            mode="date"
+            initialValue={selectedDate}
+            onChange={(date: Date) => selectNewDate(() => date)}
+            setError={(err: string) => console.log(err)}
+          />
+        </View>
       </View>
-      <View>
-        <Button title="Confirm" onPress={() => updateGoalInputs()} />
+      <View style={[gps.goalDisplayDiv, { justifyContent: "flex-end" }]}>
+        <View style={{ marginEnd: 10 }}>
+          <Button title="Confirm" onPress={() => updateGoalInputs()} />
+        </View>
+        <Button title="Cancel" onPress={() => togglePanelVisible()} />
       </View>
     </Fragment>
   );

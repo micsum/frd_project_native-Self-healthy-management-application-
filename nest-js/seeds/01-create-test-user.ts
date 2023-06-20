@@ -14,8 +14,8 @@ export async function seed(knex: Knex): Promise<void> {
         email: 'test@test.com',
         username: 'test',
         password: await hashPassword('12345678'),
-        weight: '60',
-        height: '170',
+        weight: 60,
+        height: 170,
         target: 'lose_weight',
       },
     ])

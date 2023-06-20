@@ -148,31 +148,41 @@ answer text
 created_at timestamp
 
 
+personal_target_input
+---------
+id
+user_id Fk>0- user.id
+target_type text
+weight_target decimal
+start_date date
+expected_date date
 
 
 
-# zoom: 1.229
-# view: (-476, -254)
+
+# zoom: 0.896
+# view: (-80, 60)
 # text-bg: #6495ed
 # text-color: #000000
 # diagram-bg: #f5f5f5
 # diagram-text: #f5f5f5
 # table-bg: #ffffff
 # table-text: #000000
-# meal_food_item (154, 189)
+# meal_food_item (15, 456)
 # user_relationship (1418, 246)
-# role_registration (1948, 445)
-# calendar_event (-120, 370)
-# text_message (991, 91)
-# exercise_history (522, 197)
+# role_registration (1420, 537)
+# calendar_event (103, 197)
+# text_message (1172, 89)
+# exercise_history (590, 166)
 # user (969, 400)
-# meal_input_record (565, 431)
+# meal_input_record (565, 625)
 # table (823, 878)
 # scrapped_website (776, 668)
 # row_info (1100, 760)
 # workout (358, 879)
 # workout_day (-11, 883)
-# mealplan (319, 1067)
-# mealplan_day (-19, 1063)
-# meal_content (-22, 1314)
+# mealplan (696, 953)
+# mealplan_day (421, 1169)
+# meal_content (-31, 1115)
 # chatroom_message (1394, 722)
+# personal_target_input (879, 43)
