@@ -157,8 +157,6 @@ const HomeNoStackWithChat = () => {
           onPress={async () => {
             //@ts-ignore'
             navigation.navigate("ChatRoom");
-            // await axios.get(`${Domain}/chatgpt/history`).then(function (response) {
-            // });
           }}
           buttonStyle={{ backgroundColor: "#649c98" }}
         />

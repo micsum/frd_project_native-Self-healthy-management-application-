@@ -8,78 +8,85 @@ import {
   NativeBaseProvider,
   ScrollView,
 } from "native-base";
-import { WorkoutDetailItem } from "../components/plansPageComponents/workoutDetail";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Domain } from "@env";
-import { Table, Row, Rows } from "react-native-table-component";
+import { Table, Row, Rows } from "react-native-reanimated-table";
+import { getFromSecureStore } from "../storage/secureStore";
 
 export const PlanDetailScreen = ({ route }: any) => {
-  const { id, type } = route.params;
+  const { id } = route.params;
   const [workoutData, setWorkoutData] = useState<any[]>([]);
   const [mealplanData, setMealplanData] = useState<any[]>([]);
+
   useEffect(() => {
     const fetchWorkoutData = async () => {
-      let res = await fetch(`${Domain}/workout/detail/${id}`);
-      let workout_data = await res.json();
-      setWorkoutData(workout_data);
+      const token = await getFromSecureStore("token");
+      try {
+        let res = await fetch(`${Domain}/workout/detail/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        let workout_data = await res.json();
+        console.log({ workout_data });
+        setWorkoutData(workout_data);
+      } catch (error) {
+        console.log(`can't fetch the data`);
+      }
     };
     fetchWorkoutData();
   }, []);
 
   useEffect(() => {
     const fetchMealPlanData = async () => {
-      let res = await fetch(`${Domain}/meal/detail/${id}`);
-      let mealplan_data = await res.json();
-      setMealplanData(mealplan_data);
+      const token = await getFromSecureStore("token");
+      try {
+        let res = await fetch(`${Domain}/meal/detail/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        let mealplan_data = await res.json();
+        console.log({ mealplan_data });
+        setMealplanData(mealplan_data);
+      } catch (error) {
+        console.log(`can't fetch the data`);
+      }
     };
     fetchMealPlanData();
   }, []);
 
-  // console.log(mealplanData);
   return (
-    // <View
-    //   style={{
-    //     flex: 1,
-    //     flexDirection: "row",
-    //     justifyContent: "space-between",
-    //     padding: 15,
-    //     marginTop: 50,
-    //   }}
-    // >
     <SafeAreaProvider>
       <SafeAreaView>
         <ScrollView>
           <NativeBaseProvider></NativeBaseProvider>
-          {/* <WorkoutDetailItem /> */}
-          <Text>id:{id}</Text>
 
           {mealplanData.map((mealplan) => (
-            <>
-              <View key={mealplan.id}>
-                <Text fontSize="2xl" underline>
-                  {mealplan.name}
-                </Text>
+            <View key={mealplan.id}>
+              <Text fontSize="2xl" underline>
+                {mealplan.name}
+              </Text>
 
-                <Image
-                  source={{
-                    uri: mealplan.cover_image,
-                  }}
-                  // alt="Alternate Text"
-                  size="2xl"
-                  alt="image"
-                />
-                {mealplan.content.map((k: any) => (
-                  <>
-                    <Text fontSize="lg">
-                      {k.name} (Calories:{k.calories})
-                    </Text>
-                    {k.foods.map((food: any) => (
-                      <Text>- {food.name}</Text>
-                    ))}
-                  </>
-                ))}
-              </View>
-            </>
+              <Image
+                source={{
+                  uri: mealplan.cover_image,
+                }}
+                // alt="Alternate Text"
+                size="2xl"
+                alt="image"
+              />
+              {mealplan.content.map((content: any) => (
+                <View key={content.id}>
+                  <Text fontSize="lg">
+                    {content.name} (Calories:{content.calories})
+                  </Text>
+                  {content.foods.map((food: any) => (
+                    <Text key={food.name}>- {food.name}</Text>
+                  ))}
+                </View>
+              ))}
+            </View>
           ))}
 
           {workoutData.map((workout) => (
@@ -90,9 +97,9 @@ export const PlanDetailScreen = ({ route }: any) => {
                 <Row
                   data={workout.headers}
                   style={styles.head}
-                  // textStyle={styles.text}
+                  textStyle={styles.text}
                 />
-                <Rows data={workout.rows} />
+                <Rows data={workout.rows} textStyle={styles.text} />
               </Table>
               <Text></Text>
             </View>

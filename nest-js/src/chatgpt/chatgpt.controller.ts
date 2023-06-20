@@ -12,16 +12,9 @@ export class ChatgptController {
 
   @Get('history')
   getChatRoomHistory(@Headers() headers: any) {
-    console.log(headers);
     let token = headers.authorization.replace('Bearer ', '') as string;
     const decodedToken: any = this.jwtService.decodedJWT(token);
-    console.log(decodedToken);
-    try {
-      return this.chatgptService.getChatRoomHistory(decodedToken.id);
-    } catch (error) {
-      console.log(error);
-      return { error: 'Server error' };
-    }
+    return this.chatgptService.getChatRoomHistory(decodedToken.id);
   }
 
   @Post('question')

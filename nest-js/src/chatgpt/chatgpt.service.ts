@@ -6,12 +6,16 @@ export class ChatgptService {
   constructor(@InjectKnex() private knex: Knex) {}
 
   async getChatRoomHistory(user_id: number) {
-    const history = await this.knex('chatroom_message')
-      .select('*')
-      .where({ user_id })
-      .orderByRaw('created_at DESC');
+    try {
+      const history = await this.knex('chatroom_message')
+        .select('*')
+        .where({ user_id })
+        .orderByRaw('created_at DESC');
 
-    return history;
+      return history;
+    } catch (error) {
+      return { error };
+    }
   }
 
   async askQuestion(question: string, user_id: number) {

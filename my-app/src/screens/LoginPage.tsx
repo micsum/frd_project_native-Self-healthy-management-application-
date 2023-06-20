@@ -55,6 +55,7 @@ export const Login = () => {
       (response) => {
         if (response.data.token) {
           let token = response.data.token;
+          console.log({ token });
           saveInSecureStore("token", token);
           dispatch(action("storeToken", { token }));
           dispatch(action("isLogin", { login: true }));

@@ -10,7 +10,7 @@ log.enabled = true;
 export class WorkoutService {
   constructor(@InjectKnex() private knex: Knex) {}
   async getWorkoutList() {
-    log('get workout plans');
+    log('get work out plans');
     let workouts = await this.knex('workout')
       .select('workout.id', 'workout.title', 'workout.cover_image')
       .count('workout_day.id as days')
@@ -21,6 +21,7 @@ export class WorkoutService {
   }
 
   async getWorkoutDetail(workout_id: number) {
+    log('get work out details');
     let workout_detail = await this.knex('workout_day')
       .select('id', 'title', 'headers', 'rows')
       .where({ workout_id });
