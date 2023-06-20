@@ -21,6 +21,7 @@ export const PlanDetailScreen = ({ route }: any) => {
   useEffect(() => {
     const fetchWorkoutData = async () => {
       const token = await getFromSecureStore("token");
+      console.log(token);
       try {
         let res = await fetch(`${Domain}/workout/detail/${id}`, {
           headers: {

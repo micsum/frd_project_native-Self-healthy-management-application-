@@ -10,7 +10,7 @@ export class ChatgptService {
       const history = await this.knex('chatroom_message')
         .select('*')
         .where({ user_id })
-        .orderByRaw('created_at DESC');
+        .orderByRaw('created_at ASC');
 
       return history;
     } catch (error) {
@@ -28,12 +28,18 @@ export class ChatgptService {
       messages: [{ role: 'user', content: question }],
     });
 
-    await this.knex('chatroom_message').insert({
-      user_id,
-      question,
-      answer: chat_completion.data.choices[0].message,
-    });
+    let message_id = await this.knex('chatroom_message')
+      .insert({
+        user_id,
+        question,
+        answer: chat_completion.data.choices[0].message?.content,
+        created_at: new Date(),
+      })
+      .returning('id');
 
-    return chat_completion.data.choices[0].message;
+    return {
+      message_id: message_id,
+      answer: chat_completion.data.choices[0].message?.content,
+    };
   }
 }

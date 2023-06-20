@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { ChatgptService } from './chatgpt.service';
 import { Headers } from '@nestjs/common';
 import { JWTService } from 'src/jwt/jwt.service';
@@ -18,9 +18,10 @@ export class ChatgptController {
   }
 
   @Post('question')
-  askQuestion(@Headers() headers: any, question: string) {
+  askQuestion(@Body() body: any, @Headers() headers: any) {
+    console.log(headers, body);
     let token = headers.authorization.replace('Bearer ', '') as string;
     const decodedToken: any = this.jwtService.decodedJWT(token);
-    return this.chatgptService.askQuestion(question, decodedToken.id);
+    return this.chatgptService.askQuestion(body.question, decodedToken.id);
   }
 }
