@@ -19,7 +19,7 @@ function GoalInputPanel(props: {
 
   const [selectedDate, selectNewDate] = useState<Date>(new Date());
   const formInputs = useRef<GoalInputData>({
-    target_type: "",
+    target_type: "Lose Weight",
     weight_target: 0,
     expected_date: new Date(),
     start_date: new Date(),
@@ -81,7 +81,7 @@ function GoalInputPanel(props: {
       });
       return;
     }
-
+    console.log(formInputs.current);
     const res = await fetch(`${Domain}/user/personalTarget`, {
       method: "POST",
       headers: {
@@ -91,6 +91,17 @@ function GoalInputPanel(props: {
       body: JSON.stringify(formInputs.current),
     });
     const result = await res.json();
+
+    if (result.message) {
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: "An Error Occurred",
+        textBody: result.message[0],
+        autoClose: 1500,
+      });
+      return;
+    }
+
     if (result.error) {
       Dialog.show({
         type: ALERT_TYPE.DANGER,

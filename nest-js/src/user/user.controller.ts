@@ -97,6 +97,7 @@ export class UserController {
     const userID = this.extractUserID(token);
     try {
       await this.userService.updatePersonalTarget(userID, targetInput);
+      return {};
     } catch (error) {
       console.log(error);
       return { error: 'Server Error' };

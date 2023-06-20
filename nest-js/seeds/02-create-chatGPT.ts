@@ -8,8 +8,8 @@ export async function seed(knex: Knex): Promise<void> {
       email: 'chatGPT@test.com',
       username: 'chatGPT',
       password: await hashPassword('12345678'),
-      weight: '10',
-      height: '170',
+      weight: 10,
+      height: 170,
       target: 'lose_weight',
     },
   ]);

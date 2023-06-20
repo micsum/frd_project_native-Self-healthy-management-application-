@@ -24,6 +24,7 @@ function GoalInputDisplayPanel() {
     const res = await fetch(`${Domain}/personalTarget`, {
       headers: { authorization: `Bearer ${token}` },
     });
+
     const result = await res.json();
     if (result.error) {
       Dialog.show({
@@ -34,9 +35,10 @@ function GoalInputDisplayPanel() {
       });
       return;
     }
-    const personalTargetResult = result.personalTargetResult;
+
+    const personalTargetResult = result.personalTarget;
     if (personalTargetResult.length === 0) {
-      return [];
+      return {};
     }
 
     const { id, user_id, ...personalTarget } = personalTargetResult[0];
@@ -44,7 +46,7 @@ function GoalInputDisplayPanel() {
   };
 
   const getBodyParams = async () => {
-    const res = await fetch(`${Domain}/bodyParams`, {
+    const res = await fetch(`${Domain}/user/bodyParams`, {
       headers: { authorization: `Bearer ${tokenRef.current}` },
     });
     const result = await res.json();
@@ -58,7 +60,7 @@ function GoalInputDisplayPanel() {
       });
       return;
     }
-    console.log(`get ${result.bodyParams.weight}`);
+    console.log(`get ${result[0].weight}`);
 
     bodyParams.current = result.bodyParams;
   };
@@ -150,7 +152,7 @@ function GoalInputDisplayPanel() {
                 {`Recommended Average \nDaily Calorie Consumption :`}
               </Text>
               <Text style={gps.goalDisplayText}>
-                Not Yet Set{/* {calculateAverageCalorieNeeded(inputInfo)} */}
+                {calculateAverageCalorieNeeded(inputInfo)}
               </Text>
             </View>
           ) : null}

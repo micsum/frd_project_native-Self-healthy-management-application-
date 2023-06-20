@@ -7,6 +7,8 @@ import {
   IsNotEmpty,
   Min,
   IsEnum,
+  IsNumber,
+  IsDateString,
   IsInt,
 } from 'class-validator';
 
@@ -14,20 +16,20 @@ export class TargetInputDTO {
   @IsString()
   @IsNotEmpty()
   @IsEnum(['Lose Weight', 'Maintain Weight', 'Gain Weight'])
-  targetType: string;
+  target_type: string;
 
-  @IsNumberString()
+  @IsNumber()
   @IsNotEmpty()
   @Min(0.01)
-  weightTarget: number;
+  weight_target: number;
 
-  @IsDate()
+  @IsDateString()
   @IsNotEmpty()
-  startDate: Date;
+  start_date: Date;
 
-  @IsDate()
+  @IsDateString()
   @IsNotEmpty()
-  endDate: Date;
+  expected_date: Date;
 }
 
 export class StepGoalDTO {

@@ -69,7 +69,14 @@ export class UserService {
     const personalTargetResult = await this.knex('personal_target_input')
       .select('*')
       .where({ user_id: userID });
-    return { personalTargetResult };
+    let personalTarget = personalTargetResult[0];
+    const { start_date, expected_date } = personalTarget;
+    personalTarget = {
+      ...personalTarget,
+      start_date: new Date(start_date.getTime() + 8 * 3600000),
+      expected_date: new Date(expected_date.getTime() + 8 * 3600000),
+    };
+    return { personalTarget: [personalTarget] };
   }
 
   async updatePersonalTarget(userID: number, inputInfo: TargetInputDTO) {
