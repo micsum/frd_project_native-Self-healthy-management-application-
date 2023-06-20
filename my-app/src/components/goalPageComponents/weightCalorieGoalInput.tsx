@@ -81,7 +81,7 @@ function GoalInputPanel(props: {
       return;
     }
 
-    const res = await fetch(`${Domain}/user/personalTarget}`, {
+    const res = await fetch(`${Domain}/user/personalTarget`, {
       method: "POST",
       headers: {
         authorization: `Bearer ${token}`,
@@ -137,6 +137,7 @@ function GoalInputPanel(props: {
       </View>
       <View>
         <Button title="Confirm" onPress={() => updateGoalInputs()} />
+        <Button title="Cancel" onPress={() => togglePanelVisible()} />
       </View>
     </Fragment>
   );

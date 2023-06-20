@@ -69,6 +69,7 @@ export class UserController {
   @Get('bodyParams')
   async getBodyParams(@Headers('authorization') token: string) {
     const userID = this.extractUserID(token);
+    console.log(`user ID : ${userID}`);
     try {
       return await this.userService.getBodyParams(userID);
     } catch (error) {

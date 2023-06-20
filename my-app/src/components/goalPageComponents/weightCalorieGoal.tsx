@@ -6,6 +6,7 @@ import { BodyParams, GoalInputData } from "../../utils/type";
 import { Domain } from "@env";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import GoalInputPanel from "./weightCalorieGoalInput";
+import { gps } from "./goalPageComponentStyleSheet";
 
 function GoalInputDisplayPanel() {
   const [inputPanelOpen, toggleInputPanel] = useState<boolean>(false);
@@ -43,7 +44,7 @@ function GoalInputDisplayPanel() {
   };
 
   const getBodyParams = async () => {
-    const res = await fetch(`${Domain}/bodyParams}`, {
+    const res = await fetch(`${Domain}/bodyParams`, {
       headers: { authorization: `Bearer ${tokenRef.current}` },
     });
     const result = await res.json();
@@ -67,7 +68,11 @@ function GoalInputDisplayPanel() {
   }, []);
 
   useEffect(() => {
-    getInputInfo();
+    try {
+      getInputInfo();
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
   const toggleInputPanelVisibility = () =>
@@ -117,16 +122,16 @@ function GoalInputDisplayPanel() {
         />
       ) : (
         <Fragment>
-          <View>
-            <Text>Target :</Text>
+          <View style={gps.goalDisplayDiv}>
+            <Text style={gps.goalDisplayTitle}>Target :</Text>
             <Text>{inputInfo ? inputInfo.target_type : "Not Yet Set"}</Text>
           </View>
-          <View>
-            <Text>Desired weight : </Text>
+          <View style={gps.goalDisplayDiv}>
+            <Text style={gps.goalDisplayTitle}>Desired weight : </Text>
             <Text>{inputInfo ? inputInfo.weight_target : "Not Yet Set"}</Text>
           </View>
-          <View>
-            <Text>Days to Complete Goal :</Text>
+          <View style={gps.goalDisplayDiv}>
+            <Text style={gps.goalDisplayTitle}>Days to Complete Goal :</Text>
             <Text>
               {inputInfo
                 ? countDaysRemaining(inputInfo.expected_date)
@@ -134,8 +139,10 @@ function GoalInputDisplayPanel() {
             </Text>
           </View>
           {inputInfo ? (
-            <View>
-              <Text>{"Recommended Average Daily Calorie Consumption"}</Text>
+            <View style={gps.goalDisplayDiv}>
+              <Text style={gps.goalDisplayTitle}>
+                Recommended Average Daily Calorie Consumption
+              </Text>
               <Text>{calculateAverageCalorieNeeded(inputInfo)}</Text>
             </View>
           ) : null}
@@ -143,7 +150,9 @@ function GoalInputDisplayPanel() {
       )}
 
       {inputPanelOpen ? null : (
-        <Button title="Update" onPress={() => toggleInputPanelVisibility()} />
+        <View>
+          <Button title="Update" onPress={() => toggleInputPanelVisibility()} />
+        </View>
       )}
     </Fragment>
   );
