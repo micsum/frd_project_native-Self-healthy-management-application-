@@ -20,10 +20,11 @@ function GoalInputDisplayPanel() {
   const getInputData = async () => {
     const token = await getFromSecureStore("token");
     tokenRef.current = token || "";
-    console.log(`token : ${token}`);
+
     const res = await fetch(`${Domain}/personalTarget`, {
       headers: { authorization: `Bearer ${token}` },
     });
+
     const result = await res.json();
     if (result.error) {
       Dialog.show({
@@ -34,8 +35,8 @@ function GoalInputDisplayPanel() {
       });
       return;
     }
-    console.log({ result });
-    const personalTargetResult = result.personalTargetResult;
+
+    const personalTargetResult = result.personalTarget;
     if (personalTargetResult.length === 0) {
       return {};
     }

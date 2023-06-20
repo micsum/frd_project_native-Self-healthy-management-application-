@@ -91,7 +91,17 @@ function GoalInputPanel(props: {
       body: JSON.stringify(formInputs.current),
     });
     const result = await res.json();
-    console.log({ result });
+
+    if (result.message) {
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: "An Error Occurred",
+        textBody: result.message[0],
+        autoClose: 1500,
+      });
+      return;
+    }
+
     if (result.error) {
       Dialog.show({
         type: ALERT_TYPE.DANGER,
