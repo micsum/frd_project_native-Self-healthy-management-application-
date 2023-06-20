@@ -22,9 +22,10 @@ import { action, AppDispatch } from "../store";
 import { useDispatch } from "react-redux";
 import { Domain } from "@env";
 import { useNavigation } from "@react-navigation/native";
-import { FontAwesome } from "@expo/vector-icons";
+import { createStackNavigator } from "@react-navigation/stack";
+import { ForgotPwForm } from "./ForgotPwPage";
 
-export const Login = () => {
+export const LoginNoStack = () => {
   const navigation = useNavigation();
 
   const {
@@ -140,20 +141,48 @@ export const Login = () => {
           />
           <TouchableOpacity
             onPress={handleSubmit(onSubmit)}
-            className="h-12 border-2 border-white  rounded-md flex flex-row justify-center items-center px-6"
+            className="h-12 border-2 border-white mt-5 rounded-md flex flex-row justify-center items-center px-6"
           >
             <View className="flex-1 flex items-center">
               <Text className="text-white text-base font-medium">Login</Text>
             </View>
           </TouchableOpacity>
           <View className="flex-row justify-end my-8">
-            {/* <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity
+              onPress={() => {
+                //@ts-ignore
+                navigation.navigate("ForgotPw");
+              }}
+            >
               <Text className="text-white font-bold">Forgot password?</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
     </AlertNotificationRoot>
+  );
+};
+
+const Stack = createStackNavigator();
+
+export const Login = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="LoginScreen"
+        component={LoginNoStack}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ForgotPw"
+        component={ForgotPwForm}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack.Navigator>
   );
 };
 

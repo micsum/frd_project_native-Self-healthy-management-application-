@@ -410,9 +410,10 @@ function MealTypeSelection(props: {
         return;
       }
       const dateString = date.toISOString().split("T")[0];
-      const res = await fetch(`${Domain}/mealItem/${token}/${dateString}`, {
+      const res = await fetch(`${Domain}/mealItem/${dateString}`, {
         method: "POST",
         headers: {
+          authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(updatedItem),

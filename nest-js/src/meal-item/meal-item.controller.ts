@@ -8,13 +8,15 @@ import {
   Param,
   Delete,
   UseGuards,
+  Headers,
 } from '@nestjs/common';
 import { MealItemService } from './meal-item.service';
 import { CreateMealItemDto } from './dto/create-meal-item.dto';
 import { UpdateMealItemDto } from './dto/update-meal-item.dto';
 import { JWTService } from 'src/jwt/jwt.service';
+import { JwtAuthGuard } from 'src/authguard/JwtAuthGuard.service';
 
-// @UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 @Controller('mealItem')
 export class MealItemController {
   constructor(
@@ -22,10 +24,16 @@ export class MealItemController {
     private jwtService: JWTService,
   ) {}
 
-  @Get(':token/:date')
+  private extractUserID(token: string) {
+    const trimmedToken = token.split(' ')[1];
+    const decodedToken = this.jwtService.decodedJWT(trimmedToken);
+    return typeof decodedToken === 'string' ? -1 : decodedToken.id;
+  }
+
+  @Get(':date')
   async retrieveMealItems(
-    @Param('token') token: string,
     @Param('date') date: Date,
+    @Headers('authorization') token: string,
   ) {
     const dateString = date.toString().split('-');
     if (
@@ -41,13 +49,7 @@ export class MealItemController {
       return { error: 'Inappropriate Date' };
     }
 
-    const decodedToken = this.jwtService.decodedJWT(token);
-    const userID = typeof decodedToken === 'string' ? -1 : decodedToken.id;
-
-    if (userID === undefined || userID === -1) {
-      return { error: 'User Not Found' };
-    }
-
+    const userID = this.extractUserID(token);
     try {
       return await this.mealItemService.getMealData(userID, date);
     } catch (error) {
@@ -56,18 +58,13 @@ export class MealItemController {
     }
   }
 
-  @Post(':token/:date')
+  @Post(':date')
   async addNewItem(
-    @Param('token') token: string,
+    @Headers('authorization') token: string,
     @Param('date') date: Date,
     @Body() foodItemBasicInfo: CreateMealItemDto,
   ) {
-    const decodedToken = this.jwtService.decodedJWT(token);
-    const userID = typeof decodedToken === 'string' ? -1 : decodedToken.id;
-
-    if (userID === undefined || userID === -1) {
-      return { error: 'User Not Found' };
-    }
+    const userID = this.extractUserID(token);
 
     try {
       return await this.mealItemService.createNewItem(
@@ -101,9 +98,9 @@ export class MealItemController {
     }
   }
 
-  @Get('nutritionDetail/:token/:date/:days')
+  @Get('nutritionDetail/:date/:days')
   async getNutritionDetail(
-    @Param('token') token: string,
+    @Headers('authorization') token: string,
     @Param('date') date: string,
     @Param('days') days: number,
   ) {

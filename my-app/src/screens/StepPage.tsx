@@ -1,16 +1,21 @@
-import { View, StyleSheet, Text, ViewComponent } from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Card } from "@rneui/themed";
+import {
+  View,
+  StyleSheet,
+  Text,
+  ViewComponent,
+  ScrollView,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { Card, Divider, Skeleton } from "@rneui/themed";
 import {
   AuthorizationPermissions,
   FitnessDataType,
   FitnessTracker,
-  // GoogleFitDataType,
+  GoogleFitDataType,
   HealthKitDataType,
 } from "@kilohealth/rn-fitness-tracker";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
-// import { BarChart } from "react-native-gifted-charts";
+import { BarChart } from "react-native-gifted-charts";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Button, Actionsheet, useDisclose } from "native-base";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -23,6 +28,7 @@ const dateRangeOptions = [
 export const GetSteps = () => {
   const [steps, setSteps] = useState<{ label: string; value: number }[]>([]);
   const [selectedRange, setSelectedRange] = useState(dateRangeOptions[0].value);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const SelectDateRange = () => {
     const { isOpen, onOpen, onClose } = useDisclose();
 
@@ -62,21 +68,11 @@ export const GetSteps = () => {
 
   const permissions: AuthorizationPermissions = {
     healthReadPermissions: [HealthKitDataType.StepCount],
-    // googleFitReadPermissions: [GoogleFitDataType.Steps],
+    googleFitReadPermissions: [GoogleFitDataType.Steps],
   };
 
   useEffect(() => {
-    /*
-    dataObject
-    {
-      weekData:[],
-      monthData:[]
-    }
-
-    useState => select weekData/ monthData
-
-    show => dataObject[selection]
-    */ if (selectedRange === "1 Week") {
+    if (selectedRange === "1 Week") {
       getStepsWeekly();
     }
     if (selectedRange === "1 Month") {
@@ -114,6 +110,7 @@ export const GetSteps = () => {
       setSteps(() => {
         return stepsWeeklyArray;
       });
+      setIsLoading(false);
     } catch (error) {
       // Handle error here
       console.log("error", error);
@@ -164,6 +161,7 @@ export const GetSteps = () => {
       setSteps(() => {
         return stepsMonthlyArray;
       });
+      setIsLoading(false);
     } catch (error) {
       // Handle error here
       console.log("error", error);
@@ -178,61 +176,147 @@ export const GetSteps = () => {
     }
   };
 
+  const CardSkeleton = ({ title }: { title: string }) => {
+    const numSkeletons = steps.length;
+    const skeletons = Array.from({ length: numSkeletons }, (_, index) => (
+      <View key={index} style={styles.field}>
+        <View className="space-y-1.5">
+          <Skeleton animation="wave" width={120} height={10} />
+          <Skeleton animation="wave" width={60} height={5} />
+          <Divider style={{ marginVertical: 10, width: "272%" }} />
+        </View>
+        <Skeleton animation="wave" width={60} height={10} />
+      </View>
+    ));
+
+    return (
+      <Card>
+        <Card.Title>{title}</Card.Title>
+        <Card.Divider />
+        {skeletons}
+      </Card>
+    );
+  };
+
+  const CardData = ({ title }: { title: string }) => {
+    const getWeekDay = (dateString: string) => {
+      const dateParts = dateString.split("/");
+      const day = parseInt(dateParts[0]);
+      const month = parseInt(dateParts[1]) - 1;
+      const date = new Date(2023, month, day);
+      const weekdayFormat = { weekday: "long" };
+      const locale = "en-UK";
+      //@ts-ignore
+      const weekdayName = new Intl.DateTimeFormat(locale, weekdayFormat).format(
+        date
+      );
+      return weekdayName;
+    };
+    const numSkeletons = steps.length;
+    const skeletons = Array.from({ length: numSkeletons }, (_, index) => (
+      <View key={index} style={styles.field}>
+        <View className="space-y-1.5">
+          <Text></Text>
+          <Text></Text>
+          <Divider style={{ marginVertical: 10, width: "272%" }} />
+        </View>
+        <Text></Text>
+      </View>
+    ));
+
+    const stepItems = steps.reverse().map((step, index) => (
+      <View key={index} style={styles.field}>
+        <View className="space-y-1.5">
+          <Text>{step.label}</Text>
+          <Text>{getWeekDay(step.label)}</Text>
+          <Divider style={{ marginVertical: 10, width: "400%" }} />
+        </View>
+        <Text>{step.value}</Text>
+      </View>
+    ));
+
+    return (
+      <Card>
+        <View className="flex-row justify-center items-center">
+          <View className="mb-3">
+            <MaterialIcons name="history" size={24} color="black" />
+          </View>
+          <Card.Title className="mx-2">{title}</Card.Title>
+        </View>
+        <Card.Divider />
+        {numSkeletons > 0 ? stepItems : skeletons}
+      </Card>
+    );
+  };
+  const styles = StyleSheet.create({
+    field: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginVertical: 8,
+    },
+  });
   const [width, setWidth] = useState<number>(0);
 
   return (
-    <View
-      className="mt-2"
-      onLayout={(event: any) => {
-        setWidth(event.nativeEvent.layout.width * 0.85);
-      }}
-      style={{ width: "100%" }}
-    >
-      <Card>
-        <SelectDateRange />
-        <Card.Divider></Card.Divider>
-        {/* <BarChart
-          initialSpacing={2}
-          isThreeD
-          isAnimated
-          sideWidth={0}
-          width={width || 0}
-          barWidth={22}
-          noOfSections={5}
-          maxValue={
-            Math.ceil(
-              steps.reduce((acc, current) => {
-                return acc > current.value ? acc : current.value;
-              }, 0) / 500
-            ) * 500
-          }
-          barBorderRadius={4}
-          frontColor="pink"
-          data={steps}
-          yAxisThickness={0}
-          xAxisThickness={0}
-          xAxisLabelTextStyle={{
-            textAlign: "center",
-            width: 38,
-          }}
-          renderTooltip={(item: any, index: any) => {
-            return (
-              <View
-                style={{
-                  marginBottom: 5,
-                  marginLeft: -6,
-                  backgroundColor: "#ffcefe",
-                  paddingHorizontal: 6,
-                  paddingVertical: 4,
-                  borderRadius: 4,
-                }}
-              >
-                <Text>{item.value}</Text>
-              </View>
-            );
-          }}
-        /> */}
-      </Card>
-    </View>
+    <ScrollView>
+      <View
+        className="mt-2"
+        onLayout={(event: any) => {
+          setWidth(event.nativeEvent.layout.width * 0.85);
+        }}
+        style={{ width: "100%" }}
+      >
+        <Card>
+          <SelectDateRange />
+          <Card.Divider></Card.Divider>
+          <BarChart
+            initialSpacing={2}
+            isThreeD
+            isAnimated
+            sideWidth={0}
+            width={width * 0.9 || 0}
+            barWidth={22}
+            noOfSections={5}
+            maxValue={
+              Math.ceil(
+                steps.reduce((acc, current) => {
+                  return acc > current.value ? acc : current.value;
+                }, 0) / 500
+              ) * 500
+            }
+            barBorderRadius={4}
+            frontColor="pink"
+            data={steps}
+            yAxisThickness={0}
+            xAxisThickness={0}
+            xAxisLabelTextStyle={{
+              textAlign: "center",
+              width: 38,
+            }}
+            renderTooltip={(item: any, index: any) => {
+              return (
+                <View
+                  style={{
+                    marginBottom: 5,
+                    marginLeft: -6,
+                    backgroundColor: "#ffcefe",
+                    paddingHorizontal: 6,
+                    paddingVertical: 4,
+                    borderRadius: 4,
+                  }}
+                >
+                  <Text>{item.value}</Text>
+                </View>
+              );
+            }}
+          />
+        </Card>
+        {isLoading ? (
+          <CardSkeleton title="Loading" />
+        ) : (
+          <CardData title="History" />
+        )}
+      </View>
+    </ScrollView>
   );
 };

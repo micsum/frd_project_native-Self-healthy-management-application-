@@ -21,6 +21,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       req.user = payload;
       return true;
     } catch (error) {
+      console.log(error);
       return false;
     }
   }

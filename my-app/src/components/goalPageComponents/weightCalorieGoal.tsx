@@ -12,56 +12,66 @@ function GoalInputDisplayPanel() {
   const [inputInfo, updateInputInfo] = useState<GoalInputData>();
 
   const tokenRef = useRef<string>("");
-  const bodyParams = useRef<{ height: number; weight: number }>({
-    height: 0,
-    weight: 0,
-  });
+  const bodyParams = useRef<BodyParams>({ height: 0, weight: 0 });
 
-  const { height, weight } = bodyParams.current;
+  // const { height, weight } = bodyParams.current;
 
-  //   const getInputData = async () => {
-  //     const token = await getFromSecureStore("token");
-  //     tokenRef.current = token || "";
+  const getInputData = async () => {
+    const token = await getFromSecureStore("token");
+    tokenRef.current = token || "";
 
-  //     const res = await fetch(`${Domain}/""/${token}`);
-  //     const result = await res.json();
-  //     if (result.error) {
-  //       Dialog.show({
-  //         type: ALERT_TYPE.DANGER,
-  //         title: "An Error Occurred",
-  //         textBody: result.error,
-  //         autoClose: 1500,
-  //       });
-  //       return;
-  //     }
-  //     return result;
-  //   };
+    const res = await fetch(`${Domain}/personalTarget`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    const result = await res.json();
+    if (result.error) {
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: "An Error Occurred",
+        textBody: result.error,
+        autoClose: 1500,
+      });
+      return;
+    }
+    const personalTargetResult = result.personalTargetResult;
+    if (personalTargetResult.length === 0) {
+      return [];
+    }
 
-  //   const getBodyParams = async () => {
-  //     const res = await fetch(`${Domain}/""/${tokenRef.current}`);
-  //     const result = await res.json();
+    const { id, user_id, ...personalTarget } = personalTargetResult[0];
+    return personalTarget;
+  };
 
-  //     if (result.error) {
-  //       Dialog.show({
-  //         type: ALERT_TYPE.WARNING,
-  //         title: "An Error Occurred",
-  //         textBody: result.error,
-  //       });
-  //       return;
-  //     }
+  const getBodyParams = async () => {
+    console.log("123");
+    const res = await fetch(`${Domain}/user/bodyParams`, {
+      headers: { authorization: `Bearer ${tokenRef.current}` },
+    });
+    const result = await res.json();
+    console.log(result);
 
-  //     bodyParams.current = result;
-  //   };
+    if (result.error) {
+      Dialog.show({
+        type: ALERT_TYPE.WARNING,
+        title: "An Error Occurred",
+        textBody: result.error,
+      });
+      return;
+    }
+    console.log(`get ${result.bodyParams.weight}`);
 
-  //   const getInputInfo = useCallback(async () => {
-  //     const inputData = await getInputData();
-  //     getBodyParams()
-  //     inputInfo(inputData);
-  //   }, []);
+    bodyParams.current = result.bodyParams;
+  };
 
-  //   useEffect(() => {
-  //     getInputInfo();
-  //   }, []);
+  const getInputInfo = useCallback(async () => {
+    const inputData = await getInputData();
+    updateInputInfo(inputData);
+    await getBodyParams();
+  }, []);
+
+  useEffect(() => {
+    getInputInfo();
+  }, []);
 
   const toggleInputPanelVisibility = () =>
     toggleInputPanel((visible: boolean) => !visible);
@@ -81,18 +91,18 @@ function GoalInputDisplayPanel() {
   };
 
   const calculateAverageCalorieNeeded = (inputInfo: GoalInputData) => {
-    const { targetType, weightTarget, startDate, expectedDate } = inputInfo;
+    const { target_type, weight_target, start_date, expected_date } = inputInfo;
     const numberOfDays = Math.ceil(
-      (expectedDate.getTime() - startDate.getTime()) / (24 * 3600 * 1000)
+      (expected_date.getTime() - start_date.getTime()) / (24 * 3600 * 1000)
     );
     let avgCalorieNeeded: number;
     avgCalorieNeeded = BMRCalculation();
-    if (targetType === "Maintain Weight") {
+    if (target_type === "Maintain Weight") {
       avgCalorieNeeded > 0 ? avgCalorieNeeded : 0;
     } else {
-      const netWeight = Math.abs(weight - weightTarget);
+      const netWeight = Math.abs(bodyParams.current.weight - weight_target);
       const requiredCalories = (netWeight / 0.45) * 3500;
-      targetType === "Lose Weight"
+      target_type === "Lose Weight"
         ? (avgCalorieNeeded -= requiredCalories / numberOfDays)
         : (avgCalorieNeeded += requiredCalories / numberOfDays);
     }
@@ -104,7 +114,7 @@ function GoalInputDisplayPanel() {
       {inputPanelOpen ? (
         <GoalInputPanel
           token={tokenRef.current}
-          weight={weight}
+          weight={bodyParams.current.weight}
           togglePanelVisible={toggleInputPanelVisibility}
           updateInputInfo={saveInputInfo}
         />
@@ -112,17 +122,17 @@ function GoalInputDisplayPanel() {
         <Fragment>
           <View>
             <Text>Target :</Text>
-            <Text>{inputInfo ? inputInfo.targetType : "Not Yet Set"}</Text>
+            <Text>{inputInfo ? inputInfo.target_type : "Not Yet Set"}</Text>
           </View>
           <View>
             <Text>Desired weight : </Text>
-            <Text>{inputInfo ? inputInfo.weightTarget : "Not Yet Set"}</Text>
+            <Text>{inputInfo ? inputInfo.weight_target : "Not Yet Set"}</Text>
           </View>
           <View>
             <Text>Days to Complete Goal :</Text>
             <Text>
               {inputInfo
-                ? countDaysRemaining(inputInfo.expectedDate)
+                ? countDaysRemaining(inputInfo.expected_date)
                 : "Not Yet Set"}
             </Text>
           </View>
