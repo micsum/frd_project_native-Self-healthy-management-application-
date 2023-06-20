@@ -38,9 +38,14 @@ export function PlansHomeScreen() {
       <SafeAreaView>
         <ScrollView>
           <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "#d7e0e8",
+            }}
           >
-            <Text>Please choose your workout plan or diet plan!</Text>
+            {/*<Text>Please choose your workout plan or diet plan!</Text>*/}
 
             {/* <Button onPress={() => setCurrentPlanIndex(0)}>Workout plan</Button>
 
@@ -50,6 +55,8 @@ export function PlansHomeScreen() {
               values={["Workout plan", "Meal Plan"]}
               selectedIndex={currentPlanIndex}
               onTabPress={setCurrentPlanIndex}
+              tabTextStyle={{ fontWeight: "bold" }}
+              tabsContainerStyle={{ margin: 10, marginTop: 10 }}
             />
 
             {!plans ? (
@@ -66,8 +73,11 @@ export function PlansHomeScreen() {
             )}
 
             <Box alignItems="center">
-              <Button onPress={() => console.log("hello world")}>
-                Click Me
+              <Button
+                className="mt-3"
+                onPress={() => console.log("hello world")}
+              >
+                More
               </Button>
             </Box>
           </View>

@@ -121,3 +121,13 @@ export type Messages = {
   text: string;
   user: { _id: number };
 };
+
+export type Event = {
+  id: string;
+  title: string;
+  startDate: Date;
+  endDate: Date;
+  eventType: string;
+  information: string;
+  alert: boolean;
+};

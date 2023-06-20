@@ -23,6 +23,7 @@ export function PlanItem(props: Props) {
   return (
     <Box alignItems="center">
       <Box
+        marginTop={5}
         maxW="80"
         rounded="lg"
         overflow="hidden"

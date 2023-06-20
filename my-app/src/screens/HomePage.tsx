@@ -134,7 +134,10 @@ const HomeNoStackWithChat = () => {
     );
   };
   return (
-    <View style={{ position: "relative", height: "100%" }}>
+    <View
+      style={{ position: "relative", height: "100%" }}
+      className="bg-[#d7e0e8]"
+    >
       <AlertNotificationRoot>
         <HomeScreenNoStack></HomeScreenNoStack>
         <SpeedDial
@@ -214,9 +217,11 @@ export function HomeScreenNoStack() {
           }}
           className="w-full"
         >
-          <CardFitnessData {...{ stepsGoal: 200 }} />
+          <CardFitnessData />
         </Pressable>
-        <CardExercise />
+        <Pressable className="w-max">
+          <CardExercise />
+        </Pressable>
       </SwiperFlatList>
       <CardWeight />
     </ScrollView>
