@@ -38,7 +38,6 @@ export class MealItemService {
   }
 
   async getMealData(userID: number, date: Date) {
-    console.log(userID);
     const mealDataResult = await this.knex('meal_food_item')
       .join('meal_input_record', {
         'meal_input_record.id': 'meal_food_item.meal_id',
