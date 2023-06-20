@@ -1,15 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Text,
-  View,
-  PanResponder,
-  Animated,
-  SafeAreaViewComponent,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { Text, View, Animated, StyleSheet } from "react-native";
 import { CardGoal } from "../components/homePageComponents/homeCardGoal";
-import { ScrollView, HStack, Avatar as NativeAvatar } from "native-base";
+import {
+  ScrollView,
+  HStack,
+  Avatar as NativeAvatar,
+  Pressable,
+} from "native-base";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NotifyScreen } from "./NotificationPage";
 import { useNavigation } from "@react-navigation/native";
@@ -185,7 +182,6 @@ const HomeNoStackWithChat = () => {
 export function HomeScreenNoStack() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-
   return (
     <ScrollView>
       <View
@@ -211,14 +207,15 @@ export function HomeScreenNoStack() {
         paginationActiveColor="#0898A0"
         paginationStyleItem={styles.paginationDots}
       >
-        <TouchableOpacity
+        <Pressable
           onPress={() => {
             //@ts-ignore
             navigation.navigate("StepPage");
           }}
+          className="w-full"
         >
-          <CardFitnessData />
-        </TouchableOpacity>
+          <CardFitnessData {...{ stepsGoal: 200 }} />
+        </Pressable>
         <CardExercise />
       </SwiperFlatList>
       <CardWeight />

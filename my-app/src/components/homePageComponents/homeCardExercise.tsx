@@ -1,17 +1,7 @@
 import { View, StyleSheet, Text } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
-import {
-  HStack,
-  VStack,
-  Box,
-  Divider,
-  AspectRatio,
-  Center,
-  Heading,
-  Stack,
-  Button,
-} from "native-base";
+import * as Progress from "react-native-progress";
 
 import {
   AuthorizationPermissions,
@@ -21,8 +11,6 @@ import {
   HealthKitDataType,
 } from "@kilohealth/rn-fitness-tracker";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
-import { Card } from "@rneui/themed";
-
 const permissions: AuthorizationPermissions = {
   healthReadPermissions: [HealthKitDataType.StepCount],
   // googleFitReadPermissions: [GoogleFitDataType.Steps],
@@ -30,7 +18,6 @@ const permissions: AuthorizationPermissions = {
 
 export const GetStepsToday = () => {
   const [steps, setSteps] = useState<number | undefined>();
-
   useEffect(() => {
     const getStepsToday = async () => {
       try {
@@ -62,65 +49,40 @@ export const GetStepsToday = () => {
     getStepsToday();
   }, []);
 
-  return steps ? <Text>{steps}</Text> : <Text>0</Text>;
+  return steps ? (
+    <Text className="mx-2 mt-1 text-lg font-bold">{steps}</Text>
+  ) : (
+    <Text className="mx-2 mt-1 text-lg font-bold">0</Text>
+  );
 };
-export const CardFitnessData = () => {
+
+export const CardFitnessData = ({ stepsGoal }: { stepsGoal: number }) => {
+  const [stepsProgress, setStepsProgress] = useState<number>(0);
+  const progress = (stepsProgress / stepsGoal) * 100;
+  const handleStepsUpdate = (steps: number) => {
+    setStepsProgress(steps);
+  };
   return (
-    <Box alignItems="center">
-      <Box
-        maxW="40"
-        mx="2"
-        mt="5"
-        rounded="lg"
-        overflow="hidden"
-        borderColor="coolGray.200"
-        borderWidth="1"
-        _dark={{
-          borderColor: "coolGray.700",
-          backgroundColor: "gray.800",
-        }}
-        _web={{
-          shadow: 2,
-          borderWidth: 0,
-        }}
-        _light={{
-          backgroundColor: "gray.50",
-        }}
-      >
-        <AspectRatio w="10%"></AspectRatio>
-        <Box>
-          <AspectRatio w="100%"></AspectRatio>
-          <Center
-            bg="violet.500"
-            _dark={{
-              bg: "violet.400",
-            }}
-            _text={{
-              color: "warmGray.50",
-              fontWeight: "400",
-              fontSize: "md",
-            }}
-            position="absolute"
-            top="0"
-            mx="3"
-            mt="3"
-            px="3"
-            py="1.5"
-            borderRadius={"sm"}
-          >
-            Steps Today
-          </Center>
-        </Box>
-        <Stack space={2}>
-          <HStack alignItems="center" space={4} justifyContent="space-between">
-            <HStack alignItems="center">
-              <FontAwesome5 name="shoe-prints" size={42} color="green" />
-              <GetStepsToday />
-            </HStack>
-          </HStack>
-        </Stack>
-      </Box>
-    </Box>
+    <View style={styles.card} className="mt-5 mx-3">
+      <View style={styles.header} className="justify-between">
+        <Text style={{ fontWeight: "bold", fontSize: 18 }}>Steps Today</Text>
+        <FontAwesome5
+          name="plus"
+          size={20}
+          color="black"
+          onPress={() => {
+            console.log("test");
+          }}
+        />
+      </View>
+      <View className="flex-col justify-center items-center">
+        <View className="mt-10 flex-row mx-5 items-center justify-center">
+          <FontAwesome5 name="shoe-prints" size={32} color="green" />
+          <GetStepsToday />
+        </View>
+        <Progress.Bar className="mt-3" progress={progress} width={200} />
+      </View>
+    </View>
   );
 };
 
@@ -128,66 +90,30 @@ export const CardExercise = () => {
   const {} = useState();
 
   return (
-    <Box alignItems="center">
-      <Box
-        maxWidth={"80"}
-        mx="2"
-        mt="5"
-        rounded="lg"
-        overflow="hidden"
-        borderColor="coolGray.200"
-        borderWidth="1"
-        _dark={{
-          borderColor: "coolGray.700",
-          backgroundColor: "gray.800",
-        }}
-        _web={{
-          shadow: 2,
-          borderWidth: 0,
-        }}
-        _light={{
-          backgroundColor: "gray.50",
-        }}
-      >
-        <Box>
-          <AspectRatio w="100%"></AspectRatio>
-          <Center
-            bg="violet.500"
-            _dark={{
-              bg: "violet.400",
-            }}
-            _text={{
-              color: "warmGray.50",
-              fontWeight: "400",
-              fontSize: "md",
-            }}
-            position="absolute"
-            top="0"
-            mx="3"
-            mt="3"
-            px="3"
-            py="1.5"
-            borderRadius={"sm"}
-          >
-            hihi
-          </Center>
-        </Box>
-
-        <Stack space={2}>
-          <HStack alignItems="center" space={4} justifyContent="space-between">
-            <HStack alignItems="center">
-              <Text>test</Text>
-            </HStack>
-          </HStack>
-        </Stack>
-      </Box>
-    </Box>
+    <View style={styles.card} className="mt-5 mx-3">
+      <View style={styles.header}>
+        <Text style={{ fontWeight: "bold", fontSize: 18 }}>Exercise</Text>
+      </View>
+      <Text style={{ color: "gray" }}></Text>
+    </View>
   );
 };
 
-const createCss = (margin: number) => {
-  return {
-    margin: margin,
-    color: "blue",
-  };
-};
+const styles = StyleSheet.create({
+  card: {
+    height: 150,
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 15,
+    elevation: 10,
+    padding: 10,
+    //shadowColor: "#000",
+    //shadowOffset: { width: 0, height: 3 },
+    //shadowOpacity: 0.5,
+    //shadowRadius: 5,
+  },
+
+  header: {
+    flexDirection: "row",
+  },
+});
