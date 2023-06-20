@@ -1,4 +1,5 @@
 // Buffer Line
+import { Transform } from 'class-transformer';
 import {
   IsString,
   IsDate,
@@ -6,6 +7,7 @@ import {
   IsNotEmpty,
   Min,
   IsEnum,
+  IsInt,
 } from 'class-validator';
 
 export class TargetInputDTO {
@@ -26,4 +28,12 @@ export class TargetInputDTO {
   @IsDate()
   @IsNotEmpty()
   endDate: Date;
+}
+
+export class StepGoalDTO {
+  @IsNotEmpty()
+  @IsInt()
+  @Transform(({ value }) => parseInt(value))
+  @Min(1)
+  goalInput: string;
 }

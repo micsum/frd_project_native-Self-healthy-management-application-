@@ -86,4 +86,29 @@ export class UserService {
     });
     return {};
   }
+
+  async updateStepsGoal(userID: number, goalInt: number) {
+    const stepsGoalInDb = await this.knex('personal_target_input')
+      .select('*')
+      .where({ user_id: userID });
+
+    if (stepsGoalInDb.length !== 0) {
+      await this.knex('personal_target_input')
+        .where({ user_id: userID })
+        .update({ steps_dailygoal: goalInt });
+    } else {
+      await this.knex('personal_target_input').insert({
+        steps_dailygoal: goalInt,
+        user_id: userID,
+      });
+    }
+    return {};
+  }
+
+  async getStepGoal(userID: number) {
+    const getStep = await this.knex('personal_target_input')
+      .select('steps_dailygoal')
+      .where({ user_id: userID });
+    return { getStep };
+  }
 }

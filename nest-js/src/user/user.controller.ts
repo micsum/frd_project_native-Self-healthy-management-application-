@@ -18,7 +18,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { LoginData } from './dto/login-user.dto';
 import { hashPassword } from 'hash';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { TargetInputDTO } from './dto/targetInput.dto';
+import { StepGoalDTO, TargetInputDTO } from './dto/targetInput.dto';
 import { JWTService } from 'src/jwt/jwt.service';
 import { JwtAuthGuard } from 'src/authguard/JwtAuthGuard.service';
 
@@ -97,6 +97,35 @@ export class UserController {
     const userID = this.extractUserID(token);
     try {
       await this.userService.updatePersonalTarget(userID, targetInput);
+    } catch (error) {
+      console.log(error);
+      return { error: 'Server Error' };
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('stepsGoal')
+  async setStepsGoal(
+    @Headers('Authorization') token: string,
+    @Body() { goalInput }: StepGoalDTO,
+  ) {
+    const userID = this.extractUserID(token);
+    const goalInt = parseInt(goalInput);
+    try {
+      await this.userService.updateStepsGoal(userID, goalInt);
+      return {};
+    } catch (error) {
+      console.log(error);
+      return { error: 'Server Error' };
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('stepsGoal')
+  async getStepGoal(@Headers('authorization') token: string) {
+    const userID = this.extractUserID(token);
+    try {
+      return await this.userService.getStepGoal(userID);
     } catch (error) {
       console.log(error);
       return { error: 'Server Error' };
