@@ -95,8 +95,10 @@ export class UserController {
     @Body() targetInput: TargetInputDTO,
   ) {
     const userID = this.extractUserID(token);
+    console.log(`userID : ${userID}`);
     try {
       await this.userService.updatePersonalTarget(userID, targetInput);
+      return {};
     } catch (error) {
       console.log(error);
       return { error: 'Server Error' };
