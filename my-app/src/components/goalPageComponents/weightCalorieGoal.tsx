@@ -123,32 +123,37 @@ function GoalInputDisplayPanel() {
           updateInputInfo={saveInputInfo}
         />
       ) : (
-        <Fragment>
+        <View style={{ paddingStart: 10, paddingEnd: 10 }}>
           <View style={gps.goalDisplayDiv}>
-            <Text style={gps.goalDisplayTitle}>Target :</Text>
-            <Text>{inputInfo ? inputInfo.target_type : "Not Yet Set"}</Text>
+            <Text style={gps.goalDisplayTitle}>Target Type :</Text>
+            <Text style={gps.goalDisplayText}>
+              {inputInfo ? inputInfo.target_type : "Not Yet Set"}
+            </Text>
           </View>
           <View style={gps.goalDisplayDiv}>
             <Text style={gps.goalDisplayTitle}>Desired weight : </Text>
-            <Text>{inputInfo ? inputInfo.weight_target : "Not Yet Set"}</Text>
+            <Text style={gps.goalDisplayText}>
+              {inputInfo ? inputInfo.weight_target : "Not Yet Set"}
+            </Text>
           </View>
           <View style={gps.goalDisplayDiv}>
             <Text style={gps.goalDisplayTitle}>Days to Complete Goal :</Text>
-            <Text>
+            <Text style={gps.goalDisplayText}>
               {inputInfo
                 ? countDaysRemaining(inputInfo.expected_date)
                 : "Not Yet Set"}
             </Text>
           </View>
-          {inputInfo ? (
-            <View style={gps.goalDisplayDiv}>
-              <Text style={gps.goalDisplayTitle}>
-                Recommended Average Daily Calorie Consumption
-              </Text>
-              <Text>{calculateAverageCalorieNeeded(inputInfo)}</Text>
-            </View>
-          ) : null}
-        </Fragment>
+          {/* {inputInfo ? */}
+          <View style={gps.goalDisplayDiv}>
+            <Text style={gps.goalDisplayTitle}>
+              {`Recommended Average \nDaily Calorie Consumption :`}
+            </Text>
+            <Text style={gps.goalDisplayText}>
+              Not Yet Set{/* {calculateAverageCalorieNeeded(inputInfo)} */}
+            </Text>
+          </View>
+        </View>
       )}
 
       {inputPanelOpen ? null : (
