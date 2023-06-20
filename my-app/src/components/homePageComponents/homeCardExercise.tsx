@@ -21,9 +21,7 @@ import {
   HealthKitDataType,
 } from "@kilohealth/rn-fitness-tracker";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
-
-export const fitnessData = [{ title: "card1", description: "hihi" }];
-export const exerciseData = [{ title: "card2", description: "test" }];
+import { Card } from "@rneui/themed";
 
 const permissions: AuthorizationPermissions = {
   healthReadPermissions: [HealthKitDataType.StepCount],
@@ -70,7 +68,7 @@ export const CardFitnessData = () => {
   return (
     <Box alignItems="center">
       <Box
-        maxWidth={"80"}
+        maxW="40"
         mx="2"
         mt="5"
         rounded="lg"
@@ -89,6 +87,7 @@ export const CardFitnessData = () => {
           backgroundColor: "gray.50",
         }}
       >
+        <AspectRatio w="10%"></AspectRatio>
         <Box>
           <AspectRatio w="100%"></AspectRatio>
           <Center
@@ -112,7 +111,6 @@ export const CardFitnessData = () => {
             Steps Today
           </Center>
         </Box>
-
         <Stack space={2}>
           <HStack alignItems="center" space={4} justifyContent="space-between">
             <HStack alignItems="center">

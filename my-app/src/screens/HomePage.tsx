@@ -5,6 +5,7 @@ import {
   PanResponder,
   Animated,
   SafeAreaViewComponent,
+  StyleSheet,
   TouchableOpacity,
 } from "react-native";
 import { CardGoal } from "../components/homePageComponents/homeCardGoal";
@@ -27,6 +28,13 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { GetSteps } from "./StepPage";
 import { Domain } from "@env";
+import SwiperFlatList from "react-native-swiper-flatlist";
+import {
+  ALERT_TYPE,
+  AlertNotificationRoot,
+  Dialog,
+} from "react-native-alert-notification";
+
 export const AvatarPic = () => {
   const navigation = useNavigation();
 
@@ -130,37 +138,46 @@ const HomeNoStackWithChat = () => {
   };
   return (
     <View style={{ position: "relative", height: "100%" }}>
-      <HomeScreenNoStack></HomeScreenNoStack>
-      <SpeedDial
-        isOpen={open}
-        icon={{ name: "chat", color: "#fff" }}
-        openIcon={{ name: "close", color: "#fff" }}
-        onOpen={() => setOpen(!open)}
-        onClose={() => setOpen(!open)}
-        buttonStyle={{ backgroundColor: "#649c98" }}
-      >
-        <SpeedDial.Action
-          icon={{ name: "people", color: "#fff" }}
-          title="Chat with experts"
-          titleStyle={{
-            backgroundColor: "#649c98",
-            color: "#fff",
-          }}
-          onPress={() => console.log("chat with experts")}
+      <AlertNotificationRoot>
+        <HomeScreenNoStack></HomeScreenNoStack>
+        <SpeedDial
+          isOpen={open}
+          icon={{ name: "chat", color: "#fff" }}
+          openIcon={{ name: "close", color: "#fff" }}
+          onOpen={() => setOpen(!open)}
+          onClose={() => setOpen(!open)}
           buttonStyle={{ backgroundColor: "#649c98" }}
-        />
-        <SpeedDial.Action
-          key="custom"
-          icon={<RobotIcon />}
-          title="ChatGPT"
-          titleStyle={{ backgroundColor: "#649c98", color: "#fff" }}
-          onPress={async () => {
-            //@ts-ignore'
-            navigation.navigate("ChatRoom");
-          }}
-          buttonStyle={{ backgroundColor: "#649c98" }}
-        />
-      </SpeedDial>
+        >
+          <SpeedDial.Action
+            icon={{ name: "people", color: "#fff" }}
+            title="Chat with experts"
+            titleStyle={{
+              backgroundColor: "#649c98",
+              color: "#fff",
+            }}
+            onPress={() =>
+              Dialog.show({
+                type: ALERT_TYPE.WARNING,
+                title: "Coming Soon",
+                textBody: "",
+                autoClose: 1500,
+              })
+            }
+            buttonStyle={{ backgroundColor: "#649c98" }}
+          />
+          <SpeedDial.Action
+            key="custom"
+            icon={<RobotIcon />}
+            title="ChatGPT"
+            titleStyle={{ backgroundColor: "#649c98", color: "#fff" }}
+            onPress={async () => {
+              //@ts-ignore'
+              navigation.navigate("ChatRoom");
+            }}
+            buttonStyle={{ backgroundColor: "#649c98" }}
+          />
+        </SpeedDial>
+      </AlertNotificationRoot>
     </View>
   );
 };
@@ -189,15 +206,21 @@ export function HomeScreenNoStack() {
       </View>
 
       <CardGoal />
-      <TouchableOpacity
-        onPress={() => {
-          //@ts-ignore
-          navigation.navigate("StepPage");
-        }}
+      <SwiperFlatList
+        showPagination
+        paginationActiveColor="#0898A0"
+        paginationStyleItem={styles.paginationDots}
       >
-        <CardFitnessData />
-      </TouchableOpacity>
-      <CardExercise />
+        <TouchableOpacity
+          onPress={() => {
+            //@ts-ignore
+            navigation.navigate("StepPage");
+          }}
+        >
+          <CardFitnessData />
+        </TouchableOpacity>
+        <CardExercise />
+      </SwiperFlatList>
       <CardWeight />
     </ScrollView>
   );
@@ -267,3 +290,17 @@ export const HomeScreen = () => {
     </Stack.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  paginationDots: {
+    height: 10,
+    width: 10,
+    borderRadius: 10 / 2,
+    backgroundColor: "#0898A0",
+    marginLeft: 10,
+    marginBottom: 45,
+    bottom: 220,
+    left: 0,
+    right: 0,
+  },
+});

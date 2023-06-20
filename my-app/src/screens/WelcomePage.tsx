@@ -29,7 +29,7 @@ export const WelcomeScreenNoStack = () => {
           autoplay
           autoplayDelay={5}
           autoplayLoop
-          index={4}
+          index={0}
           showPagination
           paginationActiveColor="#0898A0"
           paginationStyleItem={styles.paginationDots}
