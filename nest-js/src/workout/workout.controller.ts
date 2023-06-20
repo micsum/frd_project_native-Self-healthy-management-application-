@@ -9,13 +9,11 @@ export class WorkoutController {
 
   @Get()
   getWorkoutList() {
-    console.log('received the request of getting workout list');
     return this.workoutService.getWorkoutList();
   }
 
   @Get('/detail/:id')
   getWorkoutDetail(@Param('id') id: number) {
-    console.log('received the request of getting workout detail');
     return this.workoutService.getWorkoutDetail(id);
   }
 

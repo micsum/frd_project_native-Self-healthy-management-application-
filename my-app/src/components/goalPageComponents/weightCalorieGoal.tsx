@@ -15,7 +15,7 @@ function GoalInputDisplayPanel() {
   const tokenRef = useRef<string>("");
   const bodyParams = useRef<BodyParams>({ height: 0, weight: 0 });
 
-  const { height, weight } = bodyParams.current;
+  // const { height, weight } = bodyParams.current;
 
   const getInputData = async () => {
     const token = await getFromSecureStore("token");
@@ -48,6 +48,7 @@ function GoalInputDisplayPanel() {
       headers: { authorization: `Bearer ${tokenRef.current}` },
     });
     const result = await res.json();
+    console.log(result);
 
     if (result.error) {
       Dialog.show({
@@ -57,6 +58,7 @@ function GoalInputDisplayPanel() {
       });
       return;
     }
+    console.log(`get ${result.bodyParams.weight}`);
 
     bodyParams.current = result.bodyParams;
   };
@@ -102,7 +104,7 @@ function GoalInputDisplayPanel() {
     if (target_type === "Maintain Weight") {
       avgCalorieNeeded > 0 ? avgCalorieNeeded : 0;
     } else {
-      const netWeight = Math.abs(weight - weight_target);
+      const netWeight = Math.abs(bodyParams.current.weight - weight_target);
       const requiredCalories = (netWeight / 0.45) * 3500;
       target_type === "Lose Weight"
         ? (avgCalorieNeeded -= requiredCalories / numberOfDays)
@@ -116,7 +118,7 @@ function GoalInputDisplayPanel() {
       {inputPanelOpen ? (
         <GoalInputPanel
           token={tokenRef.current}
-          weight={weight}
+          weight={bodyParams.current.weight}
           togglePanelVisible={toggleInputPanelVisibility}
           updateInputInfo={saveInputInfo}
         />

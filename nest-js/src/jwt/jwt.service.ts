@@ -17,6 +17,7 @@ export class JWTService {
     try {
       return jwt.verify(token, env.JWT_SECRET);
     } catch (error) {
+      console.log(error);
       return { error };
     }
   }

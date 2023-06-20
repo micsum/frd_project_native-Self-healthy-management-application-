@@ -2,7 +2,6 @@ import { View } from "react-native";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Text, Button, Box, NativeBaseProvider, ScrollView } from "native-base";
 import { PlanItem } from "../components/plansPageComponents/planItem";
-import { PlanSelect } from "../components/plansPageComponents/planSelect";
 import { createStackNavigator } from "@react-navigation/stack";
 import { PlanDetailScreen } from "./PlansDetailPage";
 import { Domain } from "@env";
@@ -58,7 +57,6 @@ export function PlansHomeScreen() {
             ) : (
               plans.map((plan) => (
                 <PlanItem
-                  type={""}
                   image={plan.cover_image}
                   title={plan.title}
                   id={plan.id}

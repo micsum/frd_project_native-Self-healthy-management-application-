@@ -1,15 +1,24 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
 import axios from "axios";
-
 import { Domain } from "@env";
 import { Messages } from "../utils/type";
+import { getFromSecureStore } from "../storage/secureStore";
 
-export function ChatRoomScreen({ route }: any) {
+export function ChatRoomScreen() {
+  async function getToken() {
+    const token = await getFromSecureStore("token");
+    return token;
+  }
   useEffect(() => {
-    axios.get(Domain + `/chatgpt/history`).then(function (response) {
-      console.log(response.data);
-    });
+    let token = getToken();
+    axios
+      .get(Domain + `/chatgpt/history`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(function (response) {
+        console.log(response.data);
+      });
   }, []);
 
   const [messages, setMessages] = useState<any[]>([]);
