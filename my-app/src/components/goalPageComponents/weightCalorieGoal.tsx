@@ -144,15 +144,16 @@ function GoalInputDisplayPanel() {
                 : "Not Yet Set"}
             </Text>
           </View>
-          {/* {inputInfo ? */}
-          <View style={gps.goalDisplayDiv}>
-            <Text style={gps.goalDisplayTitle}>
-              {`Recommended Average \nDaily Calorie Consumption :`}
-            </Text>
-            <Text style={gps.goalDisplayText}>
-              Not Yet Set{/* {calculateAverageCalorieNeeded(inputInfo)} */}
-            </Text>
-          </View>
+          {inputInfo ? (
+            <View style={gps.goalDisplayDiv}>
+              <Text style={gps.goalDisplayTitle}>
+                {`Recommended Average \nDaily Calorie Consumption :`}
+              </Text>
+              <Text style={gps.goalDisplayText}>
+                Not Yet Set{/* {calculateAverageCalorieNeeded(inputInfo)} */}
+              </Text>
+            </View>
+          ) : null}
         </View>
       )}
 
