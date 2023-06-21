@@ -11,16 +11,16 @@ import {
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Domain } from "@env";
 import { Table, Row, Rows } from "react-native-reanimated-table";
-import { getFromSecureStore } from "../storage/secureStore";
+import { handleToken } from "../hooks/use-token";
 
 export const PlanDetailScreen = ({ route }: any) => {
   const { id } = route.params;
   const [workoutData, setWorkoutData] = useState<any[]>([]);
   const [mealplanData, setMealplanData] = useState<any[]>([]);
+  const { token } = handleToken();
 
   useEffect(() => {
     const fetchWorkoutData = async () => {
-      const token = await getFromSecureStore("token");
       console.log(token);
       try {
         let res = await fetch(`${Domain}/workout/detail/${id}`, {
@@ -40,7 +40,6 @@ export const PlanDetailScreen = ({ route }: any) => {
 
   useEffect(() => {
     const fetchMealPlanData = async () => {
-      const token = await getFromSecureStore("token");
       try {
         let res = await fetch(`${Domain}/meal/detail/${id}`, {
           headers: {

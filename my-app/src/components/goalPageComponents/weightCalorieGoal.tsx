@@ -1,12 +1,13 @@
 // Buffer Line
 import { Fragment, useState, useEffect, useRef, useCallback } from "react";
 import { View, Text, Button, TextInput, ScrollView } from "react-native";
-import { getFromSecureStore } from "../../storage/secureStore";
+
 import { BodyParams, GoalInputData } from "../../utils/type";
 import { Domain } from "@env";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import GoalInputPanel from "./weightCalorieGoalInput";
 import { gps } from "./goalPageComponentStyleSheet";
+import { handleToken } from "../../hooks/use-token";
 
 function GoalInputDisplayPanel() {
   const [inputPanelOpen, toggleInputPanel] = useState<boolean>(false);
@@ -16,9 +17,9 @@ function GoalInputDisplayPanel() {
   const bodyParams = useRef<BodyParams>({ height: 0, weight: 0 });
 
   // const { height, weight } = bodyParams.current;
+  const { token } = handleToken();
 
   const getInputData = async () => {
-    const token = await getFromSecureStore("token");
     tokenRef.current = token || "";
 
     const res = await fetch(`${Domain}/personalTarget`, {

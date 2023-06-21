@@ -17,40 +17,16 @@ import {
   Dialog,
 } from "react-native-alert-notification";
 import { createStackNavigator } from "@react-navigation/stack";
-import { getFromSecureStore } from "../storage/secureStore";
-import { Domain } from "@env";
+import { useGet } from "../hooks/use-get";
 
 const MealPage: React.FC = () => {
   const [date, updateSelectedDate] = useState<Date>(new Date());
-  const [dateMealData, updateDateMealData] = useState<FullItemInfo[]>([]);
 
-  const updateMealData = async () => {
-    const token = await getFromSecureStore("token");
-    if (typeof token !== "string") {
-      return;
-    }
-    const dateString = date?.toISOString().split("T")[0];
-
-    const res = await fetch(`${Domain}/mealItem/${dateString}`, {
-      headers: { authorization: `Bearer ${token}` },
-    });
-    const result = await res.json();
-    if (result.error) {
-      Dialog.show({
-        type: ALERT_TYPE.DANGER,
-        title: result.error,
-        autoClose: 1500,
-      });
-      return;
-    }
-    updateDateMealData(() => {
-      return result.mealData;
-    });
-  };
-
-  useMemo(() => {
-    updateMealData();
-  }, [date]);
+  const dateString = date.toISOString().split("T")[0];
+  const dateMealItem = useGet<{ mealData: FullItemInfo[] }>(
+    `/mealItem/${dateString}`
+  );
+  const dateMealData = dateMealItem.json.mealData || [];
 
   const selectNewDate = (date: Date) => {
     updateSelectedDate(() => {
@@ -61,24 +37,24 @@ const MealPage: React.FC = () => {
   return (
     <SafeAreaProvider>
       <NativeBaseProvider>
-        <ScrollView>
-          <Provider store={store}>
-            <AlertNotificationRoot>
-              <SafeAreaView
-                style={{
-                  marginTop: 10,
-                  paddingBottom: useSafeAreaInsets().bottom,
-                }}
-              >
-                <DateSelectionPanel updateSelectedDate={selectNewDate} />
+        <Provider store={store}>
+          <AlertNotificationRoot>
+            <SafeAreaView
+              style={{
+                marginTop: 10,
+                paddingBottom: useSafeAreaInsets().bottom,
+              }}
+            >
+              <DateSelectionPanel updateSelectedDate={selectNewDate} />
+              <ScrollView>
                 <MealTypeSelection
                   date={date}
                   foodItemFullInfo={dateMealData}
                 />
-              </SafeAreaView>
-            </AlertNotificationRoot>
-          </Provider>
-        </ScrollView>
+              </ScrollView>
+            </SafeAreaView>
+          </AlertNotificationRoot>
+        </Provider>
       </NativeBaseProvider>
     </SafeAreaProvider>
   );

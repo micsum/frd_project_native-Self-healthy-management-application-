@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { View, Text, Button } from "react-native";
 import { useDispatch } from "react-redux";
-import { store, action, AppDispatch } from "../../store";
+import { store, updateRootState, AppDispatch } from "../../store";
 import {
   FoodItemNutritionInfo,
   NutritionContentDisplay,
@@ -96,7 +96,7 @@ function NutritionDetailPanel(props: {
   });
 
   const closeItemNutritionPanel = () => {
-    dispatch(action("itemNutritionPanelVisibility", { visible: false }));
+    dispatch(updateRootState("itemNutritionPanelOpen", false));
     showNutritionDetail([]);
   };
 

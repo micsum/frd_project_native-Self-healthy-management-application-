@@ -19,7 +19,7 @@ import {
 import { View, Text, Button, SafeAreaView } from "react-native";
 import { ScrollView } from "native-base";
 import { useDispatch } from "react-redux";
-import { store, action, RootState, AppDispatch } from "../../store";
+import { store, updateRootState, RootState, AppDispatch } from "../../store";
 import FoodItemDisplay from "./FoodItemDisplay";
 import FoodItemEntryPanel from "./FoodItemEntryPanel";
 import NutritionDetailPanel from "./NutritionDetailDisplay";
@@ -27,7 +27,7 @@ import { foodItemDisplayHeight, mps } from "./mealPageComponentStyleSheet";
 import { AntDesign } from "@expo/vector-icons";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import { Domain } from "@env";
-import { getFromSecureStore } from "../../storage/secureStore";
+import { handleToken } from "../../hooks/use-token";
 
 function MealTypeSelection(props: {
   date: Date;
@@ -354,6 +354,7 @@ function MealTypeSelection(props: {
     return newItem;
   };
 
+  const { token } = handleToken();
   const updateItemBasicInfo = async (updatedItem: FoodItemBasicInfo) => {
     if (updatedItem.id !== -1 && updatedItem.meal_id !== -1) {
       const newUpdatedItem = updateCurrentFoodItem(updatedItem);
@@ -361,6 +362,7 @@ function MealTypeSelection(props: {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newUpdatedItem),
       });
@@ -404,8 +406,6 @@ function MealTypeSelection(props: {
         });
         return;
       }
-
-      const token = await getFromSecureStore("token");
       if (typeof token !== "string") {
         return;
       }
@@ -455,8 +455,8 @@ function MealTypeSelection(props: {
         autoClose: 1500,
       });
     }
-    dispatch(action("foodPanelVisibility", { visible: false }));
-    dispatch(action("foodItemInfo", {}));
+    dispatch(updateRootState("foodInputPanelOpen", false));
+    dispatch(updateRootState("foodItemInConsideration", undefined));
     return;
   };
 
@@ -507,7 +507,7 @@ function MealTypeSelection(props: {
   };
 
   const openEditPanel = () => {
-    dispatch(action("foodPanelVisibility", { visible: true }));
+    dispatch(updateRootState("foodInputPanelOpen", true));
   };
 
   const MealChangeButton = (props: { indexChange: number }) => {

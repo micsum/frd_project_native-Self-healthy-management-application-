@@ -81,6 +81,7 @@ export class MealItemController {
   @Put()
   async updateItem(@Body() foodItemFullInfo: UpdateMealItemDto) {
     try {
+      console.log(foodItemFullInfo);
       return await this.mealItemService.updateExistingItem(foodItemFullInfo);
     } catch (error) {
       console.log(error);

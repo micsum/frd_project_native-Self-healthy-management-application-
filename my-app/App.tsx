@@ -8,49 +8,79 @@ import { Login } from "./src/screens/LoginPage";
 import { WelcomeScreen } from "./src/screens/WelcomePage";
 import { Register } from "./src/screens/RegisterPage";
 import { MealScreen } from "./src/screens/MealPage";
-import { Provider } from "react-redux";
-import { store } from "./src/store";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { RootState, store, updateRootState } from "./src/store";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useEffect, useState } from "react";
-import { getFromSecureStore } from "./src/storage/secureStore";
+import { secureStore } from "./src/storage/secureStore";
+import axios from "axios";
 
-export default function App() {
-  const Stack = createStackNavigator();
-  const [authState, setAuthState] = useState<boolean>(false);
-
-  store.subscribe(() => {
-    const storeInfo = store.getState();
-    setAuthState(() => {
-      return storeInfo.isLogin;
-    });
-  });
-
+export default function RootApp() {
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-        <NavigationContainer>
-          <Stack.Navigator>
-            {authState ? (
-              <Stack.Screen
-                name="Main"
-                component={Main}
-                options={{
-                  headerShown: false,
-                }}
-              ></Stack.Screen>
-            ) : (
-              <Stack.Screen
-                name="WelcomeScreen"
-                component={WelcomeScreen}
-                options={{
-                  headerShown: false,
-                }}
-              ></Stack.Screen>
-            )}
-          </Stack.Navigator>
-        </NavigationContainer>
+        <App />
       </SafeAreaProvider>
     </Provider>
+  );
+}
+
+const Stack = createStackNavigator();
+
+function App() {
+  const auth = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    secureStore.getToken().then((token) => {
+      if (token) {
+        dispatch(updateRootState("auth", { token }));
+      } else {
+        dispatch(updateRootState("auth", null));
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (auth !== "loading" && auth?.token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${auth.token}`;
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
+    }
+  }, [auth]);
+
+  if (auth === "loading") {
+    return (
+      <View>
+        <Text>Loading ...</Text>
+      </View>
+    );
+  }
+
+  const isLogin = !!auth?.token;
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        {isLogin ? (
+          <Stack.Screen
+            name="Main"
+            component={Main}
+            options={{
+              headerShown: false,
+            }}
+          ></Stack.Screen>
+        ) : (
+          <Stack.Screen
+            name="WelcomeScreen"
+            component={WelcomeScreen}
+            options={{
+              headerShown: false,
+            }}
+          ></Stack.Screen>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 

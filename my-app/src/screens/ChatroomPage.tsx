@@ -2,15 +2,14 @@ import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
 import axios from "axios";
 import { Domain } from "@env";
-
-import { getFromSecureStore } from "../storage/secureStore";
+import { handleToken } from "../hooks/use-token";
 
 export function ChatRoomScreen() {
   const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
+  const { token } = handleToken();
 
   async function getHistory() {
-    const token = await getFromSecureStore("token");
     let history = await axios.get(Domain + `/chatgpt/history`, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -77,7 +76,7 @@ export function ChatRoomScreen() {
   }, []);
 
   const onSend = async (messages: any[] = []) => {
-    const token = await getFromSecureStore("token");
+    const { token } = handleToken();
     console.log(messages);
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)

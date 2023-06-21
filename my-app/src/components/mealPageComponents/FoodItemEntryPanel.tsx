@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { View, Text, Button, TextInput, ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
-import { action, AppDispatch } from "../../store";
+import { updateRootState, AppDispatch } from "../../store";
 import { FoodItemBasicInfo, mealIDObject } from "../../utils/type";
 import { mps } from "./mealPageComponentStyleSheet";
 import { FontAwesome } from "@expo/vector-icons";
@@ -38,12 +38,8 @@ function FoodItemEntryPanel(props: {
   }, []);
 
   const cancelItemUpdate = () => {
-    dispatch(
-      action("foodPanelVisibility", {
-        visible: false,
-      })
-    );
-    dispatch(action("foodItemInfo", {}));
+    dispatch(updateRootState("foodInputPanelOpen", false));
+    dispatch(updateRootState("foodItemInConsideration", undefined));
   };
 
   const confirmItemUpdate = (formItemInfo: FoodItemBasicInfo) => {

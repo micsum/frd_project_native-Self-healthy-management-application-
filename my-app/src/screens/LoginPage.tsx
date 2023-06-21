@@ -17,13 +17,14 @@ import {
   AlertNotificationRoot,
   Dialog,
 } from "react-native-alert-notification";
-import { getFromSecureStore, saveInSecureStore } from "../storage/secureStore";
-import { action, AppDispatch } from "../store";
+import { updateRootState, AppDispatch } from "../store";
 import { useDispatch } from "react-redux";
 import { Domain } from "@env";
 import { useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ForgotPwForm } from "./ForgotPwPage";
+import { post } from "../utils/api";
+import { handleToken } from "../hooks/use-token";
 
 export const LoginNoStack = () => {
   const navigation = useNavigation();
@@ -39,56 +40,27 @@ export const LoginNoStack = () => {
     },
   });
 
-  const dispatch = useDispatch<AppDispatch>();
+  const { setToken } = handleToken();
 
-  const getToken = async () => {
-    const token = await getFromSecureStore("token");
-    if (token) {
-      dispatch(action("isLogin", { login: true }));
+  const onSubmit = async (input: LoginData) => {
+    let output = await post("/user/login", input);
+    if (output.error) {
+      console.log("error", output.error);
+      return Dialog.show({
+        type: ALERT_TYPE.WARNING,
+        title: `${output.error}`,
+        textBody: "Please try again",
+        button: "close",
+        autoClose: 5000,
+      });
+    }
+    if (output.token) {
+      let token = output.token;
+      console.log({ token });
+      setToken(token);
     }
   };
-  useEffect(() => {
-    getToken();
-  }, []);
 
-  const onSubmit = async (data: LoginData) => {
-    await axios.post(`${Domain}/user/login`, data).then(
-      (response) => {
-        if (response.data.token) {
-          let token = response.data.token;
-          console.log({ token });
-          saveInSecureStore("token", token);
-          dispatch(action("storeToken", { token }));
-          dispatch(action("isLogin", { login: true }));
-          axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-          //console.log("response", token);
-        }
-        // test response.data thought axios
-        else if (response.data.error) {
-          console.log("error", response.data.error);
-          return Dialog.show({
-            type: ALERT_TYPE.WARNING,
-            title: `${response.data.error}`,
-            textBody: "Please try again",
-            button: "close",
-            autoClose: 5000,
-          });
-        }
-        return;
-      },
-      (error) => {
-        console.log("ran");
-        console.log(error.response.data.message);
-        return Dialog.show({
-          type: ALERT_TYPE.WARNING,
-          title: "Error",
-          textBody: `${error.response.data.message}`,
-          button: "close",
-          autoClose: 5000,
-        });
-      }
-    );
-  };
   return (
     <AlertNotificationRoot>
       <SafeAreaView className="flex-1 items-center justify-center bg-[#38668E]">
