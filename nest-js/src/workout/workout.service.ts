@@ -9,15 +9,17 @@ log.enabled = true;
 @Injectable()
 export class WorkoutService {
   constructor(@InjectKnex() private knex: Knex) {}
-  async getWorkoutList() {
-    log('get work out plans');
+  async getWorkoutList(options: { last_id: number; limit: number }) {
+    log('get work out list');
     let workouts = await this.knex('workout')
       .select('workout.id', 'workout.title', 'workout.cover_image')
       .count('workout_day.id as days')
       .innerJoin('workout_day', 'workout_day.workout_id', 'workout.id')
       .groupBy('workout.id')
-      .limit(10);
-    return workouts;
+      .orderBy('workout.id', 'asc')
+      .where('workout.id', '>', options.last_id)
+      .limit(options.limit);
+    return { list: workouts };
   }
 
   async getWorkoutDetail(workout_id: number) {

@@ -31,16 +31,19 @@ type Food = {
 export class MealPlanService {
   constructor(@InjectKnex() private knex: Knex) {}
 
-  async getMealPlanList() {
-    log('get meal plan');
+  async getMealPlanList(options: { last_id: number; limit: number }) {
+    log('get meal plan list');
     let mealplans = await this.knex
       .from('mealplan')
       .innerJoin('mealplan_day', 'mealplan_day.mealplan_id', 'mealplan.id')
       .select('mealplan.id', 'mealplan.title', 'mealplan.cover_image')
       .groupBy('mealplan.id')
-      .count('mealplan_day.id as days');
+      .count('mealplan_day.id as days')
+      .orderBy('mealplan.id', 'asc')
+      .where('mealplan.id', '>', options.last_id)
+      .limit(options.limit);
 
-    return mealplans;
+    return { list: mealplans };
   }
 
   async getMealPlanDetail(mealplan_id: number) {

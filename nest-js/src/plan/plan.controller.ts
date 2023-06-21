@@ -9,11 +9,11 @@ export class PlanController {
     private readonly mealPlanService: MealPlanService,
   ) {}
 
-  @Get('overview-list')
-  async getOverviewList() {
-    return {
-      workoutPlans: await this.workoutService.getWorkoutList(),
-      mealPlans: await this.mealPlanService.getMealPlanList(),
-    };
-  }
+  // @Get('overview-list')
+  // async getOverviewList(offset: number) {
+  //   return {
+  //     workoutPlans: await this.workoutService.getWorkoutList(offset),
+  //     mealPlans: await this.mealPlanService.getMealPlanList(),
+  //   };
+  // }
 }

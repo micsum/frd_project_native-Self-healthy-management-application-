@@ -1,13 +1,13 @@
-import { View } from "react-native";
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Text, Button, Box, NativeBaseProvider, ScrollView } from "native-base";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import React, { useEffect, useState, Component } from "react";
+import { Text, ScrollView, FlatList } from "native-base";
 import { PlanItem } from "../components/plansPageComponents/planItem";
 import { createStackNavigator } from "@react-navigation/stack";
 import { PlanDetailScreen } from "./PlansDetailPage";
-import { Domain } from "@env";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import SegmentedControlTab from "react-native-segmented-control-tab";
 import { get } from "../utils/api";
+import { useGetList } from "../hooks/use-get-list";
 
 type Plan = {
   id: number;
@@ -16,22 +16,23 @@ type Plan = {
 };
 
 export function PlansHomeScreen() {
-  // console.log("render PlansHomeScreen", new Date());
   const [data, setData] = useState<{
     workoutPlans: Plan[];
     mealPlans: Plan[];
-  }>();
+  }>({
+    workoutPlans: [],
+    mealPlans: [],
+  });
+
   const [currentPlanIndex, setCurrentPlanIndex] = useState<number>(0);
 
   useEffect(() => {
     get("/plan/overview-list").then(setData);
   }, []);
 
-  // useLayoutEffect(() => {
-  //   console.log("did render", new Date());
-  // });
-
-  const plans = currentPlanIndex == 0 ? data?.workoutPlans : data?.mealPlans;
+  const workoutList = useGetList<Plan>("/workout/list");
+  const mealPlanList = useGetList<Plan>("/meal/list");
+  const plans = currentPlanIndex == 0 ? workoutList : mealPlanList;
 
   let vdom = (
     <SafeAreaProvider>
@@ -53,27 +54,26 @@ export function PlansHomeScreen() {
               tabsContainerStyle={{ margin: 10, marginTop: 10 }}
             />
 
-            {!plans ? (
+            <View>
+              <Text>{plans.error}</Text>
+            </View>
+
+            {plans.list.length === 0 ? (
               <Text>Loading plans...</Text>
             ) : (
-              plans.map((plan) => (
-                <PlanItem
-                  image={plan.cover_image}
-                  title={plan.title}
-                  id={plan.id}
-                  key={plan.id}
-                />
-              ))
+              <FlatList
+                data={plans.list}
+                onEndReached={plans.fetchMore}
+                keyExtractor={(plan) => plan.id.toString()}
+                renderItem={({ item: plan }) => (
+                  <PlanItem
+                    image={plan.cover_image}
+                    title={plan.title}
+                    id={plan.id}
+                  />
+                )}
+              />
             )}
-
-            <Box alignItems="center">
-              <Button
-                className="mt-3"
-                onPress={() => console.log("hello world")}
-              >
-                More
-              </Button>
-            </Box>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -82,6 +82,7 @@ export function PlansHomeScreen() {
 
   return vdom;
 }
+
 //Create Stack
 const Stack = createStackNavigator();
 
