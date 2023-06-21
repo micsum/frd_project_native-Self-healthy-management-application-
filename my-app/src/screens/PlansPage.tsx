@@ -57,25 +57,24 @@ export function PlansHomeScreen() {
             <View>
               <Text>{plans.error}</Text>
             </View>
-
-            {plans.list.length === 0 ? (
-              <Text>Loading plans...</Text>
-            ) : (
-              <FlatList
-                data={plans.list}
-                onEndReached={plans.fetchMore}
-                keyExtractor={(plan) => plan.id.toString()}
-                renderItem={({ item: plan }) => (
-                  <PlanItem
-                    image={plan.cover_image}
-                    title={plan.title}
-                    id={plan.id}
-                  />
-                )}
-              />
-            )}
           </View>
         </ScrollView>
+        {plans.list.length === 0 ? (
+          <Text>Loading plans...</Text>
+        ) : (
+          <FlatList
+            data={plans.list}
+            onEndReached={plans.fetchMore}
+            keyExtractor={(plan) => plan.id.toString()}
+            renderItem={({ item: plan }) => (
+              <PlanItem
+                image={plan.cover_image}
+                title={plan.title}
+                id={plan.id}
+              />
+            )}
+          />
+        )}
       </SafeAreaView>
     </SafeAreaProvider>
   );
