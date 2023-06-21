@@ -3,8 +3,9 @@ import { StyleSheet, View, Text, Button, Platform } from "react-native";
 import { Calendar } from "react-native-calendars";
 import * as CalendarAPI from "expo-calendar";
 import { Event } from "../utils/type";
+import { createStackNavigator } from "@react-navigation/stack";
 
-export function CalendarScreen() {
+export function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [markedDates, setMarkedDates] = useState({});
   const [events, setEvents] = useState<Event[]>([]);
@@ -37,7 +38,7 @@ export function CalendarScreen() {
         }));
         setEvents(parsedEvents);
 
-        const markedDates = {};
+        const markedDates: any = {};
         parsedEvents.forEach((event) => {
           const date = event.startDate;
           const dateString = date.toISOString().split("T")[0];
@@ -117,9 +118,18 @@ export function CalendarScreen() {
         onDayPress={onDayPress}
         markedDates={markedDates}
         theme={{
-          selectedDayBackgroundColor: "#0898A0",
+          backgroundColor: "#ffffff",
+          calendarBackground: "#ffffff",
+          textSectionTitleColor: "#b6c1cd",
+          selectedDayBackgroundColor: "#00adf5",
           selectedDayTextColor: "#ffffff",
-          todayTextColor: "#0898A0",
+          todayTextColor: "#00adf5",
+          dayTextColor: "#2d4150",
+        }}
+        style={{
+          borderWidth: 1,
+          borderColor: "gray",
+          height: 400,
         }}
       />
       <View style={styles.eventContainer}>
@@ -169,10 +179,30 @@ async function getDefaultCalendarSource() {
   return defaultCalendar.source;
 }
 
+export function CalendarScreen({}) {
+  const Stack = createStackNavigator();
+
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="HomeNoStack"
+        component={CalendarPage}
+        options={{
+          headerShown: true,
+          title: "Calendar",
+          headerTitleAlign: "center",
+          headerStyle: { backgroundColor: "#38668E" },
+          headerTintColor: "#a5f3fc",
+          headerBackTitle: " ",
+        }}
+      ></Stack.Screen>
+    </Stack.Navigator>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "",
     justifyContent: "center",
   },
   eventContainer: {
