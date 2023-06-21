@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, View, Text, Button, Platform } from "react-native";
-import { Calendar } from "react-native-calendars";
+import { Agenda, Calendar, DateData } from "react-native-calendars";
 import * as CalendarAPI from "expo-calendar";
-import { Event } from "../utils/type";
+import { Event, EventDates, ObjectAny } from "../utils/type";
 import { createStackNavigator } from "@react-navigation/stack";
 
 export function CalendarPage() {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [markedDates, setMarkedDates] = useState({});
+  const [selectedDate, setSelectedDate] = useState("");
+  const [dates, setDates] = useState({});
   const [events, setEvents] = useState<Event[]>([]);
+
+  const eventDatesRef = useRef<EventDates>();
 
   useEffect(() => {
     (async () => {
@@ -17,8 +19,8 @@ export function CalendarPage() {
         const calendars = await CalendarAPI.getCalendarsAsync(
           CalendarAPI.EntityTypes.EVENT
         );
-        console.log("Here are all your calendars:");
-        console.log({ calendars });
+        // console.log("Here are all your calendars:");
+        // console.log({ calendars });
 
         const events = await CalendarAPI.getEventsAsync(
           [calendars[0].id], // Replace with the ID of the calendar you want to get events from
@@ -26,13 +28,12 @@ export function CalendarPage() {
           new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
         );
         console.log("Here are the events for the next 2 weeks:");
-        console.log({ events });
         const parsedEvents = events.map((event) => ({
           id: event.id,
           title: event.title,
-          startDate: new Date(event.startDate),
-          endDate: new Date(event.endDate),
-          eventType: "",
+          start_date: new Date(event.startDate),
+          end_date: new Date(event.endDate),
+          event_type: "",
           information: "",
           alert: false,
         }));
@@ -40,11 +41,14 @@ export function CalendarPage() {
 
         const markedDates: any = {};
         parsedEvents.forEach((event) => {
-          const date = event.startDate;
+          console.log(event);
+          const date = event.start_date;
           const dateString = date.toISOString().split("T")[0];
-          markedDates[dateString] = { marked: true };
+          markedDates[dateString] = { marked: true, dotColor: "red" };
         });
-        setMarkedDates(markedDates);
+
+        eventDatesRef.current = markedDates;
+        setDates(markedDates);
       }
     })();
   }, []);
@@ -58,7 +62,9 @@ export function CalendarPage() {
       title: "Expo Calendar",
       color: "blue",
       entityType: CalendarAPI.EntityTypes.EVENT,
+      //@ts-ignore
       sourceId: defaultCalendarSource.id,
+      //@ts-ignore
       source: defaultCalendarSource,
       name: "internalCalendarName",
       ownerAccount: "personal",
@@ -68,55 +74,123 @@ export function CalendarPage() {
   };
 
   const addEvent = async () => {
-    const defaultCalendarID = (await getDefaultCalendar()).id; // Get the default calendar
-    const event = await CalendarAPI.createEventAsync(defaultCalendarID, {
-      title: "Test Event",
-      startDate: selectedDate,
-      endDate: new Date(selectedDate.getTime() + 60 * 60 * 1000), // 1 hour
-    });
-    console.log(`Your new event ID is: ${event.id}`);
-    const parsedEvent = {
-      id: event.id,
-      title: event.title,
-      startDate: new Date(event.startDate),
-      endDate: new Date(event.endDate),
-      eventType: "",
-      information: "",
-      alert: false,
-    };
-    setEvents([...events, parsedEvent]);
+    const calendar = await getDefaultCalendar();
+    if (calendar === undefined) {
+      return;
+    }
 
-    const dateString = selectedDate.toISOString().split("T")[0];
-    setMarkedDates((prev) => ({
-      ...prev,
-      [dateString]: { marked: true },
-    }));
+    const defaultCalendarID = calendar.id;
+
+    if (defaultCalendarID !== undefined && selectedDate !== "") {
+      const event = await CalendarAPI.createEventAsync(defaultCalendarID, {
+        id: Math.random().toString(),
+        title: "Test Event",
+        startDate: new Date(selectedDate),
+        endDate: new Date(new Date(selectedDate).getTime() + 60 * 60 * 1000), // 1 hour
+      });
+      console.log(event);
+
+      const newEvent = {
+        id: Math.random().toString(),
+        title: "This is an event",
+        start_date: new Date(selectedDate),
+        end_date: new Date(new Date(selectedDate).getTime() + 3600 * 1000 * 2),
+        alert: false,
+        event_type: "basketball",
+        information: "play basketball with ball hub",
+      };
+
+      setDates((dateObject: ObjectAny) => {
+        return {
+          ...dateObject,
+          [selectedDate.split("T")[0]]: {
+            marked: true,
+            dotColor: "red",
+          },
+        };
+      });
+      eventDatesRef.current = {
+        ...eventDatesRef.current,
+        [selectedDate.split("T")[0]]: {
+          marked: true,
+          dotColor: "red",
+        },
+      };
+      setEvents((eventList: Event[]) => {
+        return [...eventList, newEvent];
+      });
+
+      //   console.log(`Your new event ID is: ${event.id}`);
+      //   const parsedEvent = {
+      //     id: event.id,
+      //     title: event.title,
+      //     startDate: new Date(event.startDate),
+      //     endDate: new Date(event.endDate),
+      //     eventType: "",
+      //     information: "",
+      //     alert: false,
+      //   };
+      //   setEvents([...events, parsedEvent]);
+
+      //   const dateString = selectedDate.split("T")[0];
+
+      //   setMarkedDates((prev) => ({
+      //     ...prev,
+      //     [dateString]: { marked: true },
+      //   }));
+    }
+    //return { error: "adding error" };
   };
 
   const deleteEvent = async (eventId: string) => {
     const deletedEventId = await CalendarAPI.deleteEventAsync(eventId);
     console.log(`Deleted event with ID: ${deletedEventId}`);
-    setEvents(events.filter((event) => event.id !== eventId));
 
-    const deletedEvent = events.find((event) => event.id === eventId);
-    if (deletedEvent) {
-      const dateString = deletedEvent.startDate.toISOString().split("T")[0];
-      setMarkedDates((prev) => ({
-        ...prev,
-        [dateString]: { marked: false },
-      }));
+    let deletedEvent: Event[] = [];
+    let newEventList: Event[] = [];
+    let dateEventObject: ObjectAny = {};
+    events.map((event) => {
+      let inConsideration =
+        dateEventObject[event.start_date.toISOString().split("T")[0]];
+      dateEventObject[event.start_date.toISOString().split("T")[0]] =
+        inConsideration ? inConsideration + 1 : 1;
+
+      if (event.id !== eventId) {
+        newEventList.push(event);
+      } else {
+        deletedEvent.push(event);
+      }
+    });
+    setEvents(newEventList);
+
+    //const deletedEvent = events.find((event) => event.id === eventId);
+    if (deletedEvent.length > 0) {
+      const dateString = deletedEvent[0].start_date.toISOString().split("T")[0];
+      if (eventDatesRef.current && dateEventObject[dateString] === 1) {
+        delete eventDatesRef.current[dateString];
+        setDates(eventDatesRef.current);
+      }
     }
   };
 
-  const onDayPress = (day: { timestamp: string | number | Date }) => {
-    setSelectedDate(new Date(day.timestamp));
+  const onDayPress = (day: DateData) => {
+    const dateString = day.dateString;
+    let newDates: ObjectAny = {};
+    newDates = { ...eventDatesRef.current };
+    newDates = {
+      ...newDates,
+      [dateString]: { ...newDates[dateString], selected: true },
+    };
+    setDates(newDates);
+    setSelectedDate(dateString);
+    console.log(dateString);
   };
 
   return (
     <View style={styles.container}>
       <Calendar
         onDayPress={onDayPress}
-        markedDates={markedDates}
+        markedDates={dates}
         theme={{
           backgroundColor: "#ffffff",
           calendarBackground: "#ffffff",
@@ -133,35 +207,34 @@ export function CalendarPage() {
         }}
       />
       <View style={styles.eventContainer}>
-        <Text>Selected date: {selectedDate.toDateString()}</Text>
-        <Button title="Create a new calendar" onPress={createCalendar} />
+        <Text>Selected date: {selectedDate}</Text>
+        {/* <Button title="Create a new calendar" onPress={createCalendar} /> */}
         <Button title="Add Test Event" onPress={addEvent} />
-        {events
-          .filter(
-            (event) =>
-              event.startDate.toDateString() === selectedDate.toDateString()
-          )
-          .map((event) => (
-            <View style={styles.event} key={event.id}>
-              <Text style={styles.eventTitle}>{event.title}</Text>
+        {events.map((event) => {
+          const { id, title, start_date, end_date } = event;
+          const startDateString = start_date.toISOString().split("T")[0];
+          return startDateString === selectedDate ? (
+            <View style={styles.event} key={id}>
+              <Text style={styles.eventTitle}>{title}</Text>
               <Text style={styles.eventTime}>
-                {event.startDate.toLocaleTimeString([], {
+                {start_date.toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}{" "}
                 -{" "}
-                {event.endDate.toLocaleTimeString([], {
+                {end_date.toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}
               </Text>
               <Button
                 title="Delete"
-                onPress={() => deleteEvent(event.id)}
+                onPress={() => deleteEvent(id)}
                 color="red"
               />
             </View>
-          ))}
+          ) : null;
+        })}
       </View>
     </View>
   );
