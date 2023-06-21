@@ -135,3 +135,15 @@ export type Event = {
 export type EventDates = {
   [key: string]: { marked: boolean; dotColor: string };
 };
+
+export type WeightInfoData = {
+  weight: number;
+  date: Date;
+};
+
+export type BarChartData = {
+  value: number;
+  dataPointText: string;
+  label: string;
+  labelComponent: Function;
+};

@@ -132,4 +132,16 @@ export class UserController {
       return { error: 'Server Error' };
     }
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('weightInfo')
+  async getWeightInfo(@Headers('authorization') token: string) {
+    const userID = this.extractUserID(token);
+    try {
+      return await this.userService.getWeightInfo(userID);
+    } catch (error) {
+      console.log(error);
+      return { error: 'Server Error' };
+    }
+  }
 }

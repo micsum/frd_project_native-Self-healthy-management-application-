@@ -118,4 +118,10 @@ export class UserService {
       .where({ user_id: userID });
     return { getStep };
   }
+
+  async getWeightInfo(userID: number) {
+    return await this.knex('table_name')
+      .select('weight', 'date')
+      .where({ user_id: userID });
+  }
 }
