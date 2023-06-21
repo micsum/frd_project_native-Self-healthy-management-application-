@@ -187,43 +187,45 @@ export function HomeScreenNoStack() {
   const navigation = useNavigation();
   return (
     <ScrollView>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          paddingTop: insets.top,
-          padding: 10,
-          marginBottom: 15,
-          backgroundColor: "#38668E",
-        }}
-      >
-        <AvatarPic />
-        <AnimatedText />
-        <Notification />
-      </View>
-
-      <CardGoal />
-      <SwiperFlatList
-        showPagination
-        paginationActiveColor="#0898A0"
-        paginationStyleItem={styles.paginationDots}
-      >
-        <Pressable
-          onPress={() => {
-            //@ts-ignore
-            navigation.navigate("StepPage");
+      <AlertNotificationRoot>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            paddingTop: insets.top,
+            padding: 10,
+            marginBottom: 15,
+            backgroundColor: "#38668E",
           }}
-          className="w-full"
         >
-          <CardFitnessData />
-        </Pressable>
-        <Pressable className="w-max">
-          <CardExercise />
-        </Pressable>
-      </SwiperFlatList>
-      <CardWeight />
+          <AvatarPic />
+          <AnimatedText />
+          <Notification />
+        </View>
+
+        <CardGoal />
+        <SwiperFlatList
+          showPagination
+          paginationActiveColor="#0898A0"
+          paginationStyleItem={styles.paginationDots}
+        >
+          <Pressable
+            onPress={() => {
+              //@ts-ignore
+              navigation.navigate("StepPage");
+            }}
+            className="w-full"
+          >
+            <CardFitnessData />
+          </Pressable>
+          <Pressable className="w-max">
+            <CardExercise />
+          </Pressable>
+        </SwiperFlatList>
+        <CardWeight />
+      </AlertNotificationRoot>
     </ScrollView>
   );
 }

@@ -18,7 +18,8 @@ import {
 import { AlertDialog, Button, Center, Input } from "native-base";
 import axios from "axios";
 import { Domain } from "@env";
-import { getFromSecureStore } from "../../storage/secureStore";
+import { handleToken } from "../../hooks/use-token";
+
 const permissions: AuthorizationPermissions = {
   healthReadPermissions: [HealthKitDataType.StepCount],
   // googleFitReadPermissions: [GoogleFitDataType.Steps],
@@ -72,14 +73,16 @@ export const GetStepsToday = ({
 const GoalDialog = ({
   isOpen,
   onClose,
+  setStepGoal,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  setStepGoal: Function;
 }) => {
   const cancelRef = useRef(null);
 
   const updateStepGoal = async (goalInput: string) => {
-    const token = await getFromSecureStore("token");
+    const { token } = handleToken();
 
     await axios
       .post(
@@ -91,6 +94,10 @@ const GoalDialog = ({
         (response) => {
           if (response.data) {
             console.log("goal set");
+            const dailyStepGoal: any = response.data;
+
+            setStepGoal(goalInput);
+
             return Dialog.show({
               type: ALERT_TYPE.SUCCESS,
               title: `Steps Goal Set`,
@@ -180,11 +187,12 @@ const GoalDialog = ({
 
 export const CardFitnessData = () => {
   const [stepsProgress, setStepsProgress] = useState<number>(0);
-  const [stepGoal, setStepGoal] = useState(null);
+  const [stepGoal, setStepGoal] = useState<number>(2222);
   const [isGoalDialogOpen, setIsGoalDialogOpen] = useState(false);
   const [progress, setProgress] = useState<number>(0);
   const handleStepsUpdate = (steps: number) => {
     setStepsProgress(steps);
+    // setStepGoal(steps);
   };
 
   const handleOpenGoalDialog = () => {
@@ -194,18 +202,21 @@ export const CardFitnessData = () => {
   const handleCloseGoalDialog = () => {
     setIsGoalDialogOpen(false);
   };
+  const { token } = handleToken();
+
+  const getStepGoal = async () => {
+    let dbstep = await axios.get(`${Domain}/user/stepsGoal`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    //console.log("stepdb", dbstep.data.getStep[0].steps_dailygoal);
+    const dailyStepGoal: number = dbstep.data.getStep[0].steps_dailygoal;
+
+    console.log(dbstep.data.getStep[0].steps_dailygoal);
+
+    setStepGoal(+dailyStepGoal);
+  };
 
   useEffect(() => {
-    const getStepGoal = async () => {
-      const token = await getFromSecureStore("token");
-
-      let dbstep = await axios.get(`${Domain}/user/stepsGoal`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      //console.log("stepdb", dbstep.data.getStep[0].steps_dailygoal);
-      const dailyStepGoal = dbstep.data.getStep[0].steps_dailygoal;
-      setStepGoal(dailyStepGoal);
-    };
     getStepGoal();
   }, []);
 
@@ -214,6 +225,7 @@ export const CardFitnessData = () => {
     setProgress(progress);
     //console.log("%", progress);
   }, [stepGoal, stepsProgress]);
+
   return (
     <View style={styles.card} className="mt-5 mx-3">
       <View style={styles.header} className="justify-between">
@@ -241,7 +253,11 @@ export const CardFitnessData = () => {
           color="#369967"
         />
       </View>
-      <GoalDialog isOpen={isGoalDialogOpen} onClose={handleCloseGoalDialog} />
+      <GoalDialog
+        isOpen={isGoalDialogOpen}
+        onClose={handleCloseGoalDialog}
+        setStepGoal={setStepGoal}
+      />
       <View className="flex-row justify-center items-center mt-2">
         {stepGoal !== null ? (
           <Text className="text-slate-500">Daily Goal: {stepGoal}</Text>

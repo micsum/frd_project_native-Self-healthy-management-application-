@@ -3,7 +3,7 @@ import { Fragment, useState, useEffect } from "react";
 import { View, Text, Button } from "react-native";
 import { FoodItemBasicInfo, FoodItemNutritionInfo } from "../../utils/type";
 import { useDispatch } from "react-redux";
-import { action, AppDispatch, store } from "../../store";
+import { updateRootState, AppDispatch, store } from "../../store";
 import { mps } from "./mealPageComponentStyleSheet";
 import { Entypo, AntDesign } from "@expo/vector-icons";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
@@ -44,12 +44,12 @@ function FoodItemDisplay(props: {
 
   const displayItemDetails = () => {
     showNutritionDetail([foodItemNutritionInfo]);
-    dispatch(action("itemNutritionPanelVisibility", { visible: true }));
+    dispatch(updateRootState("itemNutritionPanelOpen", true));
   };
 
   const editFoodItem = () => {
-    dispatch(action("foodPanelVisibility", { visible: true }));
-    dispatch(action("foodItemInfo", { foodItem: foodItemBasicInfo }));
+    dispatch(updateRootState("foodInputPanelOpen", true));
+    dispatch(updateRootState("foodItemInConsideration", foodItemBasicInfo));
   };
 
   const deleteFoodItem = () => {

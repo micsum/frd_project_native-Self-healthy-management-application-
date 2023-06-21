@@ -98,18 +98,19 @@ export const GetSteps = () => {
       };
 
       // returns the number of steps walked today, e.g. 320
-      //console.log(stepsWeeklyDaily);
+      // console.log(Object.entries(stepsWeeklyDaily));
       const stepsWeeklyArray = Object.entries(stepsWeeklyDaily)
-        .sort()
+        .sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime())
         .map(([date, value]) => ({
           label: reformatDateString(date),
           value: value,
           spacing: 15,
           barWidth: 25,
         }));
-      setSteps(() => {
-        return stepsWeeklyArray;
-      });
+
+      //console.log(stepsWeeklyArray);
+
+      setSteps(stepsWeeklyArray);
       setIsLoading(false);
     } catch (error) {
       // Handle error here
@@ -158,9 +159,7 @@ export const GetSteps = () => {
           barWidth: 25,
         }));
       //console.log("monthly", stepsMonthlyDaily);
-      setSteps(() => {
-        return stepsMonthlyArray;
-      });
+      setSteps(stepsMonthlyArray);
       setIsLoading(false);
     } catch (error) {
       // Handle error here
@@ -224,7 +223,7 @@ export const GetSteps = () => {
       </View>
     ));
 
-    const stepItems = steps.reverse().map((step, index) => (
+    const stepItems = [...steps].reverse().map((step, index) => (
       <View key={index} style={styles.field}>
         <View className="space-y-1.5">
           <Text>{step.label}</Text>
