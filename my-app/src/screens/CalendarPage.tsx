@@ -31,7 +31,9 @@ export function CalendarPage() {
         const parsedEvents = events.map((event) => ({
           id: event.id,
           title: event.title,
-          start_date: new Date(event.startDate),
+          start_date: new Date(
+            new Date(event.startDate).getTime() + 24 * 3600000
+          ),
           end_date: new Date(event.endDate),
           event_type: "",
           information: "",
