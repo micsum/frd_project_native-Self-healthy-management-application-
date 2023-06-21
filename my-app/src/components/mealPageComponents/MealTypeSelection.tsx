@@ -199,11 +199,21 @@ function MealTypeSelection(props: {
           basicInfoParams.map((param: string) => {
             basicInfoDummy[param as keyof FoodItemBasicInfo] = value(param);
           });
+
+          const sizeUnit = value("saved_size_unit").toString();
+          const sizeInG = parseFloat(value("serving_size_g").toString());
+
           basicInfoDummy["foodName"] = value("name");
+          basicInfoDummy["sizeUnit"] = sizeUnit;
+
           basicInfoDummy["servingSize"] = parseFloat(
-            value("serving_size_g").toString()
+            (sizeUnit === "g"
+              ? sizeInG
+              : sizeUnit === "kg"
+              ? sizeInG / 1000
+              : sizeInG / 453.492
+            ).toFixed(2)
           );
-          basicInfoDummy["sizeUnit"] = value("saved_size_unit");
 
           nutritionInfoParams.map((param: string) => {
             nutritionInfoDummy[param as keyof FoodItemNutritionInfo] =
