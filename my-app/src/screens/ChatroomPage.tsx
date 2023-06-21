@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
 import axios from "axios";
 import { Domain } from "@env";
@@ -43,16 +43,18 @@ export function ChatRoomScreen() {
       );
     });
 
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, [
-        {
-          _id: Math.random(),
-          text: "Older message",
-          createdAt: new Date(),
-          system: true,
-        },
-      ])
-    );
+    if (history.data.length > 0) {
+      setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, [
+          {
+            _id: Math.random(),
+            text: "Older message",
+            createdAt: new Date(),
+            system: true,
+          },
+        ])
+      );
+    }
 
     setTimeout(() => {
       setMessages((previousMessages) =>
@@ -98,7 +100,6 @@ export function ChatRoomScreen() {
           _id: Math.random(),
           text: res.data.answer,
           createdAt: new Date(),
-          renderFooter: true,
           user: {
             _id: 2,
             name: "React Native",

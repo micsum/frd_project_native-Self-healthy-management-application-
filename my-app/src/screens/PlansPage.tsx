@@ -45,12 +45,6 @@ export function PlansHomeScreen() {
               backgroundColor: "#d7e0e8",
             }}
           >
-            {/*<Text>Please choose your workout plan or diet plan!</Text>*/}
-
-            {/* <Button onPress={() => setCurrentPlanIndex(0)}>Workout plan</Button>
-
-            <Button onPress={() => setCurrentPlanIndex(1)}>Meal plan</Button> */}
-
             <SegmentedControlTab
               values={["Workout plan", "Meal Plan"]}
               selectedIndex={currentPlanIndex}
@@ -85,8 +79,6 @@ export function PlansHomeScreen() {
       </SafeAreaView>
     </SafeAreaProvider>
   );
-
-  // console.log("will render", new Date());
 
   return vdom;
 }
