@@ -125,9 +125,13 @@ export type Messages = {
 export type Event = {
   id: string;
   title: string;
-  startDate: Date;
-  endDate: Date;
-  eventType: string;
+  start_date: Date;
+  end_date: Date;
+  event_type: string;
   information: string;
   alert: boolean;
+};
+
+export type EventDates = {
+  [key: string]: { marked: boolean; dotColor: string };
 };
