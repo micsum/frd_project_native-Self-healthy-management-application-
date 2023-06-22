@@ -15,6 +15,64 @@
 ////////////////////////////////////
 
 
+chatroom_message
+----------------
+id integer PK
+user_id integer FK >- user.id
+question text
+answer text
+
+
+user
+----
+id integer PK
+height numeric NULL
+weight numeric NULL
+avatar varchar(255) NULL
+email varchar(255) unique
+username varchar(255)
+password varchar(255)
+target varchar(255) NULL
+
+
+meal_input_record
+-----------------
+id integer PK
+date_of_meal date
+user_id integer FK >- user.id
+meal_time varchar(255)
+
+
+calendar_event
+--------------
+alert boolean
+user_id integer FK >- user.id
+id integer PK
+start_date date
+end_date date
+information varchar(255) NULL
+event_type varchar(255)
+
+
+exercise_history
+----------------
+burnt_calories numeric
+user_id integer FK >- user.id
+event_datetime timestamp
+id integer PK
+event_name varchar(255)
+
+
+personal_target_input
+---------------------
+id integer PK
+user_id integer
+weight_target numeric
+start_date date
+expected_date date
+target_type varchar(255)
+
+
 meal_food_item
 --------------
 sugar_g numeric
@@ -30,136 +88,56 @@ potassium_mg numeric
 cholesterol_mg numeric
 carbohydrates_total_g numeric
 fiber_g numeric
-name string
+name varchar(255)
+saved_size_unit varchar(255) NULL
 
 
-user_relationship
------------------
+workout_day
+-----------
+headers jsonb
+workout_id integer FK >- workout.id
 id integer PK
-advisor integer FK >- user.id
-client integer FK >- user.id
-client_invite boolean
-accepted boolean
-rejected_reason string NULL
-
-
-role_registration
------------------
-id integer PK
-user_id integer FK >- user.id
-profession string
-
-
-calendar_event
---------------
-end_date date
-alert boolean
-user_id integer FK >- user.id
-id integer PK
-start_date date
-information string NULL
-event_type string
-
-
-text_message
-------------
-id integer PK
-relationship_id integer FK >- user_relationship.id
-from integer
-sent_at timestamp
-read_at timestamp
-message string
-
-
-exercise_history
-----------------
-id integer PK
-user_id integer FK >- user.id
-event_datetime timestamp
-burnt_calories numeric
-event_name string
-
-
-user
-----
-id integer PK
-email string unique
-username string
-password string
-phone_number string unique
-weight number
-height number
-target string
-
-
-meal_input_record
------------------
-id integer PK
-date_of_meal date
-user_id integer FK >- user.id
-meal_time string
-
-
-table
------
-id integer PK
-scrapped_website_id integer FK >- scrapped_website.id
-title string
-
-
-scrapped_website
-----------------
-id integer PK
-href string unique
-image_src string unique
-title string
-
-
-row_info
---------
-id integer PK
-table_id integer FK >- table.id
-row_index integer
-header string
-sub_info string
+rows jsonb
+title text
 
 
 workout
 -------
 id integer PK
 slug varchar(100) unique
+cover_image text
 title text
 href text
+
+
+mealplan
+--------
+id integer PK
+cover_image text
+href text
+slug varchar(100) unique
+title text
+
+
+mealplan_day
+------------
+id integer PK
+mealplan_id integer FK >- mealplan.id
+name text
 cover_image text
 
 
-workout_day
------------
+meal_content
+------------
+calories integer
+mealplan_day_id integer FK >- mealplan_day.id
 id integer PK
-workout_id integer FK >0- workout.id
-title text
-headers jsonb
-rows jsonb
+foods jsonb
+name text
 
 
-# zoom: 0.715
-# view: (328, 12)
-# text-bg: #6495ed
-# text-color: #000000
-# diagram-bg: #f5f5f5
-# diagram-text: #f5f5f5
-# table-bg: #ffffff
-# table-text: #000000
-# meal_food_item (154, 189)
-# user_relationship (1418, 246)
-# role_registration (1347, 710)
-# calendar_event (92, 568)
-# text_message (991, 91)
-# exercise_history (522, 197)
-# user (969, 400)
-# meal_input_record (425, 401)
-# table (823, 878)
-# scrapped_website (776, 668)
-# row_info (1100, 760)
-# workout (456, 838)
-# workout_day (180, 902)
+step_daily_goal
+---------------
+id integer PK
+steps_dailygoal integer unique
+user_id varchar(255)

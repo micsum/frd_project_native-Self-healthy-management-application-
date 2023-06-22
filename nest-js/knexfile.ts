@@ -1,5 +1,5 @@
 import type { Knex } from 'knex';
-import { env } from './src/env';
+import { env } from './env';
 
 // Update with your config settings.
 

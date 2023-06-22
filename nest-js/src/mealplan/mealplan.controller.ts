@@ -1,14 +1,14 @@
 import { Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
-import { WorkoutService } from './workout.service';
+import { MealPlanService } from './mealplan.service';
 import { JwtAuthGuard } from 'src/authguard/JwtAuthGuard.service';
 
 // @UseGuards(JwtAuthGuard)
-@Controller('workout')
-export class WorkoutController {
-  constructor(private readonly workoutService: WorkoutService) {}
+@Controller('meal')
+export class MealPlanController {
+  constructor(private readonly mealplanService: MealPlanService) {}
 
   @Get('/list')
-  getWorkoutList(
+  getMealPlanList(
     @Query('last_id') last_id_str: string,
     @Query('limit') limit_str: string,
   ) {
@@ -17,16 +17,15 @@ export class WorkoutController {
     if (limit > 25) {
       limit = 25;
     }
-    return this.workoutService.getWorkoutList({ last_id, limit });
+    return this.mealplanService.getMealPlanList({ last_id, limit });
   }
 
   @Get('/detail/:id')
-  getWorkoutDetail(@Param('id') id: number) {
-    return this.workoutService.getWorkoutDetail(id);
+  getMealPlanDetail(@Param('id') id: number) {
+    return this.mealplanService.getMealPlanDetail(id);
   }
-
   @Post('/scrap')
-  scrapWorkoutList() {
-    return this.workoutService.scrapWorkoutList();
+  scrapMealPlanList() {
+    return this.mealplanService.scrapMealPlanList();
   }
 }

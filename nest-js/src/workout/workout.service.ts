@@ -9,28 +9,34 @@ log.enabled = true;
 @Injectable()
 export class WorkoutService {
   constructor(@InjectKnex() private knex: Knex) {}
-  async getWorkoutList() {
-    log('get workout plans');
-    let workouts = await this.knex('workout').select(
-      'id',
-      'title',
-      'cover_image',
-    );
-    for (let workout of workouts) {
-      let days = await this.knex('workout_day')
-        .select('id', 'title', 'headers', 'rows')
-        .where({
-          workout_id: workout.id,
-        });
-      workout.days = days;
-    }
-    return { workouts };
+  async getWorkoutList(options: { last_id: number; limit: number }) {
+    log('get work out list');
+    let workouts = await this.knex('workout')
+      .select('workout.id', 'workout.title', 'workout.cover_image')
+      .count('workout_day.id as days')
+      .innerJoin('workout_day', 'workout_day.workout_id', 'workout.id')
+      .groupBy('workout.id')
+      .orderBy('workout.id', 'asc')
+      .where('workout.id', '>', options.last_id)
+      .limit(options.limit);
+    return { list: workouts };
+  }
+
+  async getWorkoutDetail(workout_id: number) {
+    log('get work out details');
+    let workout_detail = await this.knex('workout_day')
+      .select('id', 'title', 'headers', 'rows')
+      .where({ workout_id });
+
+    return workout_detail;
   }
 
   async scrapWorkoutList() {
     let browser = await chromium.launch({ headless: false });
     let page = await browser.newPage();
+
     log('scraping workout list...');
+
     await page.goto('https://www.muscleandstrength.com/workouts/men');
     let workoutList = await page.evaluate(() => {
       return Array.from(
@@ -87,6 +93,9 @@ export class WorkoutService {
         let workout_id = row.id;
 
         await knex('workout_day').where({ workout_id }).delete();
+        if (days.length === 0) {
+          await knex('workout').where({ id: workout_id }).delete();
+        }
 
         for (let day of days) {
           await knex('workout_day').insert({

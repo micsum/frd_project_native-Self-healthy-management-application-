@@ -1,15 +1,14 @@
-import { config } from 'dotenv';
-import populateEnv from 'populate-env';
+import { config } from 'dotenv'
+import populateEnv from 'populate-env'
 
-config();
+config()
 
 export const env = {
-  NODE_ENV: 'development',
   DB_HOST: 'localhost',
-  DB_PORT: 5432,
+  DB_PORT: 3306,
   DB_NAME: '',
   DB_USERNAME: '',
   DB_PASSWORD: '',
-};
+}
 
-populateEnv(env, { mode: 'halt' });
+populateEnv(env, { mode: 'halt' })
