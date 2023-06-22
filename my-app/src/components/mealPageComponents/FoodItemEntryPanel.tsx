@@ -85,9 +85,15 @@ function FoodItemEntryPanel(props: {
   };
 
   const enterItemServingSize = (text: string) => {
+    let servingSize = parseFloat(text);
+    if (foodItemCopy.sizeUnit === "lb") {
+      servingSize *= 453.292;
+    } else if (foodItemCopy.sizeUnit === "kg") {
+      servingSize *= 1000;
+    }
     foodItemInfo.current = {
       ...foodItemInfo.current,
-      servingSize: parseFloat(text),
+      servingSize,
     };
   };
 
