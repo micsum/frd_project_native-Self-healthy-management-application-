@@ -6,6 +6,7 @@ import { LoginData } from './dto/login-user.dto';
 import { checkPassword } from 'hash';
 import { JWTService } from 'src/jwt/jwt.service';
 import { TargetInputDTO } from './dto/targetInput.dto';
+import { WeightInfoDTO } from './dto/weightInput.dto';
 
 @Injectable()
 export class UserService {
@@ -120,8 +121,18 @@ export class UserService {
   }
 
   async getWeightInfo(userID: number) {
-    return await this.knex('table_name')
+    return await this.knex('weight_record')
       .select('weight', 'date')
       .where({ user_id: userID });
+  }
+
+  async inputWeightInfo(userID: number, weightInputInfo: WeightInfoDTO) {
+    const weightInfo = {
+      ...weightInputInfo,
+      weight: parseFloat(weightInputInfo.weight),
+      user_id: userID,
+    };
+
+    return await this.knex('weight_record').insert(weightInfo);
   }
 }

@@ -21,6 +21,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { StepGoalDTO, TargetInputDTO } from './dto/targetInput.dto';
 import { JWTService } from 'src/jwt/jwt.service';
 import { JwtAuthGuard } from 'src/authguard/JwtAuthGuard.service';
+import { WeightInfoDTO } from './dto/weightInput.dto';
 
 @Controller('user')
 export class UserController {
@@ -139,6 +140,21 @@ export class UserController {
     const userID = this.extractUserID(token);
     try {
       return await this.userService.getWeightInfo(userID);
+    } catch (error) {
+      console.log(error);
+      return { error: 'Server Error' };
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('weightInfo')
+  async inputWeightInfo(
+    @Headers('authorization') token: string,
+    @Body() weightInputInfo: WeightInfoDTO,
+  ) {
+    const userID = this.extractUserID(token);
+    try {
+      return await this.userService.inputWeightInfo(userID, weightInputInfo);
     } catch (error) {
       console.log(error);
       return { error: 'Server Error' };
