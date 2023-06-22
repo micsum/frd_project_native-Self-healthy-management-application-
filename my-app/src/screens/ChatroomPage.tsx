@@ -78,7 +78,6 @@ export function ChatRoomScreen() {
   }, []);
 
   const onSend = async (messages: any[] = []) => {
-    const { token } = handleToken();
     console.log(messages);
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)

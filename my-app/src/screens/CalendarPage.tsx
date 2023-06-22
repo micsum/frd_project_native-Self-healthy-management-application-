@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, View, Text, Button, Platform } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Button,
+  Platform,
+  TextInput,
+} from "react-native";
 import { Agenda, Calendar, DateData } from "react-native-calendars";
 import * as CalendarAPI from "expo-calendar";
 import { Event, EventDates, ObjectAny } from "../utils/type";
@@ -72,7 +79,7 @@ export function CalendarPage() {
       ownerAccount: "personal",
       accessLevel: CalendarAPI.CalendarAccessLevel.OWNER,
     });
-    console.log(`Your new calendar ID is: ${newCalendarID}`);
+    console.log(`Your new calendar ID is: ${newCalendarID}}`);
   };
 
   const addEvent = async () => {
@@ -208,10 +215,13 @@ export function CalendarPage() {
           height: 400,
         }}
       />
-      <View style={styles.eventContainer}>
+      <View
+        style={styles.eventContainer}
+        className="flex items-center justify-center"
+      >
         <Text>Selected date: {selectedDate}</Text>
-        {/* <Button title="Create a new calendar" onPress={createCalendar} /> */}
-        <Button title="Add Test Event" onPress={addEvent} />
+        <Button title="Create a new calendar" onPress={createCalendar} />
+        <Button title="Add Event" onPress={addEvent} />
         {events.map((event) => {
           const { id, title, start_date, end_date } = event;
           const startDateString = start_date.toISOString().split("T")[0];

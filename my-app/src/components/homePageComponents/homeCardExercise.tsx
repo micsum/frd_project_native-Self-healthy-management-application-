@@ -1,13 +1,13 @@
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Platform } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as Progress from "react-native-progress";
-
 import {
   AuthorizationPermissions,
   FitnessDataType,
   FitnessTracker,
-  // GoogleFitDataType,
+  GoogleFitDataType,
+  HealthKit,
   HealthKitDataType,
 } from "@kilohealth/rn-fitness-tracker";
 import {
@@ -19,10 +19,12 @@ import { AlertDialog, Button, Center, Input } from "native-base";
 import axios from "axios";
 import { Domain } from "@env";
 import { handleToken } from "../../hooks/use-token";
+import { store } from "../../store";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const permissions: AuthorizationPermissions = {
   healthReadPermissions: [HealthKitDataType.StepCount],
-  // googleFitReadPermissions: [GoogleFitDataType.Steps],
+  googleFitReadPermissions: [GoogleFitDataType.Steps],
 };
 
 export const GetStepsToday = ({
@@ -69,7 +71,6 @@ export const GetStepsToday = ({
     <Text className="mx-2 mt-1 text-lg font-bold">0</Text>
   );
 };
-
 const GoalDialog = ({
   isOpen,
   onClose,
@@ -82,52 +83,44 @@ const GoalDialog = ({
   const cancelRef = useRef(null);
 
   const updateStepGoal = async (goalInput: string) => {
-    const { token } = handleToken();
+    await axios.post(`${Domain}/user/stepsGoal`, { goalInput }).then(
+      (response) => {
+        if (response.data) {
+          console.log("goal set");
+          const dailyStepGoal: any = response.data;
 
-    await axios
-      .post(
-        `${Domain}/user/stepsGoal`,
-        { goalInput },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-      .then(
-        (response) => {
-          if (response.data) {
-            console.log("goal set");
-            const dailyStepGoal: any = response.data;
+          setStepGoal(goalInput);
 
-            setStepGoal(goalInput);
-
-            return Dialog.show({
-              type: ALERT_TYPE.SUCCESS,
-              title: `Steps Goal Set`,
-              textBody: "",
-              button: "close",
-              autoClose: 5000,
-            });
-          } else if (response.data.error) {
-            console.log("error", response.data.error);
-            return Dialog.show({
-              type: ALERT_TYPE.WARNING,
-              title: `${response.data.error}`,
-              textBody: "Please try again",
-              button: "close",
-              autoClose: 5000,
-            });
-          }
-          return;
-        },
-        (error) => {
-          console.log(error.response.data.message);
+          return Dialog.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: `Steps Goal Set`,
+            textBody: "",
+            button: "close",
+            autoClose: 5000,
+          });
+        } else if (response.data.error) {
+          console.log("error", response.data.error);
           return Dialog.show({
             type: ALERT_TYPE.WARNING,
-            title: "Error",
-            textBody: `${error.response.data.message}`,
+            title: `${response.data.error}`,
+            textBody: "Please try again",
             button: "close",
             autoClose: 5000,
           });
         }
-      );
+        return;
+      },
+      (error) => {
+        console.log(error.response.data.message);
+        return Dialog.show({
+          type: ALERT_TYPE.WARNING,
+          title: "Error",
+          textBody: `${error.response.data.message}`,
+          button: "close",
+          autoClose: 5000,
+        });
+      }
+    );
   };
 
   const [goalInput, setGoalInput] = useState<string>("");
@@ -187,7 +180,7 @@ const GoalDialog = ({
 
 export const CardFitnessData = () => {
   const [stepsProgress, setStepsProgress] = useState<number>(0);
-  const [stepGoal, setStepGoal] = useState<number>(2222);
+  const [stepGoal, setStepGoal] = useState<number | null>(null);
   const [isGoalDialogOpen, setIsGoalDialogOpen] = useState(false);
   const [progress, setProgress] = useState<number>(0);
   const handleStepsUpdate = (steps: number) => {
@@ -202,18 +195,23 @@ export const CardFitnessData = () => {
   const handleCloseGoalDialog = () => {
     setIsGoalDialogOpen(false);
   };
-  const { token } = handleToken();
 
   const getStepGoal = async () => {
-    let dbstep = await axios.get(`${Domain}/user/stepsGoal`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const token = store.getState().auth?.token;
+    let dbstep = await axios
+      .get(`${Domain}/user/stepsGoal`, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .catch(async function (error) {
+        console.log(error);
+      });
+
+    console.log(dbstep?.data);
+    const dailyStepGoal: number = dbstep?.data.getStep[0].steps_dailygoal;
+
     //console.log("stepdb", dbstep.data.getStep[0].steps_dailygoal);
-    const dailyStepGoal: number = dbstep.data.getStep[0].steps_dailygoal;
 
-    console.log(dbstep.data.getStep[0].steps_dailygoal);
-
-    setStepGoal(+dailyStepGoal);
+    setStepGoal(dailyStepGoal);
   };
 
   useEffect(() => {
@@ -221,7 +219,7 @@ export const CardFitnessData = () => {
   }, []);
 
   useEffect(() => {
-    const progress = stepGoal !== null ? stepsProgress / stepGoal : 0;
+    const progress = stepGoal ? stepsProgress / stepGoal : 0;
     setProgress(progress);
     //console.log("%", progress);
   }, [stepGoal, stepsProgress]);
@@ -270,12 +268,55 @@ export const CardFitnessData = () => {
 };
 
 export const CardExercise = () => {
+  const [showPicker, setShowPicker] = useState(false);
+  const [dateTime, setDateTime] = useState(new Date());
+  const [date, setDate] = useState(new Date(1598051730000));
+  const [mode, setMode] = useState<"date" | "time">("date");
+  const [show, setShow] = useState(false);
+  const onChange = (event: any, selecedDate: Date) => {
+    const currentDate = selecedDate;
+    setShowPicker(false);
+    setDateTime(currentDate);
+  };
+  const showMode = (currentMode: any) => {
+    //if (Platform.OS === "android") {
+    // for iOS, add a button that closes the picker
+    //}
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode("date");
+  };
+
+  const showTimepicker = () => {
+    showMode("time");
+  };
+
   return (
     <View style={styles.card} className="mt-5 mx-3">
       <View style={styles.header}>
         <Text style={{ fontWeight: "bold", fontSize: 18 }}>Exercise</Text>
       </View>
-      <Text style={{ color: "gray" }}></Text>
+      <Button onPress={showDatepicker}>"Show date picker!"</Button>
+      <Button onPress={showTimepicker}>"Show time picker!"</Button>
+      <Text>selected: {date.toLocaleString()}</Text>
+      {show && (
+        <>
+          {Platform.OS === "ios" ? (
+            <Button onPress={() => setShow(false)}>Close</Button>
+          ) : null}
+          <DateTimePicker
+            testID="dateTimePicker"
+            display="spinner"
+            value={date}
+            mode={mode}
+            is24Hour={true}
+            onChange={(event) => onChange(event, date)}
+          />
+        </>
+      )}
     </View>
   );
 };

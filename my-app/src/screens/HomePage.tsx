@@ -134,11 +134,11 @@ const HomeNoStackWithChat = () => {
     );
   };
   return (
-    <View
-      style={{ position: "relative", height: "100%" }}
-      className="bg-[#d7e0e8]"
-    >
-      <AlertNotificationRoot>
+    <AlertNotificationRoot>
+      <View
+        style={{ position: "relative", height: "100%" }}
+        className="bg-[#d7e0e8]"
+      >
         <HomeScreenNoStack></HomeScreenNoStack>
         <SpeedDial
           isOpen={open}
@@ -177,8 +177,8 @@ const HomeNoStackWithChat = () => {
             buttonStyle={{ backgroundColor: "#649c98" }}
           />
         </SpeedDial>
-      </AlertNotificationRoot>
-    </View>
+      </View>
+    </AlertNotificationRoot>
   );
 };
 
@@ -204,8 +204,9 @@ export function HomeScreenNoStack() {
           <AnimatedText />
           <Notification />
         </View>
-
-        <CardGoal />
+        <ScrollView nestedScrollEnabled={false}>
+          <CardGoal />
+        </ScrollView>
         <SwiperFlatList
           showPagination
           paginationActiveColor="#0898A0"
@@ -220,11 +221,11 @@ export function HomeScreenNoStack() {
           >
             <CardFitnessData />
           </Pressable>
-          <Pressable className="w-max">
-            <CardExercise />
-          </Pressable>
         </SwiperFlatList>
-        <CardWeight />
+        <Pressable className="w-max">
+          <CardExercise />
+        </Pressable>
+        {/*} <CardWeight />*/}
       </AlertNotificationRoot>
     </ScrollView>
   );

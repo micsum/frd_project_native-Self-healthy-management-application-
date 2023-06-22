@@ -1,4 +1,12 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  ImageBackground,
+  PixelRatio,
+} from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm, Controller } from "react-hook-form";
@@ -62,7 +70,12 @@ export const ForgotPwForm = () => {
   return (
     <AlertNotificationRoot>
       <SafeAreaView className="flex-1 items-center justify-center bg-[#38668E]">
-        <View className="p-8 w-full max-w-sm">
+        <View className="p-8 w-full max-w-sm mb-36">
+          <ImageBackground
+            style={styles.imageStyle}
+            resizeMode="cover"
+            source={require("../assets/images/Forgotpassword-amico.png")}
+          ></ImageBackground>
           <Text className="text-5xl font-bold mb-6 text-white">
             Reset password?
           </Text>
@@ -100,3 +113,11 @@ export const ForgotPwForm = () => {
     </AlertNotificationRoot>
   );
 };
+
+const styles = StyleSheet.create({
+  imageStyle: {
+    height: PixelRatio.getPixelSizeForLayoutSize(120),
+    width: "100%",
+    alignSelf: "center",
+  },
+});

@@ -7,16 +7,17 @@ const fullWidthDisplayElement: ViewStyle = {
   alignItems: "center",
   width: "100%",
   padding: 5,
+  marginBottom: 10,
 };
 
 export const gps = StyleSheet.create({
   goalDisplayDiv: fullWidthDisplayElement,
   goalDisplayTitle: {
-    fontSize: 20,
+    fontSize: 13,
     fontWeight: "bold",
   },
   goalDisplayText: {
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: "bold",
   },
 });

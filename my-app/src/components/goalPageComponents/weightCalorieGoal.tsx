@@ -1,7 +1,7 @@
 // Buffer Line
 import { Fragment, useState, useEffect, useRef, useCallback } from "react";
-import { View, Text, Button, TextInput, ScrollView } from "react-native";
-
+import { View, Text, TextInput, ScrollView } from "react-native";
+import { Button } from "native-base";
 import { BodyParams, GoalInputData } from "../../utils/type";
 import { Domain } from "@env";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
@@ -12,7 +12,6 @@ import { handleToken } from "../../hooks/use-token";
 function GoalInputDisplayPanel() {
   const [inputPanelOpen, toggleInputPanel] = useState<boolean>(false);
   const [inputInfo, updateInputInfo] = useState<GoalInputData>();
-
   const tokenRef = useRef<string>("");
   const bodyParams = useRef<BodyParams>({ height: 0, weight: 0 });
 
@@ -22,11 +21,13 @@ function GoalInputDisplayPanel() {
   const getInputData = async () => {
     tokenRef.current = token || "";
 
-    const res = await fetch(`${Domain}/personalTarget`, {
+    const res = await fetch(`${Domain}/user/personalTarget`, {
       headers: { authorization: `Bearer ${token}` },
     });
 
     const result = await res.json();
+    console.log({ result });
+
     if (result.error) {
       Dialog.show({
         type: ALERT_TYPE.DANGER,
@@ -39,9 +40,8 @@ function GoalInputDisplayPanel() {
 
     const personalTargetResult = result.personalTarget;
     if (personalTargetResult.length === 0) {
-      return {};
+      return null;
     }
-
     const { id, user_id, ...personalTarget } = personalTargetResult[0];
     return personalTarget;
   };
@@ -61,13 +61,18 @@ function GoalInputDisplayPanel() {
       });
       return;
     }
-    console.log(`get ${result[0].weight}`);
 
-    bodyParams.current = result.bodyParams;
+    let bodyParamsResult = result[0];
+    let height = parseFloat(bodyParamsResult.height);
+    let weight = parseFloat(bodyParamsResult.weight);
+
+    bodyParams.current = { height, weight };
   };
 
   const getInputInfo = useCallback(async () => {
     const inputData = await getInputData();
+    console.log({ inputData });
+
     updateInputInfo(inputData);
     await getBodyParams();
   }, []);
@@ -86,21 +91,25 @@ function GoalInputDisplayPanel() {
   const saveInputInfo = (input: GoalInputData) => updateInputInfo(input);
 
   const countDaysRemaining = (dueDay: Date) => {
+    console.log(dueDay);
+    console.log(typeof dueDay);
+
     const remainingDays = Math.ceil(
-      (dueDay.getTime() - new Date().getTime()) / (24 * 3600 * 1000)
+      (new Date(dueDay).getTime() - new Date().getTime()) / (24 * 3600 * 1000)
     );
     return remainingDays > 0 ? remainingDays : "Goal Due-Day has been reached";
   };
 
   const BMRCalculation = () => {
     const { height, weight } = bodyParams.current;
-    return (10 * weight + 6.25 * height - 5 * 30 - 73) * 1.375;
+    return (10 * weight + 6.25 * height - 5 * 60 - 161) * 1.25;
   };
 
   const calculateAverageCalorieNeeded = (inputInfo: GoalInputData) => {
     const { target_type, weight_target, start_date, expected_date } = inputInfo;
     const numberOfDays = Math.ceil(
-      (expected_date.getTime() - start_date.getTime()) / (24 * 3600 * 1000)
+      (new Date(expected_date).getTime() - new Date(start_date).getTime()) /
+        (24 * 3600 * 1000)
     );
     let avgCalorieNeeded: number;
     avgCalorieNeeded = BMRCalculation();
@@ -108,11 +117,12 @@ function GoalInputDisplayPanel() {
       avgCalorieNeeded > 0 ? avgCalorieNeeded : 0;
     } else {
       const netWeight = Math.abs(bodyParams.current.weight - weight_target);
-      const requiredCalories = (netWeight / 0.45) * 3500;
+      const requiredCalories = netWeight * 1500;
       target_type === "Lose Weight"
         ? (avgCalorieNeeded -= requiredCalories / numberOfDays)
         : (avgCalorieNeeded += requiredCalories / numberOfDays);
     }
+    avgCalorieNeeded = parseFloat((avgCalorieNeeded / 1000).toFixed(2));
     return avgCalorieNeeded;
   };
 
@@ -126,7 +136,7 @@ function GoalInputDisplayPanel() {
           updateInputInfo={saveInputInfo}
         />
       ) : (
-        <View style={{ paddingStart: 10, paddingEnd: 10 }}>
+        <View style={{ paddingStart: 1, paddingEnd: 5 }} className="-p-2 -m-1">
           <View style={gps.goalDisplayDiv}>
             <Text style={gps.goalDisplayTitle}>Target Type :</Text>
             <Text style={gps.goalDisplayText}>
@@ -134,7 +144,7 @@ function GoalInputDisplayPanel() {
             </Text>
           </View>
           <View style={gps.goalDisplayDiv}>
-            <Text style={gps.goalDisplayTitle}>Desired weight : </Text>
+            <Text style={gps.goalDisplayTitle}>Desired Weight : </Text>
             <Text style={gps.goalDisplayText}>
               {inputInfo ? inputInfo.weight_target : "Not Yet Set"}
             </Text>
@@ -153,7 +163,7 @@ function GoalInputDisplayPanel() {
                 {`Recommended Average \nDaily Calorie Consumption :`}
               </Text>
               <Text style={gps.goalDisplayText}>
-                {calculateAverageCalorieNeeded(inputInfo)}
+                {`${calculateAverageCalorieNeeded(inputInfo)} kcal`}
               </Text>
             </View>
           ) : null}
@@ -161,8 +171,15 @@ function GoalInputDisplayPanel() {
       )}
 
       {inputPanelOpen ? null : (
-        <View>
-          <Button title="Update" onPress={() => toggleInputPanelVisibility()} />
+        <View className="mt-3">
+          <Button
+            colorScheme="cyan"
+            onPress={() => {
+              toggleInputPanelVisibility();
+            }}
+          >
+            Update
+          </Button>
         </View>
       )}
     </Fragment>

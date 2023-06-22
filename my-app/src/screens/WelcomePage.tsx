@@ -7,7 +7,6 @@ import {
   Dimensions,
   StatusBar,
   SafeAreaView,
-  ScrollView,
   PixelRatio,
   StyleSheet,
   ImageBackground,

@@ -224,11 +224,11 @@ export const GetSteps = () => {
     ));
 
     const stepItems = [...steps].reverse().map((step, index) => (
-      <View key={index} style={styles.field}>
+      <View key={index} style={styles.field} className="overflow-hidden">
         <View className="space-y-1.5">
           <Text>{step.label}</Text>
           <Text>{getWeekDay(step.label)}</Text>
-          <Divider style={{ marginVertical: 10, width: "400%" }} />
+          <Divider style={{ marginVertical: 10, width: "900%" }} />
         </View>
         <Text>{step.value}</Text>
       </View>

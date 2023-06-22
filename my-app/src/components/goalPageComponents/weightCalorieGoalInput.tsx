@@ -144,7 +144,8 @@ function GoalInputPanel(props: {
             borderWidth: 1,
             borderColor: "black",
             fontSize: 20,
-            padding: 5,
+            padding: 3,
+            margin: 1,
           }}
         />
       </View>
@@ -160,10 +161,14 @@ function GoalInputPanel(props: {
         </View>
       </View>
       <View style={[gps.goalDisplayDiv, { justifyContent: "flex-end" }]}>
+        <Button
+          color="red"
+          title="Cancel"
+          onPress={() => togglePanelVisible()}
+        />
         <View style={{ marginEnd: 10 }}>
           <Button title="Confirm" onPress={() => updateGoalInputs()} />
         </View>
-        <Button title="Cancel" onPress={() => togglePanelVisible()} />
       </View>
     </Fragment>
   );
