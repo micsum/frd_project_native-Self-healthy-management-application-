@@ -15,7 +15,7 @@ export async function up(knex: Knex): Promise<void> {
       table.dropColumn('chatroom_id');
     }
   });
-  await knex.schema.dropTableIfExists('chatroom');
+  // await knex.schema.dropTableIfExists('chatroom');
 }
 
 export async function down(knex: Knex): Promise<void> {
