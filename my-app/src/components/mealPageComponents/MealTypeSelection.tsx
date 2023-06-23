@@ -168,7 +168,7 @@ function MealTypeSelection(props: {
           const value = (param: string): number | string => {
             return foodItem[param as keyof FullItemInfo];
           };
-
+          console.log(foodItem);
           const basicInfoParams: string[] = [
             "id",
             "meal_id",
@@ -211,9 +211,11 @@ function MealTypeSelection(props: {
               ? sizeInG
               : sizeUnit === "kg"
               ? sizeInG / 1000
-              : sizeInG / 453.492
+              : sizeInG / 453.592
             ).toFixed(2)
           );
+
+          console.log(basicInfoDummy);
 
           nutritionInfoParams.map((param: string) => {
             nutritionInfoDummy[param as keyof FoodItemNutritionInfo] =
@@ -358,7 +360,12 @@ function MealTypeSelection(props: {
     newItem.meal_id = meal_id;
     newItem.meal_time = meal_time;
     newItem.name = foodName;
-    newItem.serving_size_g = servingSize;
+    newItem.serving_size_g =
+      sizeUnit === "g"
+        ? servingSize
+        : sizeUnit === "kg"
+        ? servingSize * 1000
+        : servingSize * 453.592;
     newItem.saved_size_unit = sizeUnit;
 
     return newItem;

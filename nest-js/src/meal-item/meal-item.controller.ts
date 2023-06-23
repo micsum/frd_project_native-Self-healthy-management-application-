@@ -105,8 +105,7 @@ export class MealItemController {
     @Param('date') date: string,
     @Param('days') days: number,
   ) {
-    const decodedToken = this.jwtService.decodedJWT(token);
-    const userID = typeof decodedToken === 'string' ? -1 : decodedToken.id;
+    const userID = this.extractUserID(token);
 
     if (userID === undefined || userID === -1) {
       return { error: 'User Not Found' };

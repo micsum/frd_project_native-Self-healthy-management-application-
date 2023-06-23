@@ -7,6 +7,8 @@ import { checkPassword } from 'hash';
 import { JWTService } from 'src/jwt/jwt.service';
 import { TargetInputDTO } from './dto/targetInput.dto';
 import { WeightInfoDTO } from './dto/weightInput.dto';
+import { ExHistDTO } from './dto/exercise-history';
+import { env } from 'env';
 
 @Injectable()
 export class UserService {
@@ -140,5 +142,46 @@ export class UserService {
     };
 
     return await this.knex('weight_record').insert(weightInfo);
+  }
+
+  async writeExHistory(userID: number, exHistData: ExHistDTO) {
+    const { event_name, start_time, end_time } = exHistData;
+
+    const startTime = new Date(start_time);
+    const endTime = new Date(end_time);
+    const durationInHours = Math.round(
+      (endTime.getTime() - startTime.getTime()) / 3600000,
+    );
+    let totalBurntCalories: Number;
+    let exHistoryInfo: any = {};
+    try {
+      const burntCaloriesURL = `https://api.api-ninjas.com/v1/caloriesburned?activity=${event_name}`;
+      const res = await fetch(burntCaloriesURL, {
+        method: 'GET',
+        headers: { 'X-Api-Key': env.API_KEY },
+      });
+      let burntResult = await res.json();
+
+      if (burntResult.length === 0) {
+        return { error: 'Can not find this activity' };
+      }
+      totalBurntCalories = burntResult[0].calories_per_hour * durationInHours;
+      exHistoryInfo = {
+        start_time: startTime,
+        end_time: endTime,
+        event_duration: durationInHours,
+        user_id: userID,
+        burnt_calories: totalBurntCalories,
+        event_name: event_name,
+      };
+      //console.log('api', burntResult[0].calories_per_hour);
+    } catch (error) {
+      console.log(error);
+      return {
+        error: 'API Error',
+      };
+    }
+    await this.knex('exercise_history').insert(exHistoryInfo);
+    return {};
   }
 }

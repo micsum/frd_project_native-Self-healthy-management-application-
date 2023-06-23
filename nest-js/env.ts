@@ -11,6 +11,8 @@ export const env = {
   DB_USERNAME: '',
   DB_PASSWORD: '',
   JWT_SECRET: '',
+  API_KEY: '',
+  OPENAI_API_KEY: '',
 };
 
 populateEnv(env, { mode: 'halt' });

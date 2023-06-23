@@ -1,7 +1,7 @@
 // Buffer Line
 import { Fragment, useEffect, useState } from "react";
 import { View, Text, Button } from "react-native";
-import DateTimePicker from "@mohalla-tech/react-native-date-time-picker";
+import DatePicker from "react-native-date-picker";
 import { store } from "../../store";
 import { mps } from "./mealPageComponentStyleSheet";
 
@@ -42,7 +42,7 @@ export default function DateSelectionPanel(props: {
 
   return (
     <View style={{ height: 120, padding: 5, paddingBottom: 0 }}>
-      <View style={mps.calendarDisplayDiv}>
+      <View style={[mps.calendarDisplayDiv, { overflow: "hidden" }]}>
         <View
           style={
             open
@@ -57,12 +57,11 @@ export default function DateSelectionPanel(props: {
         >
           {open ? (
             <Fragment>
-              <View style={{ width: "80%" }}>
-                <DateTimePicker
+              <View>
+                <DatePicker
                   mode="date"
-                  initialValue={selectedDate}
-                  onChange={(date: Date) => selectNewDate(() => date)}
-                  setError={(err: string) => console.log(err)}
+                  date={selectedDate}
+                  onDateChange={(date: Date) => selectNewDate(() => date)}
                 />
               </View>
             </Fragment>

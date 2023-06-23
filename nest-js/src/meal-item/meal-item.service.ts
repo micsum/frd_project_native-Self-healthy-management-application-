@@ -233,6 +233,6 @@ export class MealItemService {
       dailyNutritionResult.push(outputObject);
     }
 
-    return { dateSortedObject, dailyNutritionResult };
+    return { dailyNutritionResult };
   }
 }

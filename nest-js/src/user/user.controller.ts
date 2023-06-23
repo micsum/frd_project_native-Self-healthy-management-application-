@@ -22,6 +22,7 @@ import { StepGoalDTO, TargetInputDTO } from './dto/targetInput.dto';
 import { JWTService } from 'src/jwt/jwt.service';
 import { JwtAuthGuard } from 'src/authguard/JwtAuthGuard.service';
 import { WeightInfoDTO } from './dto/weightInput.dto';
+import { ExHistDTO } from './dto/exercise-history';
 
 @Controller('user')
 export class UserController {
@@ -153,6 +154,26 @@ export class UserController {
     const userID = this.extractUserID(token);
     try {
       return await this.userService.inputWeightInfo(userID, weightInputInfo);
+    } catch (error) {
+      console.log(error);
+      return { error: 'Server Error' };
+    }
+  }
+
+  @Post('exerciseHistory')
+  async writeExHistory(
+    @Headers('authorization') token: string,
+    @Body() exHistData: ExHistDTO,
+  ) {
+    if (
+      new Date(exHistData.end_time).getTime() <
+      new Date(exHistData.start_time).getTime()
+    ) {
+      return { error: 'Wrong Date Input' };
+    }
+    const userId = this.extractUserID(token);
+    try {
+      return await this.userService.writeExHistory(userId, exHistData);
     } catch (error) {
       console.log(error);
       return { error: 'Server Error' };

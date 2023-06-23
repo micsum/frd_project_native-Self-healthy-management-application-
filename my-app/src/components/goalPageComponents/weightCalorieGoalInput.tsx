@@ -4,7 +4,7 @@ import { View, Text, Button, TextInput, ScrollView } from "react-native";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import { GoalInputData } from "../../utils/type";
 import SelectDropdown from "react-native-select-dropdown";
-import DateTimePicker from "@mohalla-tech/react-native-date-time-picker";
+import DatePicker from "react-native-date-picker";
 import { AntDesign } from "@expo/vector-icons";
 import { Domain } from "@env";
 import { gps } from "./goalPageComponentStyleSheet";
@@ -152,11 +152,10 @@ function GoalInputPanel(props: {
       <View>
         <Text style={gps.goalDisplayTitle}> Expected Target Date : </Text>
         <View>
-          <DateTimePicker
+          <DatePicker
             mode="date"
-            initialValue={selectedDate}
-            onChange={(date: Date) => selectNewDate(() => date)}
-            setError={(err: string) => console.log(err)}
+            date={selectedDate}
+            onDateChange={(date: Date) => selectNewDate(() => date)}
           />
         </View>
       </View>

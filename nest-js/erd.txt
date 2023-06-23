@@ -58,15 +58,17 @@ exercise_history
 ----------------
 burnt_calories numeric
 user_id integer FK >- user.id
-event_datetime timestamp
+event_duration timestamp
 id integer PK
 event_name varchar(255)
+start_time timestamp
+end_time timestamp
 
 
 personal_target_input
 ---------------------
 id integer PK
-user_id integer
+user_id integer FK >- user.id
 weight_target numeric
 start_date date
 expected_date date
@@ -140,4 +142,27 @@ step_daily_goal
 ---------------
 id integer PK
 steps_dailygoal integer unique
-user_id varchar(255)
+user_id integer FK >- user.id
+
+weight_record
+-------------
+user_id integer FK >- user.id
+weight integer
+date date
+
+
+# chatroom_message (1127, 478)
+# meal_input_record (417, 325)
+# calendar_event (430, 530)
+# exercise_history (483, 99)
+# personal_target_input (819, 96)
+# meal_food_item (42, 273)
+# workout_day (258, 745)
+# workout (479, 819)
+# mealplan (747, 713)
+# mealplan_day (1012, 636)
+# meal_content (992, 815)
+# step_daily_goal (1123, 306)
+# weight_record (938, 268)
+# view: (-23, 15)
+# user (681, 429)

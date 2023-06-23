@@ -1,4 +1,11 @@
-import { View, StyleSheet, Text, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Platform,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as Progress from "react-native-progress";
@@ -15,12 +22,14 @@ import {
   AlertNotificationRoot,
   Dialog,
 } from "react-native-alert-notification";
-import { AlertDialog, Button, Center, Input } from "native-base";
+import { AlertDialog, Button, Center, Input, useToken } from "native-base";
 import axios from "axios";
 import { Domain } from "@env";
 import { handleToken } from "../../hooks/use-token";
 import { store } from "../../store";
 import DatePicker from "react-native-date-picker";
+import { MaterialIcons } from "@expo/vector-icons";
+import { ExHist } from "../../utils/type";
 const permissions: AuthorizationPermissions = {
   healthReadPermissions: [HealthKitDataType.StepCount],
   googleFitReadPermissions: [GoogleFitDataType.Steps],
@@ -266,16 +275,185 @@ export const CardFitnessData = () => {
   );
 };
 
-export const CardExercise = () => {
-  const [date, setDate] = useState(new Date());
+const ExerciseDialog = ({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
+  const cancelRef = useRef(null);
+  const [startDate, setStartDate] = useState(new Date());
   const [open, setOpen] = useState(false);
+  const [endDate, setEndDate] = useState(
+    new Date(startDate.getTime() + 3600 * 1000)
+  );
+  const [openEnd, setOpenEnd] = useState(false);
+
+  const handleStartDate = (startDate: Date) => {
+    setOpen(false);
+    setStartDate(startDate);
+    setExHist({ ...exHist, start_time: startDate });
+  };
+
+  const handleEndDate = (endDate: Date) => {
+    setOpenEnd(false);
+    setEndDate(endDate);
+    setExHist({ ...exHist, end_time: endDate });
+  };
+
+  const [exInput, setExInput] = useState<string>("");
+  const handleChange = (input: string) => {
+    setExInput(input);
+    setExHist({ ...exHist, event_name: input });
+  };
+
+  const [exHist, setExHist] = useState<ExHist>({
+    event_name: "",
+    start_time: new Date(),
+    end_time: new Date(startDate.getTime() + 3600 * 1000),
+  });
+
+  const handleSetEx = async () => {
+    let exHistData = exHist;
+
+    if (exHistData.end_time.getTime() < exHistData.start_time.getTime()) {
+      return Dialog.show({
+        type: ALERT_TYPE.WARNING,
+        title: `Wrong Date Input`,
+        textBody: "please check your end time and start time",
+        button: "close",
+        autoClose: 5000,
+      });
+    }
+    await axios.post(`${Domain}/user/exerciseHistory`, exHistData).then(
+      (response) => {
+        if (response.data.error) {
+          return Dialog.show({
+            type: ALERT_TYPE.WARNING,
+            title: `Error`,
+            textBody: `${response.data.error}`,
+            button: "close",
+            autoClose: 5000,
+          });
+        } else if (response.data) {
+          console.log("exHist", response.data);
+          return Dialog.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: `Burnt Calories Calculated`,
+            textBody: "",
+            button: "close",
+            autoClose: 5000,
+          });
+        }
+      },
+      (error: any) => {
+        console.log("error", error.response.data.message);
+      }
+    );
+    onClose();
+    setExInput("");
+    setStartDate(new Date());
+    setEndDate(new Date(startDate.getTime() + 3600 * 1000));
+  };
+
+  return (
+    <View>
+      <AlertNotificationRoot>
+        <AlertDialog
+          leastDestructiveRef={cancelRef}
+          isOpen={isOpen}
+          onClose={onClose}
+          size="xl"
+        >
+          <AlertDialog.Content>
+            <AlertDialog.CloseButton />
+            <AlertDialog.Header borderBottomWidth={0} className="flex-row">
+              Exercise History
+              <View className="mx-2">
+                <MaterialIcons name="history-edu" size={24} color="black" />
+              </View>
+            </AlertDialog.Header>
+            <AlertDialog.Body className="mb-3">
+              <Input
+                variant="rounded"
+                size="xl"
+                placeholder="Your activity"
+                className="items-center justify-center text-center"
+                value={exInput}
+                onChangeText={handleChange}
+              />
+              <View>
+                <View className="flex-row items-center justify-center mt-3 mb-3">
+                  <Text>Start Time: </Text>
+                  <TouchableOpacity onPress={() => setOpen(true)}>
+                    <Text>{`${startDate.toLocaleTimeString()}`}</Text>
+                  </TouchableOpacity>
+                </View>
+                <DatePicker
+                  modal
+                  open={open}
+                  date={startDate}
+                  onConfirm={handleStartDate}
+                  onCancel={() => {
+                    setOpen(false);
+                  }}
+                />
+                <View className="flex-row items-center justify-center">
+                  <Text>End Time: </Text>
+                  <TouchableOpacity onPress={() => setOpenEnd(true)}>
+                    <Text>{`${endDate.toLocaleTimeString()}`}</Text>
+                  </TouchableOpacity>
+                </View>
+                <DatePicker
+                  modal
+                  open={openEnd}
+                  date={endDate}
+                  onConfirm={handleEndDate}
+                  onCancel={() => {
+                    setOpenEnd(false);
+                  }}
+                />
+              </View>
+            </AlertDialog.Body>
+            <AlertDialog.Footer>
+              <Button onPress={handleSetEx}>Update</Button>
+            </AlertDialog.Footer>
+          </AlertDialog.Content>
+        </AlertDialog>
+      </AlertNotificationRoot>
+    </View>
+  );
+};
+
+export const CardExercise = () => {
+  const [isExDialogOpen, setIsExDialogOpen] = useState(false);
+
+  const handleOpenExDialog = () => {
+    setIsExDialogOpen(true);
+  };
+
+  const handleCloseExDialog = () => {
+    setIsExDialogOpen(false);
+  };
 
   return (
     <View style={styles.card} className="mt-5 mx-3">
-      <View style={styles.header}>
+      <View style={styles.header} className="justify-between">
         <Text style={{ fontWeight: "bold", fontSize: 18 }}>Exercise</Text>
+        <View className="mx-1">
+          <FontAwesome5
+            name="plus"
+            size={20}
+            color="black"
+            onPress={() => {
+              handleOpenExDialog();
+            }}
+          />
+        </View>
       </View>
-      <>
+
+      {/*<>
         <Button onPress={() => setOpen(true)}>Open</Button>
         <DatePicker
           modal
@@ -289,7 +467,11 @@ export const CardExercise = () => {
             setOpen(false);
           }}
         />
-      </>
+        </>*/}
+      <ExerciseDialog
+        isOpen={isExDialogOpen}
+        onClose={handleCloseExDialog}
+      ></ExerciseDialog>
     </View>
   );
 };

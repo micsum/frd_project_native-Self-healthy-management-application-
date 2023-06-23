@@ -147,3 +147,16 @@ export type BarChartData = {
   label: string;
   labelComponent: Function;
 };
+
+export type ExHist = {
+  event_name: string;
+  start_time: Date;
+  end_time: Date;
+};
+
+export type GoalDataInfo = {
+  targetType: string;
+  desiredWeight: number;
+  dueDate: Date;
+  avgCalorieConsumption: number;
+};
