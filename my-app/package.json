@@ -13,7 +13,6 @@
     "@expo/webpack-config": "^18.0.1",
     "@kilohealth/rn-fitness-tracker": "^3.1.0",
     "@mohalla-tech/react-native-date-time-picker": "^2.0.1",
-    "@react-native-community/datetimepicker": "^7.2.0",
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/material-bottom-tabs": "^6.2.15",
     "@react-navigation/native": "^6.1.6",

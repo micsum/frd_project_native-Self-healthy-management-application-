@@ -20,8 +20,7 @@ import axios from "axios";
 import { Domain } from "@env";
 import { handleToken } from "../../hooks/use-token";
 import { store } from "../../store";
-import DateTimePicker from "@react-native-community/datetimepicker";
-
+import DatePicker from "react-native-date-picker";
 const permissions: AuthorizationPermissions = {
   healthReadPermissions: [HealthKitDataType.StepCount],
   googleFitReadPermissions: [GoogleFitDataType.Steps],
@@ -268,55 +267,29 @@ export const CardFitnessData = () => {
 };
 
 export const CardExercise = () => {
-  const [showPicker, setShowPicker] = useState(false);
-  const [dateTime, setDateTime] = useState(new Date());
-  const [date, setDate] = useState(new Date(1598051730000));
-  const [mode, setMode] = useState<"date" | "time">("date");
-  const [show, setShow] = useState(false);
-  const onChange = (event: any, selecedDate: Date) => {
-    const currentDate = selecedDate;
-    setShowPicker(false);
-    setDateTime(currentDate);
-  };
-  const showMode = (currentMode: any) => {
-    //if (Platform.OS === "android") {
-    // for iOS, add a button that closes the picker
-    //}
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode("date");
-  };
-
-  const showTimepicker = () => {
-    showMode("time");
-  };
+  const [date, setDate] = useState(new Date());
+  const [open, setOpen] = useState(false);
 
   return (
     <View style={styles.card} className="mt-5 mx-3">
       <View style={styles.header}>
         <Text style={{ fontWeight: "bold", fontSize: 18 }}>Exercise</Text>
       </View>
-      <Button onPress={showDatepicker}>"Show date picker!"</Button>
-      <Button onPress={showTimepicker}>"Show time picker!"</Button>
-      <Text>selected: {date.toLocaleString()}</Text>
-      {show && (
-        <>
-          {Platform.OS === "ios" ? (
-            <Button onPress={() => setShow(false)}>Close</Button>
-          ) : null}
-          <DateTimePicker
-            testID="dateTimePicker"
-            display="spinner"
-            value={date}
-            mode={mode}
-            is24Hour={true}
-            onChange={(event) => onChange(event, date)}
-          />
-        </>
-      )}
+      <>
+        <Button onPress={() => setOpen(true)}>Open</Button>
+        <DatePicker
+          modal
+          open={open}
+          date={date}
+          onConfirm={(date) => {
+            setOpen(false);
+            setDate(date);
+          }}
+          onCancel={() => {
+            setOpen(false);
+          }}
+        />
+      </>
     </View>
   );
 };
