@@ -140,7 +140,9 @@ export class UserService {
       weight: parseFloat(weightInputInfo.weight),
       user_id: userID,
     };
-
+    await this.knex('user')
+      .update({ weight: weightInputInfo.weight })
+      .where({ id: userID });
     return await this.knex('weight_record').insert(weightInfo);
   }
   async profileInfo(user_id: number) {
