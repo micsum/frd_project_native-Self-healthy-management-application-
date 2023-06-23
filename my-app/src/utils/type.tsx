@@ -160,3 +160,11 @@ export type GoalDataInfo = {
   dueDate: Date;
   avgCalorieConsumption: number;
 };
+
+export type ProfileData = {
+  email: string;
+  height: number;
+  weight: number;
+  username: string;
+  target: string;
+};

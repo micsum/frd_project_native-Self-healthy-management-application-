@@ -3,6 +3,7 @@ import { Knex } from 'knex';
 
 export async function seed(knex: Knex): Promise<void> {
   // Deletes ALL existing entries
+  await knex('chatroom_message').del();
   await knex('meal_food_item').del();
   await knex('meal_input_record').del();
   await knex('user').del();

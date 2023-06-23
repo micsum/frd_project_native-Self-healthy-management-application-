@@ -32,7 +32,7 @@ export class WorkoutService {
   }
 
   async scrapWorkoutList() {
-    let browser = await chromium.launch({ headless: false });
+    let browser = await chromium.launch({ headless: true });
     let page = await browser.newPage();
 
     log('scraping workout list...');
@@ -159,14 +159,3 @@ export class WorkoutService {
     return days;
   }
 }
-
-//new WorkoutService(knex).scrapWorkoutList();
-
-// chromium.launch({ headless: false }).then((browser) => {
-//   browser.newPage().then((page) => {
-//     new WorkoutService().scrapWorkoutDetail(
-//       page,
-//       'https://www.muscleandstrength.com/workouts/6-day-powerbuilding-split-meal-plan',
-//     );
-//   });
-// });

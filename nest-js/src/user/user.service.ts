@@ -57,6 +57,8 @@ export class UserService {
     let email = dbResult[0].email;
     let payload = { email, id };
 
+    console.log(dbResult[0]);
+
     return (await checkPassword(inputPassword, dbPassword))
       ? { token: this.jwtService.encodeJWT(payload) }
       : { error: 'Wrong Password' };
@@ -140,7 +142,9 @@ export class UserService {
       weight: parseFloat(weightInputInfo.weight),
       user_id: userID,
     };
-
+    await this.knex('user')
+      .update({ weight: weightInputInfo.weight })
+      .where({ id: userID });
     return await this.knex('weight_record').insert(weightInfo);
   }
 
@@ -183,5 +187,13 @@ export class UserService {
     }
     await this.knex('exercise_history').insert(exHistoryInfo);
     return {};
+  }
+  async profileInfo(user_id: number) {
+    const info = await this.knex('user')
+      .select('email', 'height', 'weight', 'username', 'target')
+      .where({ id: user_id });
+    console.log({ info });
+
+    return { info };
   }
 }

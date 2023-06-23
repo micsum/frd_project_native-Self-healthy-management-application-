@@ -385,9 +385,12 @@ function MealTypeSelection(props: {
       });
       const result = await res.json();
       if (result.message) {
+        const errorMessage = Array.isArray(result.message)
+          ? result.message[0]
+          : result.message;
         Dialog.show({
           type: ALERT_TYPE.DANGER,
-          title: result.message[0],
+          title: errorMessage,
           autoClose: 1500,
         });
         return;
@@ -438,9 +441,12 @@ function MealTypeSelection(props: {
       const result = await res.json();
 
       if (result.message) {
+        const errorMessage = Array.isArray(result.message)
+          ? result.message[0]
+          : result.message;
         Dialog.show({
           type: ALERT_TYPE.DANGER,
-          title: result.message[0],
+          title: errorMessage,
           autoClose: 1500,
         });
         return;
@@ -481,6 +487,7 @@ function MealTypeSelection(props: {
     const res = await fetch(`${Domain}/mealItem`, {
       method: "DELETE",
       headers: {
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(removedItem),
@@ -488,9 +495,12 @@ function MealTypeSelection(props: {
     const result = await res.json();
 
     if (result.message) {
+      const errorMessage = Array.isArray(result.message)
+        ? result.message[0]
+        : result.message;
       Dialog.show({
         type: ALERT_TYPE.DANGER,
-        title: result.message[0],
+        title: errorMessage,
         autoClose: 1500,
       });
       return;

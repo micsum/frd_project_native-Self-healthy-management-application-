@@ -65,7 +65,7 @@ export class MealPlanService {
   }
 
   async scrapMealPlanList() {
-    let browser = await chromium.launch({ headless: false });
+    let browser = await chromium.launch({ headless: true });
     let page = await browser.newPage();
 
     log('scraping meal plan list');

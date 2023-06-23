@@ -15,6 +15,7 @@ import { CreateMealItemDto } from './dto/create-meal-item.dto';
 import { UpdateMealItemDto } from './dto/update-meal-item.dto';
 import { JWTService } from 'src/jwt/jwt.service';
 import { JwtAuthGuard } from 'src/authguard/JwtAuthGuard.service';
+import { FoodItemBasicInfo } from './utils/mealPageType';
 
 @UseGuards(JwtAuthGuard)
 @Controller('mealItem')
