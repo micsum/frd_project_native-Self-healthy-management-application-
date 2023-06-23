@@ -1,6 +1,12 @@
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import React, { useEffect, useState, Component } from "react";
-import { Text, ScrollView, FlatList } from "native-base";
+import {
+  View,
+  ScrollView,
+  FlatList,
+  StyleSheet,
+  RefreshControl,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text } from "native-base";
 import { PlanItem } from "../components/plansPageComponents/planItem";
 import { createStackNavigator } from "@react-navigation/stack";
 import { PlanDetailScreen } from "./PlansDetailPage";
@@ -23,6 +29,11 @@ export function PlansHomeScreen() {
     workoutPlans: [],
     mealPlans: [],
   });
+  const styles = StyleSheet.create({
+    flatList: {
+      height: 580,
+    },
+  });
 
   const [currentPlanIndex, setCurrentPlanIndex] = useState<number>(0);
 
@@ -35,48 +46,47 @@ export function PlansHomeScreen() {
   const plans = currentPlanIndex == 0 ? workoutList : mealPlanList;
 
   let vdom = (
-    <SafeAreaProvider>
-      <SafeAreaView>
-        <ScrollView>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "#d7e0e8",
-            }}
-          >
-            <SegmentedControlTab
-              values={["Workout plan", "Meal Plan"]}
-              selectedIndex={currentPlanIndex}
-              onTabPress={setCurrentPlanIndex}
-              tabTextStyle={{ fontWeight: "bold" }}
-              tabsContainerStyle={{ margin: 10, marginTop: 10 }}
-            />
-
-            <View>
-              <Text>{plans.error}</Text>
-            </View>
-          </View>
-        </ScrollView>
-        {plans.list.length === 0 ? (
-          <Text>Loading plans...</Text>
-        ) : (
-          <FlatList
-            data={plans.list}
-            onEndReached={plans.fetchMore}
-            keyExtractor={(plan) => plan.id.toString()}
-            renderItem={({ item: plan }) => (
-              <PlanItem
-                image={plan.cover_image}
-                title={plan.title}
-                id={plan.id}
-              />
-            )}
+    <SafeAreaView>
+      <ScrollView>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#d7e0e8",
+          }}
+        >
+          <SegmentedControlTab
+            values={["Workout plan", "Meal Plan"]}
+            selectedIndex={currentPlanIndex}
+            onTabPress={setCurrentPlanIndex}
+            tabTextStyle={{ fontWeight: "bold" }}
+            tabsContainerStyle={{ margin: 10, marginTop: 10 }}
           />
-        )}
-      </SafeAreaView>
-    </SafeAreaProvider>
+
+          <View>
+            <Text>{plans.error}</Text>
+          </View>
+        </View>
+      </ScrollView>
+      {plans.list.length === 0 ? (
+        <Text>Loading plans...</Text>
+      ) : (
+        <FlatList
+          style={styles.flatList}
+          data={plans.list}
+          onEndReached={plans.fetchMore}
+          keyExtractor={(plan) => plan.id.toString()}
+          renderItem={({ item: plan }) => (
+            <PlanItem
+              image={plan.cover_image}
+              title={plan.title}
+              id={plan.id}
+            />
+          )}
+        />
+      )}
+    </SafeAreaView>
   );
 
   return vdom;

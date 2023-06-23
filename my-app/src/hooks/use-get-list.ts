@@ -13,7 +13,7 @@ export function useGetList<
     function () {
       setList((list) => {
         let last_id = list[list.length - 1]?.id || 0;
-        get(`${url}?last_id=${last_id}&limit=2`)
+        get(`${url}?last_id=${last_id}&limit=3`)
           .catch((error) => ({ error: String(error) }))
           .then((json) => {
             console.log("fetch result:", json);
