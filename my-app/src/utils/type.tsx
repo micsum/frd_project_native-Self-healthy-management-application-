@@ -147,3 +147,11 @@ export type BarChartData = {
   label: string;
   labelComponent: Function;
 };
+
+export type ProfileData = {
+  email: string;
+  height: number;
+  weight: number;
+  username: string;
+  target: string;
+};

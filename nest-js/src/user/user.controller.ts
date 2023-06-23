@@ -22,6 +22,7 @@ import { StepGoalDTO, TargetInputDTO } from './dto/targetInput.dto';
 import { JWTService } from 'src/jwt/jwt.service';
 import { JwtAuthGuard } from 'src/authguard/JwtAuthGuard.service';
 import { WeightInfoDTO } from './dto/weightInput.dto';
+import { log } from 'console';
 
 @Controller('user')
 export class UserController {
@@ -58,7 +59,7 @@ export class UserController {
   @Post('login')
   findAll(@Body() LoginData: LoginData) {
     try {
-      //console.log(LoginData); //test LoginData
+      console.log(LoginData); //test LoginData
       return this.userService.findAll(LoginData);
     } catch (error) {
       console.error('dbServer', error);
@@ -156,6 +157,18 @@ export class UserController {
     } catch (error) {
       console.log(error);
       return { error: 'Server Error' };
+    }
+  }
+
+  @Get('profileInfo')
+  getChatRoomHistory(@Headers() headers: any) {
+    let token = headers.authorization.replace('Bearer ', '') as string;
+    const decodedToken: any = this.jwtService.decodedJWT(token);
+    console.log(decodedToken);
+    try {
+      return this.userService.profileInfo(decodedToken.id);
+    } catch (error) {
+      return { error };
     }
   }
 }

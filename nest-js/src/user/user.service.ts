@@ -55,6 +55,8 @@ export class UserService {
     let email = dbResult[0].email;
     let payload = { email, id };
 
+    console.log(dbResult[0]);
+
     return (await checkPassword(inputPassword, dbPassword))
       ? { token: this.jwtService.encodeJWT(payload) }
       : { error: 'Wrong Password' };
@@ -140,5 +142,13 @@ export class UserService {
     };
 
     return await this.knex('weight_record').insert(weightInfo);
+  }
+  async profileInfo(user_id: number) {
+    const info = await this.knex('user')
+      .select('email', 'height', 'weight', 'username', 'target')
+      .where({ id: user_id });
+    console.log({ info });
+
+    return { info };
   }
 }
