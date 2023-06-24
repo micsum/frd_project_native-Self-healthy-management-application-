@@ -11,6 +11,7 @@ import {
   ValidationPipe,
   Header,
   Headers,
+  Head,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -189,6 +190,20 @@ export class UserController {
       return this.userService.profileInfo(decodedToken.id);
     } catch (error) {
       return { error };
+    }
+  }
+
+  @Get('getEx/:date')
+  async getExData(
+    @Headers('authorization') token: string,
+    @Param('date') date: Date,
+  ) {
+    const userId = this.extractUserID(token);
+    try {
+      return await this.userService.getExData(userId, date);
+    } catch (error) {
+      console.log(error);
+      return { error: 'Server Error' };
     }
   }
 }

@@ -4,12 +4,13 @@ import { View, StyleSheet, Text } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import GoalDialog from "./homeCardGoalDialog";
-import { BodyParams, GoalInputData } from "../../utils/type";
+import { BodyParams, ExInfo, GoalInputData } from "../../utils/type";
 import { handleToken } from "../../hooks/use-token";
 import { Domain } from "@env";
 import axios from "axios";
 
-export const CardGoal = () => {
+export const CardGoal = (props: { exInfo: ExInfo[] }) => {
+  const { exInfo } = props;
   const [isGoalDialogOpen, setIsGoalDialogOpen] = useState(false);
   const [inputInfo, updateInputInfo] = useState<GoalInputData>();
   const [foodCalories, setFoodCalories] = useState<number>(0);
@@ -20,6 +21,11 @@ export const CardGoal = () => {
     height: 0,
     weight: 0,
   });
+
+  const exerciseCalories = exInfo.reduce(
+    (acc, elem) => acc + parseFloat(elem.burnt_calories),
+    0
+  );
 
   const { token } = handleToken();
 
@@ -101,18 +107,12 @@ export const CardGoal = () => {
     setFoodCalories(caloriesResult);
   };
 
-  useEffect(() => {
-    console.log(`here`);
-
-    console.log(foodCalories);
-  }, [foodCalories]);
-
-  const getFullInfo = useCallback(async () => {
+  const getFullInfo = async () => {
     await getBodyParams();
     await getFoodCalories();
     const inputData = await getInputData();
     updateInputInfo(inputData);
-  }, []);
+  };
 
   useEffect(() => {
     getFullInfo();

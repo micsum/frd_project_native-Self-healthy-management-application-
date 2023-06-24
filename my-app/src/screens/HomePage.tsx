@@ -31,6 +31,8 @@ import {
   AlertNotificationRoot,
   Dialog,
 } from "react-native-alert-notification";
+import { handleToken } from "../hooks/use-token";
+import { ExInfo } from "../utils/type";
 
 export const AvatarPic = () => {
   const navigation = useNavigation();
@@ -183,6 +185,36 @@ const HomeNoStackWithChat = () => {
 };
 
 export function HomeScreenNoStack() {
+  const [exData, setExData] = useState<ExInfo[]>([]);
+  const { token } = handleToken();
+
+  const getEx = async () => {
+    await axios
+      .get(`${Domain}/user/getEx/${new Date()}`, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then((response) => {
+        if (response.data.error) {
+          return Dialog.show({
+            type: ALERT_TYPE.WARNING,
+            title: "Error",
+            textBody: `${response.data.error}`,
+            button: "close",
+            autoClose: 5000,
+          });
+        }
+
+        setExData(response.data);
+      });
+  };
+  useEffect(() => {
+    getEx();
+  }, []);
+
+  const addNewExercise = (exercise: ExInfo) => {
+    setExData((current) => [...current, exercise]);
+  };
+
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   return (
@@ -205,7 +237,7 @@ export function HomeScreenNoStack() {
           <Notification />
         </View>
         <ScrollView nestedScrollEnabled={false}>
-          <CardGoal />
+          <CardGoal exInfo={exData} />
         </ScrollView>
         <SwiperFlatList
           showPagination
@@ -223,7 +255,7 @@ export function HomeScreenNoStack() {
           </Pressable>
         </SwiperFlatList>
         <Pressable className="w-max">
-          <CardExercise />
+          <CardExercise exInfo={exData} addNewExercise={addNewExercise} />
         </Pressable>
         {/*} <CardWeight />*/}
       </AlertNotificationRoot>

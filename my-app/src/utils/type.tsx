@@ -168,3 +168,9 @@ export type ProfileData = {
   username: string;
   target: string;
 };
+
+export type ExInfo = {
+  burnt_calories: string;
+  event_duration: number;
+  event_name: string;
+};

@@ -186,7 +186,7 @@ export class UserService {
       };
     }
     await this.knex('exercise_history').insert(exHistoryInfo);
-    return {};
+    return { burntCalories: totalBurntCalories };
   }
   async profileInfo(user_id: number) {
     const info = await this.knex('user')
@@ -195,5 +195,19 @@ export class UserService {
     console.log({ info });
 
     return { info };
+  }
+
+  async getExData(user_id: number, date: Date) {
+    const newDate = new Date(date).setHours(0, 0, 0, 0);
+
+    return await this.knex('exercise_history')
+      .select('burnt_calories', 'event_name', 'event_duration')
+      .where({ user_id })
+      .where('start_time', '>=', new Date(newDate))
+      .where(
+        'start_time',
+        '<',
+        new Date(new Date(newDate).getTime() + 24 * 3600000),
+      );
   }
 }

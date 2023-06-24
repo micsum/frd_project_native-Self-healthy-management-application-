@@ -22,14 +22,21 @@ import {
   AlertNotificationRoot,
   Dialog,
 } from "react-native-alert-notification";
-import { AlertDialog, Button, Center, Input, useToken } from "native-base";
+import {
+  AlertDialog,
+  Button,
+  Center,
+  Input,
+  ScrollView,
+  useToken,
+} from "native-base";
 import axios from "axios";
 import { Domain } from "@env";
 import { handleToken } from "../../hooks/use-token";
 import { store } from "../../store";
 import DatePicker from "react-native-date-picker";
 import { MaterialIcons } from "@expo/vector-icons";
-import { ExHist } from "../../utils/type";
+import { ExHist, ExInfo } from "../../utils/type";
 const permissions: AuthorizationPermissions = {
   healthReadPermissions: [HealthKitDataType.StepCount],
   googleFitReadPermissions: [GoogleFitDataType.Steps],
@@ -275,13 +282,12 @@ export const CardFitnessData = () => {
   );
 };
 
-const ExerciseDialog = ({
-  isOpen,
-  onClose,
-}: {
+const ExerciseDialog = (props: {
   isOpen: boolean;
   onClose: () => void;
+  addNewExercise: (exercise: ExInfo) => void;
 }) => {
+  const { isOpen, onClose, addNewExercise } = props;
   const cancelRef = useRef(null);
   const [startDate, setStartDate] = useState(new Date());
   const [open, setOpen] = useState(false);
@@ -316,6 +322,10 @@ const ExerciseDialog = ({
 
   const handleSetEx = async () => {
     let exHistData = exHist;
+    const { event_name, start_time, end_time } = exHist;
+    const event_duration = Math.ceil(
+      (new Date(end_time).getTime() - new Date(start_time).getTime()) / 3600000
+    );
 
     if (exHistData.end_time.getTime() < exHistData.start_time.getTime()) {
       return Dialog.show({
@@ -338,6 +348,16 @@ const ExerciseDialog = ({
           });
         } else if (response.data) {
           console.log("exHist", response.data);
+          console.log({
+            event_name,
+            event_duration,
+            burnt_calories: response.data.burntCalories,
+          });
+          addNewExercise({
+            event_name,
+            event_duration,
+            burnt_calories: response.data.burntCalories,
+          });
           return Dialog.show({
             type: ALERT_TYPE.SUCCESS,
             title: `Burnt Calories Calculated`,
@@ -426,7 +446,11 @@ const ExerciseDialog = ({
   );
 };
 
-export const CardExercise = () => {
+export const CardExercise = (props: {
+  exInfo: ExInfo[];
+  addNewExercise: (exercise: ExInfo) => void;
+}) => {
+  const { exInfo, addNewExercise } = props;
   const [isExDialogOpen, setIsExDialogOpen] = useState(false);
 
   const handleOpenExDialog = () => {
@@ -435,6 +459,18 @@ export const CardExercise = () => {
 
   const handleCloseExDialog = () => {
     setIsExDialogOpen(false);
+  };
+
+  const ExerciseItem = (props: { exercise: ExInfo }) => {
+    const { event_name, event_duration, burnt_calories } = props.exercise;
+    return (
+      <View>
+        <Text>
+          {event_name} {"     "} {event_duration}hr {"     "} {burnt_calories}
+          cal
+        </Text>
+      </View>
+    );
   };
 
   return (
@@ -452,26 +488,23 @@ export const CardExercise = () => {
           />
         </View>
       </View>
-
-      {/*<>
-        <Button onPress={() => setOpen(true)}>Open</Button>
-        <DatePicker
-          modal
-          open={open}
-          date={date}
-          onConfirm={(date) => {
-            setOpen(false);
-            setDate(date);
-          }}
-          onCancel={() => {
-            setOpen(false);
-          }}
-        />
-        </>*/}
+      <ScrollView>
+        <View>
+          {exInfo.map((exercise) => {
+            return (
+              <ExerciseItem
+                key={exInfo.indexOf(exercise)}
+                exercise={exercise}
+              />
+            );
+          })}
+        </View>
+      </ScrollView>
       <ExerciseDialog
         isOpen={isExDialogOpen}
         onClose={handleCloseExDialog}
-      ></ExerciseDialog>
+        addNewExercise={addNewExercise}
+      />
     </View>
   );
 };
