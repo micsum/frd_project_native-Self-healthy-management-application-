@@ -466,7 +466,8 @@ export const CardExercise = (props: {
     return (
       <View>
         <Text>
-          {event_name} {"     "} {event_duration}hr {"     "} {burnt_calories}
+          {event_name} {"     "} {event_duration}hr {"     "}{" "}
+          {parseFloat(burnt_calories.toString()).toFixed(2)}
           cal
         </Text>
       </View>

@@ -8,6 +8,7 @@ import { BodyParams, ExInfo, GoalInputData } from "../../utils/type";
 import { handleToken } from "../../hooks/use-token";
 import { Domain } from "@env";
 import axios from "axios";
+import * as Progress from "react-native-progress";
 
 export const CardGoal = (props: { exInfo: ExInfo[] }) => {
   const { exInfo } = props;
@@ -15,17 +16,18 @@ export const CardGoal = (props: { exInfo: ExInfo[] }) => {
   const [inputInfo, updateInputInfo] = useState<GoalInputData>();
   const [foodCalories, setFoodCalories] = useState<number>(0);
 
-  const goalCalories = useRef<number>();
+  const exerciseCalories = exInfo.reduce(
+    (acc, elem) => acc + parseFloat(parseFloat(elem.burnt_calories).toFixed(2)),
+    0
+  );
+  const goalCalories = useRef<number>(0);
   const tokenRef = useRef<string>("");
   const [bodyParams, setBodyParams] = useState<BodyParams>({
     height: 0,
     weight: 0,
   });
 
-  const exerciseCalories = exInfo.reduce(
-    (acc, elem) => acc + parseFloat(elem.burnt_calories),
-    0
-  );
+  const [progress, setProgress] = useState(0);
 
   const { token } = handleToken();
 
@@ -114,6 +116,31 @@ export const CardGoal = (props: { exInfo: ExInfo[] }) => {
     updateInputInfo(inputData);
   };
 
+  const returnNewProgress = () => {
+    const updatedGoalCalories = goalCalories.current;
+    console.log(exerciseCalories);
+    const remainingCalories =
+      updatedGoalCalories * 1000 + foodCalories - exerciseCalories;
+
+    console.log(goalCalories.current);
+    console.log(foodCalories);
+    console.log(exerciseCalories);
+
+    console.log(`remaining calories :${remainingCalories}`);
+    if (remainingCalories < 0) {
+      return 100;
+    } else if (goalCalories.current === 0) {
+      return 0;
+    } else {
+      return parseFloat(
+        (
+          (goalCalories.current - remainingCalories) /
+          goalCalories.current
+        ).toFixed(2)
+      );
+    }
+  };
+
   useEffect(() => {
     getFullInfo();
   }, []);
@@ -171,6 +198,9 @@ export const CardGoal = (props: { exInfo: ExInfo[] }) => {
     updateInputInfo(input);
   };
 
+  useEffect(() => {
+    setProgress(returnNewProgress());
+  }, [foodCalories, exInfo]);
   return (
     <View style={styles.card} className="mt-2 m-3 p-3">
       <Box className="flex-row justify-around">
@@ -213,6 +243,7 @@ export const CardGoal = (props: { exInfo: ExInfo[] }) => {
           />
         </View>
       </Box>
+      <Progress.Circle progress={progress} showsText animated size={50} />
       <GoalDialog
         token={tokenRef.current}
         weight={bodyParams.weight}
