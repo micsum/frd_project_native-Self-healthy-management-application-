@@ -160,7 +160,7 @@ function FoodItemEntryPanel(props: {
             <Button
               title="Confirm"
               onPress={() => confirmItemUpdate(foodItemInfo.current)}
-              color={`#7cfc00`}
+              color={`#45B08C`}
             />
           </View>
         </View>

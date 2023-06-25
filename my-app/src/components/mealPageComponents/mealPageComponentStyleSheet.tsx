@@ -5,12 +5,12 @@ const fullWidthDisplayElement: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",
   width: "100%",
-  padding: 5,
+  padding: 3.5,
 };
 
 const defaultFontSize = 20;
 export const foodItemDisplayHeight = {
-  minHeight: "20%",
+  maxHeight: "100%",
 };
 
 export const mps = StyleSheet.create({
@@ -19,13 +19,10 @@ export const mps = StyleSheet.create({
   },
   calendarDisplayDiv: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
     alignItems: "center",
     width: "100%",
     height: "100%",
-    borderWidth: 2,
-    borderColor: "gray",
-    borderRadius: 10,
   },
   calendarDiv: {
     flexDirection: "row",
@@ -38,12 +35,13 @@ export const mps = StyleSheet.create({
     justifyContent: "center",
   },
   calendarText: {
-    fontSize: defaultFontSize * 1.5,
+    fontSize: defaultFontSize * 1.1,
     fontWeight: "bold",
+    color: "#15998E",
   },
   mealTypeSelection: fullWidthDisplayElement,
   mealDisplayText: {
-    width: "40%",
+    width: "30%",
     fontWeight: "bold",
   },
   mealTypeToggle: {
@@ -52,8 +50,8 @@ export const mps = StyleSheet.create({
     width: "40%",
   },
   addItemButton: {
-    alignItems: "flex-end",
-    width: "20%",
+    fontSize: "xs",
+    width: "25%",
   },
   foodItemDisplayDiv: {
     margin: 6,
@@ -76,13 +74,17 @@ export const mps = StyleSheet.create({
     textDecorationLine: "underline",
   },
   detailPanel: {
-    height: "30%",
+    height: "35%",
+    width: "94%",
+    backgroundColor: "white",
+    margin: 12,
+    borderRadius: 15,
+    elevation: 10,
     padding: 10,
-    margin: 5,
-    borderWidth: 2,
-    borderColor: "black",
-    borderRadius: 10,
-    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
   },
   nutritionContentDisplay: fullWidthDisplayElement,
   nutritionContentText: {

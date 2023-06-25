@@ -28,7 +28,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import { Domain } from "@env";
 import { handleToken } from "../../hooks/use-token";
-
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 function MealTypeSelection(props: {
   date: Date;
   foodItemFullInfo: FullItemInfo[];
@@ -554,7 +554,7 @@ function MealTypeSelection(props: {
         {!foodInputVisible && !itemNutritionPanelVisible ? (
           <AntDesign
             name={`${icon}`}
-            size={24}
+            size={16}
             color="black"
             onPress={() => toggleMealSelection(indexChange)}
           />
@@ -567,7 +567,7 @@ function MealTypeSelection(props: {
     <Fragment>
       <View style={[mps.mealTypeSelection, { height: "10%" }]}>
         <Text style={[mps.mealDisplayText, mps.defaultFontSize]}>
-          Meal In Display :{" "}
+          Meal Types:
         </Text>
         <View style={mps.mealTypeToggle}>
           <MealChangeButton indexChange={-1} />

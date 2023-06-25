@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsNumberString,
   MinLength,
+  Min,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -19,9 +20,11 @@ export class CreateUserDto {
   confirmPassword?: string;
 
   @IsNumberString()
+  @Min(10)
   weight: string;
 
   @IsNumberString()
+  @Min(50)
   height: string;
 
   @IsString()

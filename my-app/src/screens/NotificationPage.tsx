@@ -13,6 +13,8 @@ export const NotifyScreen = () => {
         padding: 15,
         marginTop: 50,
       }}
-    ></View>
+    >
+      <Text className="items-center text-xl">coming soon...</Text>
+    </View>
   );
 };

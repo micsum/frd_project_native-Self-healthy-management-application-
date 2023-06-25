@@ -24,8 +24,8 @@ export default function GoalDialog(props: {
     toggleInputPanel((visible: boolean) => !visible);
 
   const countDaysRemaining = (dueDay: Date) => {
-    console.log(dueDay);
-    console.log(typeof dueDay);
+    //console.log(dueDay);
+    //console.log(typeof dueDay);
 
     const remainingDays = Math.ceil(
       (new Date(dueDay).getTime() - new Date().getTime()) / (24 * 3600 * 1000)

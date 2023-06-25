@@ -136,11 +136,11 @@ const HomeNoStackWithChat = () => {
     );
   };
   return (
-    <AlertNotificationRoot>
-      <View
-        style={{ position: "relative", height: "100%" }}
-        className="bg-[#d7e0e8]"
-      >
+    <View
+      style={{ position: "relative", height: "100%" }}
+      className="bg-[#d7e0e8]"
+    >
+      <AlertNotificationRoot>
         <HomeScreenNoStack></HomeScreenNoStack>
         <SpeedDial
           isOpen={open}
@@ -179,8 +179,8 @@ const HomeNoStackWithChat = () => {
             buttonStyle={{ backgroundColor: "#649c98" }}
           />
         </SpeedDial>
-      </View>
-    </AlertNotificationRoot>
+      </AlertNotificationRoot>
+    </View>
   );
 };
 

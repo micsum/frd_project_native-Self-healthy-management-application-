@@ -133,7 +133,11 @@ function GoalInputPanel(props: {
         </View>
       </View>
       <View style={gps.goalDisplayDiv}>
-        <Text style={gps.goalDisplayTitle}>Target Weight : </Text>
+        <View className="items-center">
+          <Text style={gps.goalDisplayTitle}>Target Weight: </Text>
+          <Text className="text-xs">(kg)</Text>
+        </View>
+
         <TextInput
           inputMode={"decimal"}
           placeholder="Enter Weight Target Here"

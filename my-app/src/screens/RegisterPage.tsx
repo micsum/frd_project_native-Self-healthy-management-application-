@@ -67,7 +67,7 @@ export const RegisterForm = () => {
         return Dialog.show({
           type: ALERT_TYPE.WARNING,
           title: "Error",
-          textBody: response.error,
+          textBody: response.message,
           button: "close",
           autoClose: 3000,
         });
@@ -107,11 +107,17 @@ export const RegisterForm = () => {
     setTargetOpen(() => {
       return true;
     });
+    setIsDropdownOpen(true);
   }, []);
 
   const password = watch("password");
   const confirmPassword = watch("confirmPassword");
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleDropdownClose = () => {
+    setIsDropdownOpen(false);
+  };
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-[#38668E]">
       <AlertNotificationRoot>
@@ -290,7 +296,7 @@ export const RegisterForm = () => {
                   name="height"
                 />
               </View>
-              <View>
+              <View className="z-10">
                 {errors.target && (
                   <Text className="text-red-400">{errors.target.message}</Text>
                 )}
@@ -311,15 +317,18 @@ export const RegisterForm = () => {
                       onOpen={onTargetOpen}
                       loading={loading}
                       onChangeValue={onChange}
+                      style={{ backgroundColor: "white" }}
+                      onClose={handleDropdownClose}
+                      dropDownContainerStyle={{ backgroundColor: "#dfdfdf" }}
                     />
                   )}
                   name="target"
                 />
               </View>
-
               <TouchableOpacity
                 onPress={handleSubmit(onSubmit)}
                 className="my-8 h-12 border-2 border-white  rounded-md flex flex-row justify-center items-center px-6"
+                disabled={isDropdownOpen}
               >
                 <View className="flex-1 flex items-center">
                   <Text className="text-white text-base font-medium">
