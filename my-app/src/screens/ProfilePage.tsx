@@ -44,7 +44,7 @@ export const ProfileScreen = () => {
         />
         <View className="gap-2 items-center">
           <Text className="text-slate-900 text3xl font-bold">
-            Username : {profileInfo?.username}
+            User Name : {profileInfo?.username}
           </Text>
           <Text className="text-slate-900 textlg">
             Email : {profileInfo?.email}
@@ -74,7 +74,7 @@ export const ProfileScreen = () => {
           />
           <Text className="text-slate-900 textlg">Help</Text>
         </Pressable> */}
-        <Pressable className="flex-row items-centr gap-2 px-8">
+        <Pressable className="flex-row justify-center items-center gap-2 px-8">
           <MaterialIcons name="logout" size={24} className="text-slate-900" />
           <Text className="text-slate-900 textlg" onPress={() => logout()}>
             Logout

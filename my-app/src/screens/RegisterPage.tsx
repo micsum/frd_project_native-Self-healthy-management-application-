@@ -254,12 +254,12 @@ export const RegisterForm = () => {
                 )}
                 <Controller
                   control={control}
-                  rules={{ required: "Please input your weight" }}
+                  rules={{ required: "Please input your weight (kg)" }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
                       className="w-full bg-white rounded-md h-12 px-4 mb-4"
                       placeholderTextColor="#000"
-                      placeholder="Your weight"
+                      placeholder="Your weight (kg)"
                       onBlur={onBlur}
                       keyboardType="numeric"
                       onChangeText={onChange}
@@ -275,12 +275,12 @@ export const RegisterForm = () => {
                 )}
                 <Controller
                   control={control}
-                  rules={{ required: "Please input your height" }}
+                  rules={{ required: "Please input your height (cm)" }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
                       className="w-full bg-white rounded-md h-12 px-4 mb-4"
                       placeholderTextColor="#000"
-                      placeholder="Your height"
+                      placeholder="Your height (cm)"
                       onBlur={onBlur}
                       keyboardType="numeric"
                       onChangeText={onChange}

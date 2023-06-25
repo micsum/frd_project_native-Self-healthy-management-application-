@@ -46,7 +46,7 @@ export function PlansHomeScreen() {
   const plans = currentPlanIndex == 0 ? workoutList : mealPlanList;
 
   let vdom = (
-    <SafeAreaView>
+    <View className="mt-3">
       <ScrollView>
         <View
           style={{
@@ -61,7 +61,7 @@ export function PlansHomeScreen() {
             selectedIndex={currentPlanIndex}
             onTabPress={setCurrentPlanIndex}
             tabTextStyle={{ fontWeight: "bold" }}
-            tabsContainerStyle={{ margin: 10, marginTop: 10 }}
+            tabsContainerStyle={{ margin: 10, marginTop: 2 }}
           />
 
           <View>
@@ -86,7 +86,7 @@ export function PlansHomeScreen() {
           )}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 
   return vdom;

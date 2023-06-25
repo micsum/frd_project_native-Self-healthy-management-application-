@@ -31,9 +31,9 @@ export class MealItemController {
     return typeof decodedToken === 'string' ? -1 : decodedToken.id;
   }
 
-  @Get(':date')
+  @Get('/foodItems/:date')
   async retrieveMealItems(
-    @Param('date') date: Date,
+    @Param('date') date: string,
     @Headers('authorization') token: string,
   ) {
     const dateString = date.toString().split('-');
@@ -115,7 +115,7 @@ export class MealItemController {
     try {
       return await this.mealItemService.getPastItemNutrition(
         userID,
-        date,
+        date.split('T')[0],
         days,
       );
     } catch (error) {

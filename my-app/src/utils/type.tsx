@@ -142,10 +142,10 @@ export type WeightInfoData = {
 };
 
 export type BarChartData = {
-  value: number;
-  dataPointText: string;
+  value: number | null;
+  dataPointText: string | null;
   label: string;
-  labelComponent: Function;
+  //labelComponent: Function;
 };
 
 export type ExHist = {
@@ -173,4 +173,9 @@ export type ExInfo = {
   burnt_calories: string;
   event_duration: number;
   event_name: string;
+};
+
+export type WeightInfo = {
+  weight: string;
+  date: Date;
 };

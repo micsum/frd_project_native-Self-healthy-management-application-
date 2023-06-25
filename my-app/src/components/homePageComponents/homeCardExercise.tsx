@@ -195,7 +195,7 @@ const GoalDialog = ({
 
 export const CardFitnessData = () => {
   const [stepsProgress, setStepsProgress] = useState<number>(0);
-  const [stepGoal, setStepGoal] = useState<number | null>(null);
+  const [stepGoal, setStepGoal] = useState<number | null>(0);
   const [isGoalDialogOpen, setIsGoalDialogOpen] = useState(false);
   const [progress, setProgress] = useState<number>(0);
   const handleStepsUpdate = (steps: number) => {
@@ -240,7 +240,7 @@ export const CardFitnessData = () => {
   }, [stepGoal, stepsProgress]);
 
   return (
-    <View style={styles.card} className="mt-5 mx-3">
+    <View style={styles.card}>
       <View style={styles.header} className="justify-between">
         <Text style={{ fontWeight: "bold", fontSize: 18 }}>Steps Today</Text>
         <FontAwesome5
@@ -257,14 +257,16 @@ export const CardFitnessData = () => {
           <FontAwesome5 name="shoe-prints" size={32} color="green" />
           <GetStepsToday onStepsUpdate={handleStepsUpdate} />
         </View>
-        <Progress.Bar
-          className="mt-3"
-          progress={progress}
-          width={200}
-          animated
-          unfilledColor="#eee"
-          color="#369967"
-        />
+        <View className="mx-3">
+          <Progress.Bar
+            className="mt-3"
+            progress={progress}
+            width={150}
+            animated
+            unfilledColor="#eee"
+            color="#369967"
+          />
+        </View>
       </View>
       <GoalDialog
         isOpen={isGoalDialogOpen}
@@ -368,7 +370,14 @@ const ExerciseDialog = (props: {
         }
       },
       (error: any) => {
-        console.log("error", error.response.data.message);
+        //console.log("error", error.response.data.message);
+        return Dialog.show({
+          type: ALERT_TYPE.WARNING,
+          title: `Error`,
+          textBody: `Activity should not be empty`,
+          button: "close",
+          autoClose: 5000,
+        });
       }
     );
     onClose();
@@ -391,7 +400,7 @@ const ExerciseDialog = (props: {
             <AlertDialog.Header borderBottomWidth={0} className="flex-row">
               Exercise History
               <View className="mx-2">
-                <MaterialIcons name="history-edu" size={24} color="black" />
+                <MaterialIcons name="fitness-center" size={24} color="black" />
               </View>
             </AlertDialog.Header>
             <AlertDialog.Body className="mb-3">
@@ -403,11 +412,11 @@ const ExerciseDialog = (props: {
                 value={exInput}
                 onChangeText={handleChange}
               />
-              <View>
-                <View className="flex-row items-center justify-center mt-3 mb-3">
-                  <Text>Start Time: </Text>
+              <View className="flex-col items-center justify-center">
+                <View className="flex-row mt-3 mb-3">
+                  <Text className="text-lg">Start Time: </Text>
                   <TouchableOpacity onPress={() => setOpen(true)}>
-                    <Text>{`${startDate.toLocaleTimeString()}`}</Text>
+                    <Text className="text-blue-400 text-2xl">{`${startDate.toLocaleTimeString()}`}</Text>
                   </TouchableOpacity>
                 </View>
                 <DatePicker
@@ -418,11 +427,12 @@ const ExerciseDialog = (props: {
                   onCancel={() => {
                     setOpen(false);
                   }}
+                  title={"Start Time"}
                 />
-                <View className="flex-row items-center justify-center">
-                  <Text>End Time: </Text>
+                <View className="flex-row ml-1">
+                  <Text className="text-lg">End Time: </Text>
                   <TouchableOpacity onPress={() => setOpenEnd(true)}>
-                    <Text>{`${endDate.toLocaleTimeString()}`}</Text>
+                    <Text className="text-pink-400 text-2xl ml-1">{`${endDate.toLocaleTimeString()}`}</Text>
                   </TouchableOpacity>
                 </View>
                 <DatePicker
@@ -433,6 +443,7 @@ const ExerciseDialog = (props: {
                   onCancel={() => {
                     setOpenEnd(false);
                   }}
+                  title={"End Time"}
                 />
               </View>
             </AlertDialog.Body>
@@ -466,8 +477,15 @@ export const CardExercise = (props: {
     return (
       <View>
         <Text>
-          {event_name} {"     "} {event_duration}hr {"     "}{" "}
-          {parseFloat(burnt_calories.toString()).toFixed(2)}
+          {event_name} {"     "}
+          <MaterialIcons name="timer" size={12} color="#5488a5" />
+          {event_duration}hr {"     "}{" "}
+          <MaterialIcons
+            name="local-fire-department"
+            size={15}
+            color="#ed7377"
+          />
+          {parseFloat(burnt_calories).toFixed(2)}
           cal
         </Text>
       </View>
@@ -475,7 +493,7 @@ export const CardExercise = (props: {
   };
 
   return (
-    <View style={styles.card} className="mt-5 mx-3">
+    <View style={styles.card} className="mx-auto">
       <View style={styles.header} className="justify-between">
         <Text style={{ fontWeight: "bold", fontSize: 18 }}>Exercise</Text>
         <View className="mx-1">
@@ -489,18 +507,25 @@ export const CardExercise = (props: {
           />
         </View>
       </View>
-      <ScrollView>
-        <View>
+      {exInfo.length === 0 ? (
+        <Text className="mt-10 self-center">
+          No Exercise Today{" "}
+          <FontAwesome5 name="grin-beam-sweat" size={18} color="black" />
+        </Text>
+      ) : (
+        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
           {exInfo.map((exercise) => {
             return (
-              <ExerciseItem
-                key={exInfo.indexOf(exercise)}
-                exercise={exercise}
-              />
+              <View className="flex self-center ml-6 mb-5 mt-1">
+                <ExerciseItem
+                  key={exInfo.indexOf(exercise)}
+                  exercise={exercise}
+                />
+              </View>
             );
           })}
-        </View>
-      </ScrollView>
+        </ScrollView>
+      )}
       <ExerciseDialog
         isOpen={isExDialogOpen}
         onClose={handleCloseExDialog}
@@ -513,10 +538,10 @@ export const CardExercise = (props: {
 const styles = StyleSheet.create({
   card: {
     height: 150,
-    width: "80%",
+    width: "100%",
     backgroundColor: "white",
     borderRadius: 15,
-    elevation: 10,
+    elevation: 15,
     padding: 10,
     //shadowColor: "#000",
     //shadowOffset: { width: 0, height: 3 },
@@ -526,5 +551,12 @@ const styles = StyleSheet.create({
 
   header: {
     flexDirection: "row",
+  },
+
+  scrollViewContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 5,
   },
 });

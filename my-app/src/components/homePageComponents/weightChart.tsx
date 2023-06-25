@@ -9,7 +9,7 @@ import { Domain } from "@env";
 
 export default function WeightChart() {
   const [weightInfo, updateWeightInfo] = useState<WeightInfoData[]>([]);
-  const barChartData = useRef<BarChartData[]>([]);
+  const [barChartData, setBarChartData] = useState<BarChartData[]>([]);
   const { token } = handleToken();
 
   const getWeightInfo = async () => {
@@ -26,19 +26,27 @@ export default function WeightChart() {
       });
       return;
     }
-    console.log(result);
-    updateWeightInfo([]);
+
+    updateWeightInfo(result);
   };
 
   const generateBarChartData = (weightInfoData: WeightInfoData[]) => {
-    return weightInfoData.map((weightInfo) => {
-      const { weight, date } = weightInfo;
-      const value = weight;
-      const dataPointText = weight.toString();
-      const label = `${date.getDate()}/${date.getMonth()}`;
-      const labelComponent = () => {};
-      return { value, dataPointText, label, labelComponent };
-    });
+    //console.log("weightInfoData", weightInfoData);
+
+    return weightInfoData
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .map((weightInfo) => {
+        console.log(weightInfo);
+
+        const { weight, date } = weightInfo;
+        const value = weight;
+        const dataPointText = weight.toString();
+        const label = `${new Date(date).getDate()}/${
+          new Date(date).getMonth() + 1
+        }`;
+        //const labelComponent = () => {};
+        return { value, dataPointText, label };
+      });
   };
 
   useEffect(() => {
@@ -46,16 +54,22 @@ export default function WeightChart() {
   }, []);
 
   useEffect(() => {
-    barChartData.current = generateBarChartData(weightInfo);
+    if (weightInfo.length > 0) {
+      setBarChartData(generateBarChartData(weightInfo));
+    }
   }, [weightInfo]);
 
   return (
     <Fragment>
       <View>
         <LineChart
-          data={barChartData.current}
-          thickness={5}
+          //@ts-ignore
+          data={barChartData}
+          thickness={2}
+          color="#48bcd1"
           isAnimated={true}
+          dataPointsColor={"green"}
+          width={300}
         />
       </View>
     </Fragment>

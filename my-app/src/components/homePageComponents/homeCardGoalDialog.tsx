@@ -67,7 +67,9 @@ export default function GoalDialog(props: {
                     </Text>
                   </View>
                   <View style={gps.goalDisplayDiv}>
-                    <Text style={gps.goalDisplayTitle}>Desired Weight : </Text>
+                    <Text style={gps.goalDisplayTitle}>
+                      Desired Weight (kg) :{" "}
+                    </Text>
                     <Text style={gps.goalDisplayText}>
                       {targetInfo ? targetInfo.desiredWeight : "Not Yet Set"}
                     </Text>

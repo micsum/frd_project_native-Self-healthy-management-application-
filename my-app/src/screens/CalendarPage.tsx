@@ -11,6 +11,7 @@ import { Agenda, Calendar, DateData } from "react-native-calendars";
 import * as CalendarAPI from "expo-calendar";
 import { Event, EventDates, ObjectAny } from "../utils/type";
 import { createStackNavigator } from "@react-navigation/stack";
+import { ScrollView } from "native-base";
 
 export function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState("");
@@ -197,57 +198,59 @@ export function CalendarPage() {
 
   return (
     <View style={styles.container}>
-      <Calendar
-        onDayPress={onDayPress}
-        markedDates={dates}
-        theme={{
-          backgroundColor: "#ffffff",
-          calendarBackground: "#ffffff",
-          textSectionTitleColor: "#b6c1cd",
-          selectedDayBackgroundColor: "#00adf5",
-          selectedDayTextColor: "#ffffff",
-          todayTextColor: "#00adf5",
-          dayTextColor: "#2d4150",
-        }}
-        style={{
-          borderWidth: 1,
-          borderColor: "gray",
-          height: 400,
-        }}
-      />
-      <View
-        style={styles.eventContainer}
-        className="flex items-center justify-center"
-      >
-        <Text>Selected date: {selectedDate}</Text>
-        <Button title="Create a new calendar" onPress={createCalendar} />
-        <Button title="Add Event" onPress={addEvent} />
-        {events.map((event) => {
-          const { id, title, start_date, end_date } = event;
-          const startDateString = start_date.toISOString().split("T")[0];
-          return startDateString === selectedDate ? (
-            <View style={styles.event} key={id}>
-              <Text style={styles.eventTitle}>{title}</Text>
-              <Text style={styles.eventTime}>
-                {start_date.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}{" "}
-                -{" "}
-                {end_date.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </Text>
-              <Button
-                title="Delete"
-                onPress={() => deleteEvent(id)}
-                color="red"
-              />
-            </View>
-          ) : null;
-        })}
-      </View>
+      <ScrollView>
+        <Calendar
+          onDayPress={onDayPress}
+          markedDates={dates}
+          theme={{
+            backgroundColor: "#ffffff",
+            calendarBackground: "#ffffff",
+            textSectionTitleColor: "#b6c1cd",
+            selectedDayBackgroundColor: "#00adf5",
+            selectedDayTextColor: "#ffffff",
+            todayTextColor: "#00adf5",
+            dayTextColor: "#2d4150",
+          }}
+          style={{
+            borderWidth: 1,
+            borderColor: "gray",
+            height: 400,
+          }}
+        />
+        <View
+          style={styles.eventContainer}
+          className="flex items-center justify-center"
+        >
+          <Text>Selected date: {selectedDate}</Text>
+          <Button title="Create event type" onPress={createCalendar} />
+          <Button title="Add Event" onPress={addEvent} />
+          {events.map((event) => {
+            const { id, title, start_date, end_date } = event;
+            const startDateString = start_date.toISOString().split("T")[0];
+            return startDateString === selectedDate ? (
+              <View style={styles.event} key={id}>
+                <Text style={styles.eventTitle}>{title}</Text>
+                <Text style={styles.eventTime} className="mx-3">
+                  {start_date.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}{" "}
+                  -{" "}
+                  {end_date.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </Text>
+                <Button
+                  title="Delete"
+                  onPress={() => deleteEvent(id)}
+                  color="red"
+                />
+              </View>
+            ) : null;
+          })}
+        </View>
+      </ScrollView>
     </View>
   );
 }

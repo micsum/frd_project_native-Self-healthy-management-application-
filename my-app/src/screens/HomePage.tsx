@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Text, View, Animated, StyleSheet } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Text, View, Animated, StyleSheet, RefreshControl } from "react-native";
 import { CardGoal } from "../components/homePageComponents/homeCardGoal";
 import {
   ScrollView,
@@ -217,9 +217,22 @@ export function HomeScreenNoStack() {
 
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   return (
-    <ScrollView>
-      <AlertNotificationRoot>
+    <AlertNotificationRoot>
+      <ScrollView
+        nestedScrollEnabled={true}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View
           style={{
             flex: 1,
@@ -228,7 +241,7 @@ export function HomeScreenNoStack() {
             alignItems: "center",
             paddingTop: insets.top,
             padding: 10,
-            marginBottom: 15,
+            marginBottom: 5,
             backgroundColor: "#38668E",
           }}
         >
@@ -236,30 +249,28 @@ export function HomeScreenNoStack() {
           <AnimatedText />
           <Notification />
         </View>
-        <ScrollView nestedScrollEnabled={false}>
-          <CardGoal exInfo={exData} />
-        </ScrollView>
-        <SwiperFlatList
-          showPagination
-          paginationActiveColor="#0898A0"
-          paginationStyleItem={styles.paginationDots}
-        >
-          <Pressable
-            onPress={() => {
-              //@ts-ignore
-              navigation.navigate("StepPage");
-            }}
-            className="w-full"
-          >
-            <CardFitnessData />
-          </Pressable>
-        </SwiperFlatList>
-        <Pressable className="w-max">
-          <CardExercise exInfo={exData} addNewExercise={addNewExercise} />
-        </Pressable>
-        {/*} <CardWeight />*/}
-      </AlertNotificationRoot>
-    </ScrollView>
+        <CardGoal exInfo={exData} />
+        <View className="flex-row items-center w-100  mx-3 justify-around">
+          <View className="w-1/2 p-1 ">
+            <Pressable
+              onPress={() => {
+                //@ts-ignore
+                navigation.navigate("StepPage");
+              }}
+              className="w-max"
+            >
+              <CardFitnessData />
+            </Pressable>
+          </View>
+          <View className="w-1/2 p-1">
+            <ScrollView className="">
+              <CardExercise exInfo={exData} addNewExercise={addNewExercise} />
+            </ScrollView>
+          </View>
+        </View>
+        <CardWeight />
+      </ScrollView>
+    </AlertNotificationRoot>
   );
 }
 
@@ -267,64 +278,66 @@ const Stack = createStackNavigator();
 
 export const HomeScreen = () => {
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="HomeNoStack"
-        component={HomeNoStackWithChat}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="ChatRoom"
-        component={ChatRoomScreen}
-        options={{
-          title: "Chat with ChatGPT",
-          headerShown: true,
-          headerTitleAlign: "center",
-          headerStyle: { backgroundColor: "#38668E" },
-          headerTintColor: "#a5f3fc",
-          headerBackTitle: " ",
-        }}
-      />
-      <Stack.Screen
-        name="StepPage"
-        component={GetSteps}
-        options={{
-          title: "Steps Record",
-          headerShown: true,
-          headerTitleAlign: "center",
-          headerStyle: { backgroundColor: "#38668E" },
-          headerTintColor: "#a5f3fc",
-          headerBackTitle: " ",
-        }}
-      />
+    <AlertNotificationRoot>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="HomeNoStack"
+          component={HomeNoStackWithChat}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="ChatRoom"
+          component={ChatRoomScreen}
+          options={{
+            title: "Chat with ChatGPT",
+            headerShown: true,
+            headerTitleAlign: "center",
+            headerStyle: { backgroundColor: "#38668E" },
+            headerTintColor: "#a5f3fc",
+            headerBackTitle: " ",
+          }}
+        />
+        <Stack.Screen
+          name="StepPage"
+          component={GetSteps}
+          options={{
+            title: "Steps Record",
+            headerShown: true,
+            headerTitleAlign: "center",
+            headerStyle: { backgroundColor: "#38668E" },
+            headerTintColor: "#a5f3fc",
+            headerBackTitle: " ",
+          }}
+        />
 
-      <Stack.Screen
-        name="Notify"
-        component={NotifyScreen}
-        options={{
-          headerShown: true,
-          title: "Notification",
-          headerTitleAlign: "center",
-          headerStyle: { backgroundColor: "#38668E" },
-          headerTintColor: "#a5f3fc",
-          headerBackTitle: " ",
-        }}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          headerShown: true,
-          title: "Profile",
-          headerTitleAlign: "center",
-          headerStyle: { backgroundColor: "#38668E" },
-          headerTintColor: "#a5f3fc",
-          headerBackTitle: " ",
-        }}
-      />
-    </Stack.Navigator>
+        <Stack.Screen
+          name="Notify"
+          component={NotifyScreen}
+          options={{
+            headerShown: true,
+            title: "Notification",
+            headerTitleAlign: "center",
+            headerStyle: { backgroundColor: "#38668E" },
+            headerTintColor: "#a5f3fc",
+            headerBackTitle: " ",
+          }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            headerShown: true,
+            title: "Profile",
+            headerTitleAlign: "center",
+            headerStyle: { backgroundColor: "#38668E" },
+            headerTintColor: "#a5f3fc",
+            headerBackTitle: " ",
+          }}
+        />
+      </Stack.Navigator>
+    </AlertNotificationRoot>
   );
 };
 

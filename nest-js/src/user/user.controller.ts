@@ -135,8 +135,11 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('weightInfo')
-  async getWeightInfo(@Headers('authorization') token: string) {
+  @Get('weightInfo/:date')
+  async getWeightInfo(
+    @Headers('authorization') token: string,
+    @Param('date') date: Date,
+  ) {
     const userID = this.extractUserID(token);
     try {
       return await this.userService.getWeightInfo(userID);

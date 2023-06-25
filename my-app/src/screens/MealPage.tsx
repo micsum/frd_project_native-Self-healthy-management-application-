@@ -24,7 +24,7 @@ const MealPage: React.FC = () => {
 
   const dateString = date.toISOString().split("T")[0];
   const dateMealItem = useGet<{ mealData: FullItemInfo[] }>(
-    `/mealItem/${dateString}`
+    `/mealItem/foodItems/${dateString}`
   );
   const dateMealData = dateMealItem.json.mealData || [];
 

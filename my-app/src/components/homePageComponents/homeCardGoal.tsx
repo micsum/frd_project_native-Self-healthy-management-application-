@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Box, AspectRatio, Center } from "native-base";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Pressable } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { ALERT_TYPE, Dialog } from "react-native-alert-notification";
 import GoalDialog from "./homeCardGoalDialog";
@@ -9,13 +9,17 @@ import { handleToken } from "../../hooks/use-token";
 import { Domain } from "@env";
 import axios from "axios";
 import * as Progress from "react-native-progress";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
+import { Entypo } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export const CardGoal = (props: { exInfo: ExInfo[] }) => {
   const { exInfo } = props;
   const [isGoalDialogOpen, setIsGoalDialogOpen] = useState(false);
   const [inputInfo, updateInputInfo] = useState<GoalInputData>();
-  const [foodCalories, setFoodCalories] = useState<number>(0);
 
+  const foodCalories = useRef<number>(0);
   const exerciseCalories = exInfo.reduce(
     (acc, elem) => acc + parseFloat(parseFloat(elem.burnt_calories).toFixed(2)),
     0
@@ -28,6 +32,7 @@ export const CardGoal = (props: { exInfo: ExInfo[] }) => {
   });
 
   const [progress, setProgress] = useState(0);
+  const [dummy, forceUpdate] = useState<boolean>(false);
 
   const { token } = handleToken();
 
@@ -79,12 +84,12 @@ export const CardGoal = (props: { exInfo: ExInfo[] }) => {
       return null;
     }
     const { id, user_id, ...personalTarget } = personalTargetResult[0];
-    return personalTarget;
+    updateInputInfo(personalTarget);
   };
 
   const getFoodCalories = async () => {
     const caloriesResult = await axios
-      .get(`${Domain}/mealItem/nutritionDetail/${new Date()}/1`)
+      .get(`${Domain}/mealItem/nutritionDetail/${new Date().toISOString()}/1`)
       .then((response: any) => {
         const result = response.data;
         if (result.error) {
@@ -106,44 +111,53 @@ export const CardGoal = (props: { exInfo: ExInfo[] }) => {
 
         return result.dailyNutritionResult[0].calories;
       });
-    setFoodCalories(caloriesResult);
+    foodCalories.current = caloriesResult;
   };
 
   const getFullInfo = async () => {
     await getBodyParams();
     await getFoodCalories();
-    const inputData = await getInputData();
-    updateInputInfo(inputData);
+    await getInputData();
+    forceUpdate((dummy: boolean) => !dummy);
   };
 
   const returnNewProgress = () => {
     const updatedGoalCalories = goalCalories.current;
-    console.log(exerciseCalories);
+    const updatedFoodCalories = foodCalories.current;
+    //console.log(exerciseCalories);
     const remainingCalories =
-      updatedGoalCalories * 1000 + foodCalories - exerciseCalories;
+      updatedGoalCalories * 1000 + updatedFoodCalories - exerciseCalories;
 
-    console.log(goalCalories.current);
-    console.log(foodCalories);
-    console.log(exerciseCalories);
+    //console.log(updatedGoalCalories);
+    //console.log(foodCalories);
+    //console.log(exerciseCalories);
 
-    console.log(`remaining calories :${remainingCalories}`);
+    //console.log(`remaining calories :${remainingCalories}`);
+    let result: number;
     if (remainingCalories < 0) {
-      return 100;
-    } else if (goalCalories.current === 0) {
-      return 0;
+      result = 100;
+    } else if (updatedGoalCalories === 0) {
+      result = 0;
     } else {
-      return parseFloat(
+      result = parseFloat(
         (
-          (goalCalories.current - remainingCalories) /
-          goalCalories.current
+          (updatedGoalCalories * 1000 - remainingCalories) /
+          (updatedGoalCalories * 1000)
         ).toFixed(2)
       );
     }
+    console.log(result);
+
+    return result < 0 ? 0 : result * 100;
   };
 
   useEffect(() => {
     getFullInfo();
   }, []);
+
+  useEffect(() => {
+    setProgress(returnNewProgress());
+  }, [inputInfo, foodCalories, exInfo]);
 
   const handleGoalDialog = () => {
     setIsGoalDialogOpen((open: boolean) => !open);
@@ -198,68 +212,125 @@ export const CardGoal = (props: { exInfo: ExInfo[] }) => {
     updateInputInfo(input);
   };
 
-  useEffect(() => {
-    setProgress(returnNewProgress());
-  }, [foodCalories, exInfo]);
   return (
-    <View style={styles.card} className="mt-2 m-3 p-3">
-      <Box className="flex-row justify-around">
-        <Center
-          bg="violet.500"
-          _dark={{
-            bg: "violet.400",
-          }}
-          _text={{
-            color: "warmGray.50",
-            fontWeight: "700",
-            fontSize: "md",
-          }}
-          position="absolute"
-          top="0"
-          mx="1"
-          mt="0"
-          px="3"
-          py="1.5"
-          borderRadius={"sm"}
-        >
-          Goal
-        </Center>
-        <AspectRatio w="100%" ratio={16 / 9}>
-          <View className="flex-col items-center ml-3">
-            <Text style={{ fontWeight: "bold", fontSize: 18 }}>Calories</Text>
-            <Text className="text-slate-500 ml-5">
-              Remaining = Goal + Food - Exercise
-            </Text>
-          </View>
-        </AspectRatio>
-        <View className="mr-3 mt-1">
-          <FontAwesome5
-            name="plus"
-            size={20}
-            color="black"
-            onPress={() => {
-              handleGoalDialog();
+    <Pressable
+      onPress={() => {
+        handleGoalDialog();
+      }}
+    >
+      <View style={styles.card} className="mt-2 m-3 p-3">
+        <Box className="flex-row justify-around">
+          <Center
+            bg="violet.600"
+            _dark={{
+              bg: "violet.400",
             }}
-          />
-        </View>
-      </Box>
-      <Progress.Circle progress={progress} showsText animated size={50} />
-      <GoalDialog
-        token={tokenRef.current}
-        weight={bodyParams.weight}
-        targetInfo={generateTargetInfo(inputInfo)}
-        isOpen={isGoalDialogOpen}
-        onClose={handleGoalDialog}
-        updateInputInfo={changeInputInfo}
-      ></GoalDialog>
-    </View>
+            _text={{
+              color: "warmGray.50",
+              fontWeight: "700",
+              fontSize: "md",
+            }}
+            position="absolute"
+            top="0"
+            mx="1"
+            mt="0"
+            px="3"
+            py="1.5"
+            borderRadius={"sm"}
+          >
+            Goal
+          </Center>
+          <AspectRatio w="100%" ratio={16 / 9}>
+            <View className="flex-col items-center ml-3">
+              <Text style={{ fontWeight: "bold", fontSize: 18 }}>Calories</Text>
+              <Text className="text-slate-500 ml-5">
+                Remaining = Goal + Food - Exercise
+              </Text>
+              {/*<Progress.Circle
+              progress={progress}
+              showsText
+              animated
+              direction="clockwise"
+              unfilledColor="white"
+              color="#38668E"
+              thickness={2}
+              size={150}
+              className="mt-9 mr-36"
+        />*/}
+              <View className="mt-9">
+                <View className="flex-row items-center justify-between">
+                  <View className="">
+                    <AnimatedCircularProgress
+                      size={150}
+                      fill={progress}
+                      width={15}
+                      tintColor="#29a0b1"
+                      backgroundColor="#d7e0e8"
+                      rotation={0}
+                    >
+                      {(progress) => (
+                        <Text className="text-2xl">{`${progress}%`}</Text>
+                      )}
+                    </AnimatedCircularProgress>
+                  </View>
+                  <View className="mx-7 flex-col justify-center">
+                    <View className="flex-row items-center mb-2">
+                      <Entypo name="flag" size={24} color="#8699a3" />
+                      <View className="mx-1">
+                        <Text>Target</Text>
+                        <Text>{`${goalCalories.current * 1000}`}</Text>
+                      </View>
+                    </View>
+                    <View className="flex-row items-center mb-2">
+                      <MaterialCommunityIcons
+                        name="silverware-fork-knife"
+                        size={24}
+                        color="#000C66"
+                      />
+                      <View className="mx-1">
+                        <Text>Food</Text>
+                        <Text>{`${Math.ceil(
+                          +foodCalories.current.toFixed(2)
+                        )}`}</Text>
+                      </View>
+                    </View>
+                    <View className="flex-row items-center">
+                      <MaterialIcons
+                        name="local-fire-department"
+                        size={24}
+                        color="#ed7377"
+                      />
+                      <View className="mx-1">
+                        <Text>Exercise</Text>
+                        <Text>{`${exerciseCalories}`}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </AspectRatio>
+          {/*<View className="mr-3 mt-1">
+            <FontAwesome5 name="plus" size={20} color="black" />
+                        </View>*/}
+        </Box>
+        <GoalDialog
+          token={tokenRef.current}
+          weight={bodyParams.weight}
+          targetInfo={generateTargetInfo(inputInfo)}
+          isOpen={isGoalDialogOpen}
+          onClose={handleGoalDialog}
+          updateInputInfo={changeInputInfo}
+        ></GoalDialog>
+      </View>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    height: 300,
-    width: "95%",
+    height: 270,
+    width: "94%",
     backgroundColor: "white",
     borderRadius: 15,
     elevation: 10,

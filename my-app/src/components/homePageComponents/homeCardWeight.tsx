@@ -1,5 +1,5 @@
-import { View, StyleSheet } from "react-native";
-import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useRef, useState } from "react";
 import {
   HStack,
   VStack,
@@ -10,34 +10,176 @@ import {
   Heading,
   Stack,
   Button,
+  AlertDialog,
+  Input,
 } from "native-base";
+import WeightChart from "./weightChart";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { WeightInfo } from "../../utils/type";
+import {
+  ALERT_TYPE,
+  AlertNotificationRoot,
+  Dialog,
+} from "react-native-alert-notification";
+import DatePicker from "react-native-date-picker";
+import { Domain } from "@env";
+import axios from "axios";
+
+const WeightDialog = (props: {
+  isOpen: boolean;
+  onClose: () => void;
+  addNewWeight: (newWeight: WeightInfo) => void;
+}) => {
+  const { isOpen, onClose, addNewWeight } = props;
+  const cancelRef = useRef(null);
+  const [updateDate, setUpdateDate] = useState(new Date());
+  const [open, setOpen] = useState(false);
+
+  const handleUpdateDate = (updateDate: Date) => {
+    setOpen(false);
+    setUpdateDate(updateDate);
+    setWeightHist((current) => {
+      return { ...current, date: updateDate };
+    });
+  };
+
+  const [kgInput, setKgInput] = useState<string>("");
+  const handleChange = (input: string) => {
+    setWeightHist((current) => {
+      return { ...current, weight: input };
+    });
+  };
+  const [weightHist, setWeightHist] = useState<WeightInfo>({
+    weight: "0",
+    date: new Date(),
+  });
+
+  const handleSetWeight = async () => {
+    let weightData = weightHist;
+    const { weight, date } = weightHist;
+
+    if (+weightData.weight < 0) {
+      return Dialog.show({
+        type: ALERT_TYPE.WARNING,
+        title: `Wrong Weight Input`,
+        textBody: "please check your input",
+        button: "close",
+        autoClose: 5000,
+      });
+    }
+    await axios.post(`${Domain}/user/weightInfo`, weightHist).then(
+      (response) => {
+        if (response.data.error) {
+          return Dialog.show({
+            type: ALERT_TYPE.WARNING,
+            title: `Error`,
+            textBody: `${response.data.error}`,
+            button: "close",
+            autoClose: 5000,
+          });
+        } else if (response.data) {
+          console.log("weightHist", response.data);
+
+          addNewWeight({
+            weight,
+            date,
+          });
+          return Dialog.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: `Weight Updated`,
+            textBody: "",
+            button: "close",
+            autoClose: 5000,
+          });
+        }
+      },
+      (error: any) => {
+        console.log("error", error.response.data.message);
+        return Dialog.show({
+          type: ALERT_TYPE.WARNING,
+          title: `Error`,
+          textBody: `${error.response.data.message}`,
+          button: "close",
+          autoClose: 5000,
+        });
+      }
+    );
+    onClose();
+    //setKgInput("");
+    //setUpdateDate(new Date());
+  };
+  return (
+    <View>
+      <AlertNotificationRoot>
+        <AlertDialog
+          leastDestructiveRef={cancelRef}
+          isOpen={isOpen}
+          onClose={onClose}
+          size="xl"
+        >
+          <AlertDialog.Content>
+            <AlertDialog.CloseButton />
+            <AlertDialog.Header
+              borderBottomWidth={0}
+              className="flex-row items-center"
+            >
+              Update Weight
+              <View className="mx-2">
+                <FontAwesome5 name="weight" size={24} color="black" />
+              </View>
+            </AlertDialog.Header>
+            <AlertDialog.Body className="mb-3">
+              <Input
+                variant="rounded"
+                size="xl"
+                placeholder="New Weight"
+                className="items-center justify-center text-center"
+                //value={kgInput}
+                onChangeText={handleChange}
+              />
+              <View className="flex-col items-center justify-center">
+                <View className="flex-row mt-3 mb-3 items-center">
+                  <Text className="text-lg">Measure Date: </Text>
+                  <TouchableOpacity onPress={() => setOpen(true)}>
+                    <Text className="text-blue-400 text-2xl">{`${updateDate.toLocaleDateString()}`}</Text>
+                  </TouchableOpacity>
+                </View>
+                <DatePicker
+                  modal
+                  mode="date"
+                  open={open}
+                  date={updateDate}
+                  onConfirm={handleUpdateDate}
+                  onCancel={() => {
+                    setOpen(false);
+                  }}
+                  title={"Start Time"}
+                />
+              </View>
+            </AlertDialog.Body>
+            <AlertDialog.Footer>
+              <Button onPress={handleSetWeight}>Update</Button>
+            </AlertDialog.Footer>
+          </AlertDialog.Content>
+        </AlertDialog>
+      </AlertNotificationRoot>
+    </View>
+  );
+};
 
 export const CardWeight = () => {
+  const [isWeightDialog, setWeightDialog] = useState(false);
+  const openWeightDialog = () => {
+    setWeightDialog(true);
+  };
+
+  const closeWeightDialog = () => {
+    setWeightDialog(false);
+  };
   return (
-    <Box alignItems="center">
-      <Box
-        maxWidth={"auto"}
-        mt="6"
-        mb="4"
-        mx="2"
-        rounded="lg"
-        overflow="hidden"
-        borderColor="coolGray.200"
-        borderWidth="1"
-        _dark={{
-          borderColor: "coolGray.700",
-          backgroundColor: "gray.800",
-        }}
-        _web={{
-          shadow: 2,
-          borderWidth: 0,
-        }}
-        _light={{
-          backgroundColor: "gray.50",
-        }}
-      >
+    <View style={styles.card} className="mt-2 m-3 p-3">
+      <View className="flex-row justify-around">
         <Box>
-          <AspectRatio w="100%" ratio={16 / 9}></AspectRatio>
           <Center
             bg="cyan.500"
             _dark={{
@@ -50,29 +192,47 @@ export const CardWeight = () => {
             }}
             position="absolute"
             top="0"
-            mx="3"
-            mt="3"
+            mx="1"
+            mt="0"
             px="3"
             py="1.5"
             borderRadius={"sm"}
           >
             Weight
           </Center>
+          <AspectRatio w="100%" ratio={16 / 9}>
+            <View className="mt-12">
+              <WeightChart />
+            </View>
+          </AspectRatio>
         </Box>
-
-        <Stack space={2}>
-          <HStack alignItems="center" space={4} justifyContent="space-between">
-            <HStack alignItems="center"></HStack>
-          </HStack>
-        </Stack>
-      </Box>
-    </Box>
+        <View className="mx-2">
+          <FontAwesome5
+            name="plus"
+            size={20}
+            color="black"
+            onPress={() => {
+              openWeightDialog();
+            }}
+          />
+        </View>
+      </View>
+      <WeightDialog
+        isOpen={isWeightDialog}
+        onClose={closeWeightDialog}
+        addNewWeight={() => {}}
+      />
+    </View>
   );
 };
 
-const createCss = (margin: number) => {
-  return {
-    margin: margin,
-    color: "blue",
-  };
-};
+const styles = StyleSheet.create({
+  card: {
+    height: 300,
+    width: "95%",
+    backgroundColor: "white",
+    borderRadius: 15,
+    elevation: 10,
+    padding: 10,
+  },
+});

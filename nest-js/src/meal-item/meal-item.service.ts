@@ -37,7 +37,7 @@ export class MealItemService {
     return dateArray;
   }
 
-  async getMealData(userID: number, date: Date) {
+  async getMealData(userID: number, date: string) {
     const mealDataResult = await this.knex('meal_food_item')
       .join('meal_input_record', {
         'meal_input_record.id': 'meal_food_item.meal_id',
@@ -48,7 +48,7 @@ export class MealItemService {
         '*',
       )
       .where('meal_input_record.user_id', '=', userID)
-      .andWhere('meal_input_record.date_of_meal', '=', date);
+      .andWhere('meal_input_record.date_of_meal', '=', new Date(date));
 
     const mealData = mealDataResult.map((foodItem) => {
       //@ts-ignore
@@ -213,7 +213,12 @@ export class MealItemService {
 
     for (let foodItem of itemNutritionResult) {
       const dateOfMeal: Date = foodItem.date_of_meal;
-      dateSortedObject[dateOfMeal.toISOString().split('T')[0]].push(foodItem);
+
+      dateSortedObject[
+        new Date(new Date(dateOfMeal).getTime() + 8 * 3600000)
+          .toISOString()
+          .split('T')[0]
+      ].push(foodItem);
     }
 
     const dailyNutritionResult: any = [];

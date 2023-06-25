@@ -66,7 +66,7 @@ export function MyTabs() {
           ),
         }}
       />
-      <Tab.Screen
+      {/*<Tab.Screen
         name="More"
         component={MoreScreen}
         options={{
@@ -75,7 +75,7 @@ export function MyTabs() {
             <Feather name="more-horizontal" size={24} color="black" />
           ),
         }}
-      />
+      />*/}
     </Tab.Navigator>
   );
 }

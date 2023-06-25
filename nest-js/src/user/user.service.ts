@@ -21,7 +21,15 @@ export class UserService {
   async create(createUserDto: CreateUserDto) {
     //console.log('new', createUserDto); check the confirm password drop
 
-    await this.knex('user').insert(createUserDto);
+    const user_id = await this.knex('user')
+      .insert(createUserDto)
+      .returning('id');
+
+    await this.knex('weight_record').insert({
+      weight: createUserDto.weight,
+      user_id: user_id[0].id,
+      date: new Date(Date.now()),
+    });
     return 'Successfully registered';
   }
 
@@ -76,7 +84,6 @@ export class UserService {
       .where({ user_id: userID });
 
     if (personalTargetResult.length === 0) {
-      console.log('ran');
       return { personalTarget: [] };
     }
 
